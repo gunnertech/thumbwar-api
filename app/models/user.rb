@@ -5,16 +5,16 @@ class User < ActiveRecord::Base
 
   attr_accessible :email, :password, :password_confirmation, :remember_me
   attr_accessible :username
-  attr_accessible :authentication_token
+  attr_accessible :token
   
-  before_save { |u| u.authentication_token = generate_authentication_token if authentication_token.blank? }
+  before_save { |u| u.token = generate_token if token.blank? }
   
   private
   
-  def generate_authentication_token
+  def generate_token
     loop do
       token = Devise.friendly_token
-      break token unless User.where{ authentication_token == token }.count > 0
+      break token unless User.where{ token == token }.count > 0
     end
   end
 end

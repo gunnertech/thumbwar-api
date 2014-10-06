@@ -31,7 +31,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       # t.datetime :locked_at
       
       t.string :username, null: false, default: ""
-      t.string :authentication_token
+      t.string :token
 
       t.timestamps
     end
@@ -42,6 +42,6 @@ class DeviseCreateUsers < ActiveRecord::Migration
     # add_index :users, :unlock_token,         unique: true
     
     add_index :users, :username, unique: true
-    add_index :users, :authentication_token, unique: true
+    add_index :users, :token, unique: true
   end
 end
