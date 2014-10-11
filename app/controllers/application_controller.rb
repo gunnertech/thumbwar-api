@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
       if (user = User.find_by_mobile(params[:mobile]))
         if params[:token]
           if Devise.secure_compare(user.token, params[:token])
-            sign_in(user, store: false)
+            @user = user
           else
             render status: 401, json: {error: "invalid token"}
           end
