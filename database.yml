@@ -1,5 +1,0 @@
-development:
-  adapter: postgresql
-  host: localhost
-  username: gunnertech
-  database: thumbwar_development
