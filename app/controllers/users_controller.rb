@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   end
   
   def show
-    render status: 200, json: {user: current_user}
+    render status: 200, json: {user: @user}
   end
   
   def index
@@ -34,12 +34,12 @@ class UsersController < ApplicationController
   end
 
   def logout
-    current_user.update_column(:token, nil)
+    @user.update_column(:token, nil)
     render status: 200, json: {}
   end
   
   def follow
-    User.find(params[:user_id]).followers << current_user
+    User.find(params[:user_id]).followers << @user
     render status: 200, json: {}
   end
   
@@ -49,7 +49,7 @@ class UsersController < ApplicationController
     if params[:collection].present?
       case params[:collection]
       when "followers"
-        current_user.followers
+        @user.followers
       else
         User.where{id == 0}
       end
