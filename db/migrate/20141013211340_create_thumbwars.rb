@@ -5,7 +5,7 @@ class CreateThumbwars < ActiveRecord::Migration
       t.integer :challengee_id, null: false
       t.integer :challenger_id, null: false
       t.text :description, null: false
-      t.integer :expires_in
+      t.datetime :expires_at
       t.boolean :public, default: true
       t.string :wager
       t.integer :winner_id

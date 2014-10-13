@@ -11,5 +11,6 @@ ThumbwarApi::Application.routes.draw do
   resources :thumbwars do
     post "watch", to: "thumbwars#watch"
     get "watchers", to: "thumbwars#watchers"
+    post "comment", to: "thumbwars#comment"
   end
 end
