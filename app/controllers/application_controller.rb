@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   respond_to :json
   
-  before_filter :authenticate_from_token!, except: [:create, :login]
+  before_filter :authenticate_from_token!, except: [:register, :login]
  
   private
   
@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
       if (user = User.find_by_mobile(params[:mobile]))
         if params[:token]
           if Devise.secure_compare(user.token, params[:token])
-            @user = user
+            @current_user = user
           else
             render status: 401, json: {error: "invalid token"}
           end

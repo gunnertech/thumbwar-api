@@ -1,0 +1,1 @@
+json.array! collection, partial: "users/user", as: :user

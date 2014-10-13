@@ -1,0 +1,1 @@
+json.(user, :id, :mobile, :username, :first_name, :last_name)

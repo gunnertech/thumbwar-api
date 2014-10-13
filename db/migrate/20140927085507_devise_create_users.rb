@@ -1,6 +1,6 @@
 class DeviseCreateUsers < ActiveRecord::Migration
   def change
-    create_table(:users) do |t|
+    create_table :users do |t|
       t.string :encrypted_password, null: false, default: ""
       t.string :facebook_token
       t.string :first_name

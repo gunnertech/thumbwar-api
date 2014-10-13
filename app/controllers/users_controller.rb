@@ -1,5 +1,5 @@
-class UsersController < ApplicationController
-  def create
+class UsersController < InheritedResources::Base
+  def register
     user = User.new(params[:user])
     if user.save
       render status: 201, json: {user: user}
@@ -8,25 +8,13 @@ class UsersController < ApplicationController
     end
   end
   
-  def show
-    render status: 200, json: {user: @user}
-  end
-  
-  def index
-    render status: 200, json: {users: collection}
-  end
-  
   def login
     if user = User.find_by_mobile(params[:mobile])
-      if user.token
-        render status: 200, json: {token: user.token}
+      if user.valid_password?(params[:password])
+        user.save if user.token.nil?
+        render status: 200, json: {user: user.to_json(only: [:mobile, :token])}
       else
-        if user.valid_password?(params[:password])
-          user.save
-          render status: 200, json: {token: user.token}
-        else
-          render status: 401, json: {error: "invalid password"}
-        end
+        render status: 401, json: {error: "invalid password"}
       end
     else
       render status: 404, json: {error: "user not found"}
@@ -34,27 +22,16 @@ class UsersController < ApplicationController
   end
 
   def logout
-    @user.update_column(:token, nil)
+    @current_user.update_column(:token, nil)
     render status: 200, json: {}
   end
   
   def follow
-    User.find(params[:user_id]).followers << @user
+    User.find(params[:id]).followers << @current_user
     render status: 200, json: {}
   end
   
-  private
-  
-  def collection
-    if params[:collection].present?
-      case params[:collection]
-      when "followers"
-        @user.followers
-      else
-        User.where{id == 0}
-      end
-    else
-      User.where{id == 0}
-    end
+  def followers
+    render status: 200, json: {users: User.find(params[:user_id]).followers}
   end
 end
