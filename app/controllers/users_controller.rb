@@ -4,7 +4,7 @@ class UsersController < InheritedResources::Base
   def register
     user = User.new(params[:user])
     if user.save
-      render status: 201, json: {user: user.to_json}
+      render status: 201, json: user
     else
       render status: 422, json: {errors: user.errors}
     end
