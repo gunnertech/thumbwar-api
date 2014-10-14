@@ -2,6 +2,8 @@ class Comment < ActiveRecord::Base
   attr_accessible :body, :user_id
   acts_as_nested_set :scope => [:commentable_id, :commentable_type]
 
+  mount_uploader :photo, PhotoUploader
+
   validates :body, :presence => true
   validates :user, :presence => true
 
