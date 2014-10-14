@@ -17,11 +17,6 @@ class ThumbwarsController < InheritedResources::Base
     render status: 200, json: {users: Thumbwar.find(params[:thumbwar_id]).watchers}
   end
   
-  def comment
-    params[:comment][:user_id] = @current_user.id
-    resource.comments.create!(params[:comment])
-  end
-  
   def push
     resource.update_attribute(:winner_id, 0)
     render status: 200, json: {}
