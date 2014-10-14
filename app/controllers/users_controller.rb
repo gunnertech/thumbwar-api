@@ -56,6 +56,12 @@ class UsersController < InheritedResources::Base
       else
         User.all
       end
+    elsif params[:search]
+      if User.where{ username == my{params[:search]} }.count
+        User.where{ username == my{params[:search]} }
+      else
+        User.where{ mobile == my{params[:search]} }
+      end
     else
       User.all
     end
