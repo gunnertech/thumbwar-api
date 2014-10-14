@@ -2,7 +2,7 @@ class Thumbwar < ActiveRecord::Base
   acts_as_commentable
   alias_attribute :comments, :comment_threads
   
-  attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager
+  attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, :accepted
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"

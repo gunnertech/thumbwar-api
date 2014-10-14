@@ -1,7 +1,7 @@
 ThumbwarApi::Application.routes.draw do
   post "register", to: "users#register"
   post "login", to: "users#login"
-  post "logout", to: "users#logout"
+  delete "logout", to: "users#logout"
   
   resources :users do
     resources :thumbwars, only: :index
@@ -13,9 +13,9 @@ ThumbwarApi::Application.routes.draw do
   end
   
   resources :thumbwars do
+    resources :comments, only: :create
     post "watch"
     post "unwatch"
-    post "comment"
     post "push"
     
     get ":view", to: "thumbwars#index"
