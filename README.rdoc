@@ -5,7 +5,7 @@ mobile: User's mobile number.
 
 There are only two requests where that's not the case:
 
-POST /users
+POST /register
 
 Params
   mobile (required)
@@ -43,6 +43,11 @@ Sample Response
   }
 
 == Users
+
+POST /logout
+
+Sample Response
+  {}
 
 GET /users/:user_id
 
