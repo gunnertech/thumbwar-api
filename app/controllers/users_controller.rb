@@ -34,7 +34,7 @@ class UsersController < InheritedResources::Base
   end
   
   def unfollow
-    Following.find_by_followee_id_and_follower_id(params[:user_id], @current_user.id).destroy
+    Following.find_by_followee_id_and_follower_id(params[:user_id], @current_user.id).destroy rescue nil
     render status: 200, json: {}
   end
   
