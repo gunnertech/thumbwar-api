@@ -1,1 +1,1 @@
-json.(user, :id, :mobile, :username, :first_name, :last_name)
+json.(user, :id, :mobile, :username, :first_name, :last_name, :public, :publish_to_facebook, :publish_to_twitter, :sms_notifications )
