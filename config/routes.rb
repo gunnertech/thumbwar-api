@@ -1,5 +1,5 @@
 ThumbwarApi::Application.routes.draw do
-  post "register", to: "users#register"
+  delete "register", to: "users#register"
   post "login", to: "users#login"
   post "logout", to: "users#logout"
   

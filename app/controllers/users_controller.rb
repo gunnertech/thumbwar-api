@@ -18,7 +18,7 @@ class UsersController < InheritedResources::Base
       user ||= username_user if username_user && username_user.valid_password?(params[:password])
       if user
         user.save if user.token.nil?
-        render status: 200, json: user}
+        render status: 200, json: user
       else
         render status: 401, json: {error: "invalid password"}
       end
