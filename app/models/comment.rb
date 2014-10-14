@@ -1,8 +1,9 @@
 class Comment < ActiveRecord::Base
-  attr_accessible :body, :user_id
+  attr_accessible :body, :user_id, :photo
   acts_as_nested_set :scope => [:commentable_id, :commentable_type]
 
-  validates :body, :presence => true
+  mount_uploader :photo, PhotoUploader
+
   validates :user, :presence => true
 
   # NOTE: install the acts_as_votable plugin if you
@@ -13,6 +14,8 @@ class Comment < ActiveRecord::Base
 
   # NOTE: Comments belong to a user
   belongs_to :user
+
+  default_scope order('id ASC')
 
   # Helper class method that allows you to build a comment
   # by passing a commentable object, a user_id, and comment text
