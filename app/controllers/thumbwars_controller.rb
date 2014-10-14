@@ -22,7 +22,7 @@ class ThumbwarsController < InheritedResources::Base
     resource.comments.create!(params[:comment])
   end
   
-  private
+  protected
   
   def set_challenger_id
     params[:thumbwar][:challenger_id] = @current_user.id

@@ -42,7 +42,7 @@ class UsersController < InheritedResources::Base
     render status: 200, json: {}
   end
   
-  private
+  protected
   
   def collection
     return @users if @users

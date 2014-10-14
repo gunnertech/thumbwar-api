@@ -14,6 +14,8 @@ class Thumbwar < ActiveRecord::Base
   validates :challenger_id, presence: true
   validates :description, presence: true
   
+  after_create :send_alerts
+  
   def status
     if accepted.nil?
       "pending"
@@ -24,5 +26,11 @@ class Thumbwar < ActiveRecord::Base
         winner_id == 0 ? "push" : winner_id == challenger_id ? "win" : "loss"
       end
     end
+  end
+  
+  protected
+  
+  def send_alerts
+    challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ? "You've been challenged" : "#{challenger} has challenged you"} to a Thumbwar!")
   end
 end

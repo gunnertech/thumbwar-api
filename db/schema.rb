@@ -11,7 +11,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141013231717) do
+ActiveRecord::Schema.define(:version => 20141014034739) do
+
+  create_table "alerts", :force => true do |t|
+    t.integer  "alertable_id",                      :null => false
+    t.string   "alertable_type",                    :null => false
+    t.integer  "user_id",                           :null => false
+    t.text     "body",                              :null => false
+    t.boolean  "read",           :default => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
+  end
+
+  add_index "alerts", ["alertable_id", "alertable_type"], :name => "index_alerts_on_alertable_id_and_alertable_type"
+  add_index "alerts", ["user_id"], :name => "index_alerts_on_user_id"
 
   create_table "comments", :force => true do |t|
     t.integer  "commentable_id",   :default => 0

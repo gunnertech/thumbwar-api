@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   
   attr_accessible :facebook_token, :first_name, :inviter_id, :last_name, :mobile, :password, :public, :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username
   
+  has_many :alerts
   has_many :challenges, class_name: "Thumbwar", foreign_key: "challengee_id"
   has_many :followeeings, class_name: "Following", foreign_key: :follower_id
   has_many :followees, through: :followeeings
@@ -13,14 +14,19 @@ class User < ActiveRecord::Base
   has_many :watchings
   
   before_save { |u| u.token = generate_token if token.blank? }
+  after_create :send_alerts
   
   validates :mobile, presence: true
   validates :mobile, uniqueness: true
   validates :username, uniqueness: true, allow_blank: true
   
-  def to_builder
-    Jbuilder.new do |user|
-      user.(self, :id, :mobile, :username, :first_name, :last_name)
+  def to_s
+    if username.present?
+      username
+    elsif first_name.present? || last_name.present?
+      "#{first_name} #{last_name}"
+    else
+      ""
     end
   end
   
@@ -31,5 +37,9 @@ class User < ActiveRecord::Base
       auth_token = Devise.friendly_token
       break auth_token unless User.where{ token == my{auth_token} }.count > 0
     end
+  end
+  
+  def send_alerts
+    
   end
 end

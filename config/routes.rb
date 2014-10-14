@@ -17,4 +17,6 @@ ThumbwarApi::Application.routes.draw do
     get ":view", to: "thumbwars#index"
     post "comment", to: "thumbwars#comment"
   end
+  
+  resources :alerts, only: [:update, :index]
 end
