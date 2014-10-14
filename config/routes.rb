@@ -1,7 +1,7 @@
 ThumbwarApi::Application.routes.draw do
-  delete "register", to: "users#register"
+  post "register", to: "users#register"
   post "login", to: "users#login"
-  post "logout", to: "users#logout"
+  delete "logout", to: "users#logout"
   
   resources :users do
     resources :thumbwars, only: :index
