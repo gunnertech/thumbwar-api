@@ -4,7 +4,7 @@ class UsersController < InheritedResources::Base
   def register
     user = User.new(params[:user])
     if user.save
-      render status: 201, json: {user: user.to_json(only: [:id, :mobile, :username, :first_name, :last_name])}
+      render status: 201, json: user
     else
       render status: 422, json: {errors: user.errors}
     end
@@ -18,7 +18,7 @@ class UsersController < InheritedResources::Base
       user ||= username_user if username_user && username_user.valid_password?(params[:password])
       if user
         user.save if user.token.nil?
-        render status: 200, json: {user: user.to_json(only: [:mobile, :token])}
+        render status: 200, json: user
       else
         render status: 401, json: {error: "invalid password"}
       end
