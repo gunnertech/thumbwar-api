@@ -11,8 +11,12 @@ class UsersController < InheritedResources::Base
   end
   
   def login
-    if user = User.find_by_mobile(params[:login]) || User.find_by_username(params[:login])
-      if user.valid_password?(params[:password])
+    mobile_user = User.find_by_mobile(params[:login])
+    username_user = User.find_by_username(params[:login])
+    if mobile_user || username_user
+      user = mobile_user if mobile_user && mobile_user.valid_password?(params[:password])
+      user ||= username_user if username_user && username_user.valid_password?(params[:password])
+      if user
         user.save if user.token.nil?
         render status: 200, json: {user: user.to_json(only: [:mobile, :token])}
       else
