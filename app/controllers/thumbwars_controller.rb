@@ -22,6 +22,11 @@ class ThumbwarsController < InheritedResources::Base
     resource.comments.create!(params[:comment])
   end
   
+  def push
+    resource.update_attribute(:winner_id, 0)
+    render status: 200, json: {}
+  end
+  
   protected
   
   def set_challenger_id

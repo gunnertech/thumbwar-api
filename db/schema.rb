@@ -44,8 +44,8 @@ ActiveRecord::Schema.define(:version => 20141014034739) do
   add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
 
   create_table "followings", :force => true do |t|
-    t.integer  "follower_id", :null => false
     t.integer  "followee_id", :null => false
+    t.integer  "follower_id", :null => false
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(:version => 20141014034739) do
     t.boolean  "accepted"
     t.integer  "challengee_id",                   :null => false
     t.integer  "challenger_id",                   :null => false
-    t.text     "description",                     :null => false
+    t.text     "body",                            :null => false
     t.datetime "expires_at"
     t.boolean  "public",        :default => true
     t.string   "wager"
