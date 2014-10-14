@@ -1,7 +1,7 @@
 ThumbwarApi::Application.routes.draw do
   resources :users do
     post "follow", to: "users#follow"
-    get "followers", to: "users#followers"
+    get ":view", to: "users#index"
     resources :thumbwars, only: :index
   end
   post "register", to: "users#register"
@@ -10,7 +10,7 @@ ThumbwarApi::Application.routes.draw do
   
   resources :thumbwars do
     post "watch", to: "thumbwars#watch"
-    get "watchers", to: "thumbwars#watchers"
+    get ":view", to: "thumbwars#index"
     post "comment", to: "thumbwars#comment"
   end
 end

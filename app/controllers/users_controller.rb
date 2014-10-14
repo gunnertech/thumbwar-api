@@ -31,7 +31,18 @@ class UsersController < InheritedResources::Base
     render status: 200, json: {}
   end
   
-  def followers
-    render status: 200, json: {users: User.find(params[:user_id]).followers}
+  private
+  
+  def collection
+    return @users if @users
+    
+    @users = if params[:view]
+      User.find(params[:user_id]).followers if params[:view] == "followers"
+      User.find(params[:user_id]).followees if params[:view] == "following"
+    else
+      User.all
+    end
+    
+    @users
   end
 end

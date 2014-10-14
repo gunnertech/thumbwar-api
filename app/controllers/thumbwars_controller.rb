@@ -24,10 +24,14 @@ class ThumbwarsController < InheritedResources::Base
   end
   
   def collection
+    return @thumbwars if @thumbwars
+    
     @thumbwars = if parent.nil?
       Thumbwar.where{ public == true }.order{ id.desc }
     else
       Thumbwar.joins{ watchings }.where{ (challengee_id == my{parent.id}) | (challenger_id == my{parent.id}) | (watchings.user_id == my{parent.id}) }.order{ id.desc }
     end
+    
+    @thumbwars
   end
 end
