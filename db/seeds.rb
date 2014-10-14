@@ -1,7 +1,8 @@
-challenger=User.create!(mobile:"1231231234", username:"challenger")
-challengee=User.create!(mobile:"2342342345", username:"challengee")
-follower=User.create!(mobile:"3453453456", username:"follower")
-watcher=User.create!(mobile:"4564564567", username:"watcher")
+challenger=User.create!(mobile:"11231231234", username:"challenger")
+challengee=User.create!(mobile:"12342342345", username:"challengee")
+follower=User.create!(mobile:"13453453456", username:"follower")
+watcher=User.create!(mobile:"14564564567", username:"watcher")
+invited=User.create!(mobile:"15675675678", username:"invited", inviter: challenger)
 
 tw1=Thumbwar.create!(challenger: challenger, challengee: challengee, body: "1")
 tw2=Thumbwar.create!(challenger: challenger, challengee: challengee, body: "2")
