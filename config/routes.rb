@@ -13,9 +13,9 @@ ThumbwarApi::Application.routes.draw do
   end
   
   resources :thumbwars do
+    resources :comments, only: :create
     post "watch"
     post "unwatch"
-    post "comment"
     post "push"
     
     get ":view", to: "thumbwars#index"
