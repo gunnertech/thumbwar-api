@@ -1,4 +1,6 @@
 class ThumbwarsController < InheritedResources::Base
+  belongs_to :user, optional: true
+  
   before_filter :set_challenger_id, only: :create
   
   def watch
@@ -19,5 +21,13 @@ class ThumbwarsController < InheritedResources::Base
   
   def set_challenger_id
     params[:thumbwar][:challenger_id] = @current_user.id
+  end
+  
+  def collection
+    @thumbwars = if parent.nil?
+      Thumbwar.where{ public == true }.order{ id.desc }
+    else
+      Thumbwar.joins{ watchings }.where{ (challengee_id == my{parent.id}) | (challenger_id == my{parent.id}) | (watchings.user_id == my{parent.id}) }.order{ id.desc }
+    end
   end
 end

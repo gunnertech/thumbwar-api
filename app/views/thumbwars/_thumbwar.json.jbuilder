@@ -1,17 +1,17 @@
-json.(thumbwar, :id, :description, :expires_in, :status)
+json.(thumbwar, :id, :description, :expires_at, :status)
 
 json.challengee do
-  json.partial! "users/user", user: resource.challengee
+  json.partial! "users/user", user: thumbwar.challengee
 end
 
 json.challenger do
-  json.partial! "users/user", user: resource.challenger
+  json.partial! "users/user", user: thumbwar.challenger
 end
 
 json.watchers do
-  json.array! resource.watchers, partial: "users/user", as: :user
+  json.array! thumbwar.watchers, partial: "users/user", as: :user
 end
 
 json.comments do
-  json.array! resource.comments, partial: "comments/comment", as: :comment
+  json.array! thumbwar.comments, partial: "comments/comment", as: :comment
 end
