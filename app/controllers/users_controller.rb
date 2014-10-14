@@ -33,6 +33,11 @@ class UsersController < InheritedResources::Base
     render status: 200, json: {}
   end
   
+  def unfollow
+    Following.find_by_followee_id_and_follower_id(params[:user_id], @current_user.id).destroy
+    render status: 200, json: {}
+  end
+  
   private
   
   def collection

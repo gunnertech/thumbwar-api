@@ -1,6 +1,7 @@
 ThumbwarApi::Application.routes.draw do
   resources :users do
     post "follow", to: "users#follow"
+    post "unfollow", to: "users#unfollow"
     get ":view", to: "users#index"
     resources :thumbwars, only: :index
   end
