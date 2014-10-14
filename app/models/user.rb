@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   has_many :watchings
   
   before_save { |u| u.token = generate_token if token.blank? }
-  after_create :send_alert, if: Proc.new{ |u| u.inviter_id }
+  after_create :send_inviter_alert, if: Proc.new{ |u| u.inviter_id }
   
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}
   validates :username, uniqueness: true, allow_blank: true
@@ -40,7 +40,7 @@ class User < ActiveRecord::Base
     end
   end
   
-  def send_alerts
+  def send_inviter_alert
     inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
   end
 end
