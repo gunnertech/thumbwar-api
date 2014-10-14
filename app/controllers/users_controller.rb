@@ -27,7 +27,7 @@ class UsersController < InheritedResources::Base
   end
   
   def follow
-    User.find(params[:id]).followers << @current_user
+    User.find(params[:user_id]).followers << @current_user
     render status: 200, json: {}
   end
   
