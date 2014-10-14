@@ -1,4 +1,6 @@
 class UsersController < InheritedResources::Base
+  belongs_to :user, optional: true
+  
   def register
     user = User.new(params[:user])
     if user.save
@@ -37,8 +39,14 @@ class UsersController < InheritedResources::Base
     return @users if @users
     
     @users = if params[:view]
-      User.find(params[:user_id]).followers if params[:view] == "followers"
-      User.find(params[:user_id]).followees if params[:view] == "following"
+      case params[:view]
+      when "followers"
+        parent.followers
+      when "following"
+        parent.followees
+      else
+        User.all
+      end
     else
       User.all
     end
