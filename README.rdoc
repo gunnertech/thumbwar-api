@@ -62,7 +62,27 @@ POST /users/:user_id/follow
 Sample Response
   {}
 
+POST /users/:user_id/unfollow
+
+Sample Response
+  {}
+
 GET /users/:user_id/followers
+
+Sample Response
+  {
+    "users":[
+      {
+        "first_name":null,
+        "id":2,
+        "last_name":null,
+        "mobile":"55555555555",
+        "username":""
+      }
+    ]
+  }
+
+GET /users/:user_id/following
 
 Sample Response
   {
