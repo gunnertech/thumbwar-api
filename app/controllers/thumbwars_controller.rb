@@ -8,6 +8,11 @@ class ThumbwarsController < InheritedResources::Base
     render status: 200, json: {}
   end
   
+  def unwatch
+    Thumbwar.find_by_thumbwar_id_and_user_id(params[:thumbwar_id], @current_user.id).destroy rescue nil
+    render status: 200, json: {}
+  end
+  
   def watchers
     render status: 200, json: {users: Thumbwar.find(params[:thumbwar_id]).watchers}
   end
@@ -29,7 +34,7 @@ class ThumbwarsController < InheritedResources::Base
     @thumbwars = if parent.nil?
       Thumbwar.where{ public == true }.order{ id.desc }
     else
-      Thumbwar.joins{ watchings }.where{ (challengee_id == my{parent.id}) | (challenger_id == my{parent.id}) | (watchings.user_id == my{parent.id}) }.order{ id.desc }
+      Thumbwar.joins{ watchings.outer }.where{ (challengee_id == my{parent.id}) | (challenger_id == my{parent.id}) | (watchings.user_id == my{parent.id}) }.order{ id.desc }
     end
     
     @thumbwars
