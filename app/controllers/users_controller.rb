@@ -54,7 +54,7 @@ class UsersController < InheritedResources::Base
       when "following"
         parent.followees
       else
-        User.all
+        User.limit(10)
       end
     elsif params[:search]
       if User.where{ username == my{params[:search]} }.count
@@ -63,7 +63,7 @@ class UsersController < InheritedResources::Base
         User.where{ mobile == my{params[:search]} }
       end
     else
-      User.all
+      User.limit(10)
     end
     
     @users
