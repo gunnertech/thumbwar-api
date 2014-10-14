@@ -4,6 +4,12 @@ class CommentsController < InheritedResources::Base
 
   private
 
+  def collection
+  	return @comments if @comments
+
+  	@comments = end_of_association_chain.accessible_by(current_ability).reorder{ id.desc }
+  end
+
   def set_user_id
   	params[:comment][:user_id] = @current_user.id
   end

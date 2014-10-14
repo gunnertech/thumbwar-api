@@ -17,3 +17,5 @@
 .port
 
 /config/database.yml
+.env
+/public/uploads
