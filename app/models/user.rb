@@ -62,7 +62,6 @@ class User < ActiveRecord::Base
       "Please click this link to verify your ThumbWar mobile number #{verification_url}?code=#{verification_code}" :
       "Please enter your verification code to confirm your ThumbWar mobile number: #{code}"
 
-    mobile = "18609404747"
     client.account.sms.messages.create(
       from: "+1#{number}",
       to: "+#{mobile}",
