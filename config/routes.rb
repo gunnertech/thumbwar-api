@@ -1,5 +1,6 @@
 ThumbwarApi::Application.routes.draw do
   post "register", to: "users#register"
+  put "verify", to: "users#verify"
   post "login", to: "users#login"
   delete "logout", to: "users#logout"
   
@@ -14,6 +15,7 @@ ThumbwarApi::Application.routes.draw do
   
   resources :thumbwars do
     resources :comments, only: :create
+    
     post "watch"
     post "unwatch"
     post "push"

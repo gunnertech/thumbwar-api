@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   
   before_filter :authenticate_from_token!, except: [:register, :login]
  
-  private
+  protected
   
   def authenticate_from_token!
     if params[:mobile]

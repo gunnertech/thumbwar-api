@@ -10,8 +10,10 @@ gem "inherited_resources", "1.5.0"
 gem "jbuilder", "2.1.3"
 gem "acts_as_commentable_with_threading", "1.2.0"
 gem "carrierwave", "0.10.0"
-gem "fog"
-gem "mini_magick", "~> 4.0.0.rc"
+gem "fog", "1.24.0"
+gem "mini_magick", "4.0.0.rc"
+gem "twilio-ruby"
+gem 'delayed_job_active_record'
 
 group :development do
   gem "better_errors", "2.0.0"

@@ -6,4 +6,5 @@ class Watching < ActiveRecord::Base
   
   validates :thumbwar_id, presence: true
   validates :user_id, presence: true
+  validates_uniqueness_of :thumbwar_id, scope: :user_id
 end
