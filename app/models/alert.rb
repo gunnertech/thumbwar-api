@@ -3,4 +3,8 @@ class Alert < ActiveRecord::Base
   
   belongs_to :alertable, polymorphic: true
   belongs_to :user
+  
+  validates :alertable_type, presence: true
+  validates :alertable_id, presence: true
+  validates :user_id, presence: true
 end

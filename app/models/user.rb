@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   mount_uploader :avatar, AvatarUploader
+  
   devise :database_authenticatable, authentication_keys: [:username]
   devise :recoverable
   
@@ -16,11 +17,11 @@ class User < ActiveRecord::Base
   has_many :thumbwars, foreign_key: "challenger_id"
   has_many :watchings
   
-  before_save { |u| u.token = generate_token if token.blank? }
-  after_save :accept_invite, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
-  
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}
   validates :username, uniqueness: true, allow_blank: true
+  
+  before_save { |u| u.token = generate_token if token.blank? }
+  after_save :accept_invite, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
   
   def to_s
     if username.present?
