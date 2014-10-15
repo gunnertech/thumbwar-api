@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141015142148) do
+ActiveRecord::Schema.define(:version => 20141015144119) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "alertable_id",                      :null => false
@@ -82,6 +82,7 @@ ActiveRecord::Schema.define(:version => 20141015142148) do
     t.datetime "created_at",                           :null => false
     t.datetime "updated_at",                           :null => false
     t.string   "status",        :default => "pending"
+    t.string   "url"
   end
 
   add_index "thumbwars", ["challengee_id"], :name => "index_thumbwars_on_challengee_id"
