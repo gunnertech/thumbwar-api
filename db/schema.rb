@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141014232252) do
+ActiveRecord::Schema.define(:version => 20141015065317) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "alertable_id",                      :null => false
@@ -56,16 +56,15 @@ ActiveRecord::Schema.define(:version => 20141014232252) do
 
   create_table "thumbwars", :force => true do |t|
     t.boolean  "accepted"
-    t.integer  "challengee_id",                        :null => false
-    t.integer  "challenger_id",                        :null => false
-    t.text     "body",                                 :null => false
+    t.integer  "challengee_id",                   :null => false
+    t.integer  "challenger_id",                   :null => false
+    t.text     "body",                            :null => false
     t.datetime "expires_at"
     t.boolean  "public",        :default => true
     t.string   "wager"
     t.integer  "winner_id"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
-    t.string   "status",        :default => "pending"
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
   end
 
   add_index "thumbwars", ["challengee_id"], :name => "index_thumbwars_on_challengee_id"
@@ -73,12 +72,12 @@ ActiveRecord::Schema.define(:version => 20141014232252) do
   add_index "thumbwars", ["winner_id"], :name => "index_thumbwars_on_winner_id"
 
   create_table "users", :force => true do |t|
-    t.string   "encrypted_password",     :default => "",   :null => false
+    t.string   "encrypted_password",     :default => "",    :null => false
     t.string   "facebook_token"
     t.string   "first_name"
     t.integer  "inviter_id"
     t.string   "last_name"
-    t.string   "mobile",                                   :null => false
+    t.string   "mobile",                                    :null => false
     t.boolean  "public",                 :default => true
     t.boolean  "publish_to_facebook"
     t.boolean  "publish_to_twitter"
@@ -87,10 +86,12 @@ ActiveRecord::Schema.define(:version => 20141014232252) do
     t.boolean  "sms_notifications",      :default => true
     t.string   "token"
     t.string   "twitter_token"
-    t.string   "username",               :default => "",   :null => false
-    t.datetime "created_at",                               :null => false
-    t.datetime "updated_at",                               :null => false
+    t.string   "username",               :default => "",    :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "avatar"
+    t.string   "verification_code"
+    t.boolean  "verified",               :default => false
   end
 
   add_index "users", ["inviter_id"], :name => "index_users_on_inviter_id"

@@ -2,23 +2,18 @@ class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
   
   def register
-    user = User.new(params[:user])
-    if user.save
-      render status: 201, json: user
-    else
-      render status: 422, json: {errors: user.errors}
-    end
+    @user = User.new(params[:user])
+    render status: 422, json: {errors: user.errors} if !@user.save
   end
   
   def login
     mobile_user = User.find_by_mobile(params[:login])
     username_user = User.find_by_username(params[:login])
     if mobile_user || username_user
-      user = mobile_user if mobile_user && mobile_user.valid_password?(params[:password])
-      user ||= username_user if username_user && username_user.valid_password?(params[:password])
-      if user
-        user.save if user.token.nil?
-        render status: 200, json: user
+      @user = mobile_user if mobile_user && mobile_user.valid_password?(params[:password])
+      @user ||= username_user if username_user && username_user.valid_password?(params[:password])
+      if @user
+        @user.save if @user.token.nil?
       else
         render status: 401, json: {error: "invalid password"}
       end
@@ -30,6 +25,14 @@ class UsersController < InheritedResources::Base
   def logout
     @current_user.update_attribute(:token, nil)
     render status: 200, json: {}
+  end
+  
+  def verify
+    if params[:code] == @current_user.verification_code
+      @current_user.update_attribute(:verified, true)
+    else
+      render status: 401, json: {error: "invalid code"}
+    end
   end
   
   def follow

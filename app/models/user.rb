@@ -21,7 +21,8 @@ class User < ActiveRecord::Base
   validates :username, uniqueness: true, allow_blank: true
   
   before_save { |u| u.token = generate_token if token.blank? }
-  after_save :accept_invite, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
+  after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
+  after_create :send_confirmation_code, if: Proc.new{ |u| u.username.present? }
   
   def to_s
     if username.present?
@@ -37,7 +38,7 @@ class User < ActiveRecord::Base
     user.followerings.where{ followee_id == my{user.id} }.count > 0
   end
   
-  private
+  protected
   
   def generate_token
     loop do
@@ -46,9 +47,26 @@ class User < ActiveRecord::Base
     end
   end
   
-  def accept_invite
+  def complete_invitation_acceptance
+    update_column(:verified, true)
+    
     self.followers << inviter
     inviter.followers << self
+    
     inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
+  end
+  
+  def send_confirmation_code
+    code = rand.to_s[2..7]
+    
+    update_column(:verification_code, code)
+    
+    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+    # number = ENV['TWILIO_NUMBERS'].split(",").sample
+    client.account.sms.messages.create(
+      from: "+1#{ENV["TWILIO_NUMBER"]}",
+      to: "+#{mobile}",
+      body: "Welcome to Thumbwar! Your verification code is #{code}"
+    )
   end
 end
