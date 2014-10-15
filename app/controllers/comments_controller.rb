@@ -2,7 +2,7 @@ class CommentsController < InheritedResources::Base
   belongs_to :thumbwar, optional: true
   before_filter :set_user_id, only: :create
 
-  private
+  protected
 
   def collection
   	return @comments if @comments
