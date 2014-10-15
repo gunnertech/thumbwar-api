@@ -26,13 +26,21 @@ class User < ActiveRecord::Base
   after_create :send_confirmation_code, if: Proc.new{ |u| u.username.present? }
   
   def to_s
-    if username.present?
-      username
-    elsif first_name.present? || last_name.present?
+    display_name    
+  end
+
+  def display_name
+    if display_full_name? && (first_name.present? || last_name.present?)
       "#{first_name} #{last_name}"
+    elsif username.present?
+      username
     else
-      ""
+      "New Guest"
     end
+  end
+
+  def display_full_name?
+    true #This will be a preference in later versions
   end
 
   def follows?(user)
