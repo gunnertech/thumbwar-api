@@ -1,8 +1,9 @@
 class User < ActiveRecord::Base
+  mount_uploader :avatar, AvatarUploader
   devise :database_authenticatable, authentication_keys: [:username]
   devise :recoverable
   
-  attr_accessible :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :password, :public, :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username
+  attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :password, :public, :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username
   
   belongs_to :inviter, class_name: "User", foreign_key: "inviter_id"
   
@@ -15,6 +16,7 @@ class User < ActiveRecord::Base
   has_many :thumbwars, foreign_key: "challenger_id"
   has_many :watchings
   
+  before_validation :generate_username, if: Proc.new{ |u| u.username.blank? }
   before_save { |u| u.token = generate_token if token.blank? }
   after_create :send_inviter_alert, if: Proc.new{ |u| u.inviter_id }
   
@@ -30,8 +32,16 @@ class User < ActiveRecord::Base
       ""
     end
   end
+
+  def follows?(user)
+    user.followerings.where{ followee_id == my{user.id} }.count > 0
+  end
   
   private
+
+  def generate_username
+    self.username = "tWar_#{id}"
+  end
   
   def generate_token
     loop do
