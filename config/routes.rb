@@ -14,6 +14,7 @@ ThumbwarApi::Application.routes.draw do
   
   resources :thumbwars do
     resources :comments, only: :create
+    
     post "watch"
     post "unwatch"
     post "push"
