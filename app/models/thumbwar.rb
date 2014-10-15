@@ -2,7 +2,7 @@ class Thumbwar < ActiveRecord::Base
   acts_as_commentable
   alias_attribute :comments, :comment_threads
   
-  attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, :accepted
+  attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, :accepted, :winner_id
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
@@ -15,6 +15,7 @@ class Thumbwar < ActiveRecord::Base
   validates :body, presence: true
   
   after_create :send_challenge_alert
+  after_create :follow_challengee, unless: Proc.new { |tw| tw.challenger.follows?(tw.challengee) } 
   after_update :send_winner_alert, if: Proc.new { |tw| tw.winner_id_changed? }
   
   def status
@@ -30,9 +31,13 @@ class Thumbwar < ActiveRecord::Base
   end
   
   protected
+
+  def follow_challengee
+    challengee.followers << challenger
+  end
   
   def send_challenge_alert
-    challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ? "You've been challenged" : "#{challenger} has challenged you"} to a Thumbwar!")
+    challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ? "You've been challenged" : "#{challenger.first_name} #{challenger.last_name} has challenged you"} to a Thumbwar!")
   end
   
   def send_winner_alert

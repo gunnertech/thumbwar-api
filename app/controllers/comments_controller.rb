@@ -7,7 +7,7 @@ class CommentsController < InheritedResources::Base
   def collection
   	return @comments if @comments
 
-  	@comments = end_of_association_chain.accessible_by(current_ability).reorder{ id.desc }
+  	@comments = end_of_association_chain.reorder{ id.desc }
   end
 
   def set_user_id
