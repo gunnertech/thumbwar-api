@@ -3,7 +3,6 @@ source "https://rubygems.org"
 gem "rails", "3.2.19"
 gem "pg", "0.17.1"
 gem "foreman", "0.75.0"
-gem "thin", "1.6.2"
 gem "devise", "3.3.0"
 gem "squeel", "1.2.1"
 gem "inherited_resources", "1.5.0"
@@ -14,6 +13,7 @@ gem "fog", "1.24.0"
 gem "mini_magick", "4.0.0.rc"
 gem "twilio-ruby"
 gem 'delayed_job_active_record'
+gem 'unicorn', '>= 4.3.1'
 
 group :development do
   gem "better_errors", "2.0.0"
