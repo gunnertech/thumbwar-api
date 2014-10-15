@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   
   before_validation :generate_username, if: Proc.new{ |u| u.username.blank? }
   before_save { |u| u.token = generate_token if token.blank? }
-  after_create :send_inviter_alert, if: Proc.new{ |u| u.inviter_id }
+  after_create :inviter_stuff, if: Proc.new{ |u| u.inviter }
   
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}
   validates :username, uniqueness: true, allow_blank: true
@@ -50,7 +50,9 @@ class User < ActiveRecord::Base
     end
   end
   
-  def send_inviter_alert
+  def inviter_stuff
     inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
+    inviter.followers << self
+    self.followers << inviter
   end
 end
