@@ -1,6 +1,7 @@
 ThumbwarApi::Application.routes.draw do
   post "register", to: "users#register"
   put "verify", to: "users#verify"
+  post "resend_verification", to: "users#resend_verification"
   post "login", to: "users#login"
   delete "logout", to: "users#logout"
   

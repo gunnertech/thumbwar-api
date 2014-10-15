@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141015065317) do
+ActiveRecord::Schema.define(:version => 20141015144119) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "alertable_id",                      :null => false
@@ -44,6 +44,22 @@ ActiveRecord::Schema.define(:version => 20141015065317) do
   add_index "comments", ["commentable_id", "commentable_type"], :name => "index_comments_on_commentable_id_and_commentable_type"
   add_index "comments", ["user_id"], :name => "index_comments_on_user_id"
 
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0, :null => false
+    t.integer  "attempts",   :default => 0, :null => false
+    t.text     "handler",                   :null => false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
   create_table "followings", :force => true do |t|
     t.integer  "followee_id", :null => false
     t.integer  "follower_id", :null => false
@@ -56,15 +72,17 @@ ActiveRecord::Schema.define(:version => 20141015065317) do
 
   create_table "thumbwars", :force => true do |t|
     t.boolean  "accepted"
-    t.integer  "challengee_id",                   :null => false
-    t.integer  "challenger_id",                   :null => false
-    t.text     "body",                            :null => false
+    t.integer  "challengee_id",                        :null => false
+    t.integer  "challenger_id",                        :null => false
+    t.text     "body",                                 :null => false
     t.datetime "expires_at"
     t.boolean  "public",        :default => true
     t.string   "wager"
     t.integer  "winner_id"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+    t.string   "status",        :default => "pending"
+    t.string   "url"
   end
 
   add_index "thumbwars", ["challengee_id"], :name => "index_thumbwars_on_challengee_id"
