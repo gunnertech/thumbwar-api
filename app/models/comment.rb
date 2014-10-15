@@ -1,10 +1,8 @@
 class Comment < ActiveRecord::Base
+  mount_uploader :photo, PhotoUploader
+  
   attr_accessible :body, :user_id, :photo
   acts_as_nested_set :scope => [:commentable_id, :commentable_type]
-
-  mount_uploader :photo, PhotoUploader
-
-  validates :user, :presence => true
 
   # NOTE: install the acts_as_votable plugin if you
   # want user to vote on the quality of comments.
@@ -14,6 +12,8 @@ class Comment < ActiveRecord::Base
 
   # NOTE: Comments belong to a user
   belongs_to :user
+
+  validates :user, :presence => true
 
   default_scope order('id ASC')
 
