@@ -4,8 +4,11 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, authentication_keys: [:username]
   devise :recoverable
   
-  attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :password, :public, :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username
-  
+  attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :password, :public, 
+    :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username, :verification_url
+
+  attr_accessor :verification_url
+
   belongs_to :inviter, class_name: "User", foreign_key: "inviter_id"
   
   has_many :alerts
@@ -23,7 +26,7 @@ class User < ActiveRecord::Base
   
   before_save { |u| u.token = generate_token if token.blank? }
   after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
-  after_create :send_confirmation_code, if: Proc.new{ |u| u.username.present? }
+  after_create :send_confirmation_code_wrapper, if: Proc.new{ |u| u.username.present? }
   
   def to_s
     display_name    
@@ -46,6 +49,27 @@ class User < ActiveRecord::Base
   def follows?(user)
     user.followerings.where{ followee_id == my{user.id} }.count > 0
   end
+
+  def send_confirmation_code(verification_url=nil)
+    code = rand.to_s[2..7]
+    
+    update_column(:verification_code, code)
+    
+    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+    number = ENV['TWILIO_NUMBERS'].split(",").sample
+
+    body = verification_url.present? ? 
+      "Please click this link to verify your ThumbWar mobile number #{verification_url}?code=#{verification_code}" :
+      "Please enter your verification code to confirm your ThumbWar mobile number: #{code}"
+
+    mobile = "18609404747"
+    client.account.sms.messages.create(
+      from: "+1#{number}",
+      to: "+#{mobile}",
+      body: body
+    )
+  end
+  handle_asynchronously :send_confirmation_code
   
 
   protected
@@ -65,19 +89,8 @@ class User < ActiveRecord::Base
     
     inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
   end
-  
-  def send_confirmation_code
-    code = rand.to_s[2..7]
-    
-    update_column(:verification_code, code)
-    
-    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
-    number = ENV['TWILIO_NUMBERS'].split(",").sample
-    client.account.sms.messages.create(
-      from: "+1#{number}",
-      to: "+#{mobile}",
-      body: "Welcome to Thumbwar! Your verification code is #{code}"
-    )
+
+  def send_confirmation_code_wrapper
+    send_confirmation_code(verification_url)
   end
-  handle_asynchronously :send_confirmation_code
 end
