@@ -16,9 +16,8 @@ class User < ActiveRecord::Base
   has_many :thumbwars, foreign_key: "challenger_id"
   has_many :watchings
   
-  before_validation :generate_username, if: Proc.new{ |u| u.username.blank? }
   before_save { |u| u.token = generate_token if token.blank? }
-  after_create :send_inviter_alert, if: Proc.new{ |u| u.inviter_id }
+  after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
   
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}
   validates :username, uniqueness: true, allow_blank: true
@@ -38,10 +37,6 @@ class User < ActiveRecord::Base
   end
   
   private
-
-  def generate_username
-    self.username = "tWar_#{id}"
-  end
   
   def generate_token
     loop do
@@ -50,7 +45,9 @@ class User < ActiveRecord::Base
     end
   end
   
-  def send_inviter_alert
+  def complete_invitation_acceptance
+    self.followers << inviter
+    inviter.followers << self
     inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
   end
 end
