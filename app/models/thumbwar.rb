@@ -61,7 +61,6 @@ class Thumbwar < ActiveRecord::Base
     client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
     audience_members.each do |user|
       number = ENV['TWILIO_NUMBERS'].split(",").sample
-      user["mobile"] = "18609404747"
       client.account.sms.messages.create(
         from: "+1#{number}",
         to: "+#{user["mobile"]}",
