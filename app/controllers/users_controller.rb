@@ -50,9 +50,9 @@ class UsersController < InheritedResources::Base
     @users = if params[:view]
       case params[:view]
       when "followers"
-        parent.followers
+        @current_user.followers
       when "following"
-        parent.followees
+        @current_user.followees
       else
         User.limit(10)
       end

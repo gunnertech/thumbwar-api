@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141014192422) do
+ActiveRecord::Schema.define(:version => 20141014232252) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "alertable_id",                      :null => false
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(:version => 20141014192422) do
     t.string   "username",               :default => "",   :null => false
     t.datetime "created_at",                               :null => false
     t.datetime "updated_at",                               :null => false
+    t.string   "avatar"
   end
 
   add_index "users", ["inviter_id"], :name => "index_users_on_inviter_id"

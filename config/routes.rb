@@ -21,5 +21,5 @@ ThumbwarApi::Application.routes.draw do
     get ":view", to: "thumbwars#index"
   end
   
-  resources :alerts, only: [:update, :index]
+  resources :alerts, only: [:update, :index, :show]
 end
