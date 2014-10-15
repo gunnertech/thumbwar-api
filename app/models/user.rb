@@ -46,8 +46,8 @@ class User < ActiveRecord::Base
   end
   
   def accept_invite
-    inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
-    inviter.followers << self
     self.followers << inviter
+    inviter.followers << self
+    inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
   end
 end
