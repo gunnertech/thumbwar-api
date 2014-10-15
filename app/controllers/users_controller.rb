@@ -30,9 +30,15 @@ class UsersController < InheritedResources::Base
   def verify
     if params[:code] == @current_user.verification_code
       @current_user.update_attribute(:verified, true)
+      @user = @current_user
     else
       render status: 401, json: {error: "invalid code"}
     end
+  end
+
+  def resend_verification
+    @current_user.send_confirmation_code(params[:verification_url])
+    render status: 200, json: {}
   end
   
   def follow

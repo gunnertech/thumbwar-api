@@ -2,7 +2,9 @@ class Thumbwar < ActiveRecord::Base
   acts_as_commentable
   alias_attribute :comments, :comment_threads
   
-  attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, :accepted, :winner_id
+  attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
+    :accepted, :winner_id, :audience_members, :url
+  attr_accessor :audience_members
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
@@ -14,7 +16,9 @@ class Thumbwar < ActiveRecord::Base
   validates :challenger_id, presence: true
   validates :body, presence: true
   
+  after_create :complete_url, if: Proc.new { |tw| tw.url.present? }
   after_create :send_challenge_alert
+  after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
   after_create :follow_challengee, unless: Proc.new { |tw| tw.challenger.follows?(tw.challengee) } 
   after_update :send_winner_alert, if: Proc.new { |tw| tw.winner_id_changed? }
   
@@ -32,6 +36,10 @@ class Thumbwar < ActiveRecord::Base
   
   protected
 
+  def complete_url
+    update_column(:url, url.gsub(/\{id\}/,id.to_s))
+  end
+
   def follow_challengee
     challengee.followers << challenger
   end
@@ -44,4 +52,23 @@ class Thumbwar < ActiveRecord::Base
     challengee.alerts.create!(alertable: self, body: winner_id == 0 ? "One of your Thumbwars is a push." : "You #{(winner_id == challengee_id) ? "lost" : "won"} a Thumbwar!")
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
   end
+
+  def send_notice_to_audience_members_wrapper
+    send_notice_to_audience_members(audience_members)    
+  end
+
+  def send_notice_to_audience_members(audience_members)
+    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+    audience_members.each do |user|
+      number = ENV['TWILIO_NUMBERS'].split(",").sample
+      user["mobile"] = "18609404747"
+      client.account.sms.messages.create(
+        from: "+1#{number}",
+        to: "+#{user["mobile"]}",
+        body: "#{challenger} wants you to see a Thumbwar. #{url}"
+      )
+    end
+  end
+  handle_asynchronously :send_notice_to_audience_members
+
 end
