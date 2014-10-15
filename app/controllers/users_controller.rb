@@ -3,7 +3,7 @@ class UsersController < InheritedResources::Base
   
   def register
     @user = User.new(params[:user])
-    render status: 422, json: {errors: user.errors} if !@user.save
+    render status: 422, json: {errors: @user.errors} if !@user.save
   end
   
   def login
