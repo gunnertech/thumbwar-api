@@ -16,7 +16,6 @@ class User < ActiveRecord::Base
   has_many :thumbwars, foreign_key: "challenger_id"
   has_many :watchings
   
-  before_validation :generate_username, if: Proc.new{ |u| u.username.blank? }
   before_save { |u| u.token = generate_token if token.blank? }
   after_create :inviter_stuff, if: Proc.new{ |u| u.inviter }
   
@@ -38,10 +37,6 @@ class User < ActiveRecord::Base
   end
   
   private
-
-  def generate_username
-    self.username = "tWar_#{id}"
-  end
   
   def generate_token
     loop do
