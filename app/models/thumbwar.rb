@@ -4,7 +4,7 @@ class Thumbwar < ActiveRecord::Base
   
   attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
     :accepted, :winner_id, :audience_members, :url
-  attr_accessor :audience_members
+  attr_accessor :audience_members, :status
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
@@ -16,10 +16,11 @@ class Thumbwar < ActiveRecord::Base
   validates :challenger_id, presence: true
   validates :body, presence: true
   
+
   after_create :complete_url, if: Proc.new { |tw| tw.url.present? }
   after_create :send_challenge_alert
   after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
-  after_create :follow_challengee, unless: Proc.new { |tw| tw.challenger.follows?(tw.challengee) } 
+  after_save :make_connections, if: Proc.new { |tw| tw.accepted? } 
   after_update :send_winner_alert, if: Proc.new { |tw| tw.winner_id_changed? }
   
   def status
@@ -40,12 +41,16 @@ class Thumbwar < ActiveRecord::Base
     update_column(:url, url.gsub(/\{id\}/,id.to_s))
   end
 
-  def follow_challengee
-    challengee.followers << challenger
+  def make_connections
+    challengee.followers << challenger unless challengee.follows?(challenger)
+    challenger.followers << challengee unless challenger.follows?(challengee)
   end
   
   def send_challenge_alert
-    challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ? "You've been challenged" : "#{challenger.first_name} #{challenger.last_name} has challenged you"} to a Thumbwar!")
+    challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ? 
+      "You've been challenged" : 
+      "#{challenger.first_name} #{challenger.last_name} has challenged you"} 
+      to a Thumbwar!".squish)
   end
   
   def send_winner_alert
