@@ -18,7 +18,7 @@ class Alert < ActiveRecord::Base
     client.account.sms.messages.create(
       from: "+1#{ENV["TWILIO_NUMBER"]}",
       to: "+#{user.mobile}",
-      body: body
+      body: "#{body} #{alertable.url}".squish
     )
   end
 end
