@@ -71,6 +71,21 @@ class User < ActiveRecord::Base
   end
   handle_asynchronously :send_confirmation_code
   
+  def send_reset_password_token(url)
+    token = generate_reset_password_token
+    update_column(:reset_password_token, token)
+    update_column(:reset_password_sent_at, Time.now)
+    
+    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+    number = ENV['TWILIO_NUMBERS'].split(",").sample
+
+    client.account.sms.messages.create(
+      from: "+1#{number}",
+      to: "+#{mobile}",
+      body: "Please click this link to reset your ThumbWar password #{url}?reset_password_token=#{token}&mobile=#{mobile}"
+    )
+  end
+  handle_asynchronously :send_reset_password_token
 
   protected
 
@@ -96,6 +111,13 @@ class User < ActiveRecord::Base
     loop do
       auth_token = Devise.friendly_token
       break auth_token unless User.where{ token == my{auth_token} }.count > 0
+    end
+  end
+  
+  def generate_reset_password_token
+    loop do
+      auth_token = Devise.friendly_token
+      break auth_token unless User.where{ reset_password_token == my{auth_token} }.count > 0
     end
   end
   

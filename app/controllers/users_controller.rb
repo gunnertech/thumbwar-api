@@ -53,6 +53,33 @@ class UsersController < InheritedResources::Base
     @current_user.send_confirmation_code(params[:verification_url])
     render status: 200, json: {}
   end
+
+  def forgot_password
+    if user = User.find_by_mobile(params[:mobile])
+      if params[:url].present?
+        unless user.reset_password_token && user.reset_password_period_valid?
+          user.send_reset_password_token(params[:url])
+        end
+        render status: 200, json: {}
+      else
+        render status: 400, json: {error: "no [:url] param"}
+      end
+    else
+      render status: 404, json: {error: "user not found"}
+    end
+  end
+
+  def reset_password
+    if user = User.find_by_mobile_and_reset_password_token(params[:mobile], params[:token])
+      if params[:password].present?
+        user.reset_password!(params[:password], nil)
+      else
+        render status: 400, json: {error: "no [:password] param"}
+      end
+    else
+      render status: 404, json: {error: "user not found"}
+    end
+  end
   
   def follow
     User.find(params[:user_id]).followers << @current_user
