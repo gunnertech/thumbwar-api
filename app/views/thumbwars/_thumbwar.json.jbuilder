@@ -15,3 +15,9 @@ end
 json.comments do
   json.array! thumbwar.comments, partial: "comments/comment", as: :comment
 end
+
+json.photo do |photo|
+  photo.url thumbwar.photo.url
+  photo.large_url thumbwar.photo.large.url
+  photo.small_url thumbwar.photo.small.url
+end
