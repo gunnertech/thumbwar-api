@@ -1,9 +1,10 @@
 class Thumbwar < ActiveRecord::Base
+  mount_uploader :photo, PhotoUploader
   acts_as_commentable
   alias_attribute :comments, :comment_threads
   
   attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
-    :accepted, :winner_id, :audience_members, :url
+    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url
   attr_accessor :audience_members, :status
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
