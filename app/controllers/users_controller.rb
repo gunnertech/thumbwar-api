@@ -1,9 +1,22 @@
 class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
+  skip_before_filter :authenticate_from_token!, only: :index
   
   def register
-    @user = User.new(params[:user])
-    render status: 422, json: {errors: @user.errors} if !@user.save
+    password = params.delete(:password)
+    
+    if password.present? && (id = params.delete(:id)) && (@user = User.find_by_mobile(params[:user][:mobile]))
+
+      if @user.id == id && !@user.verified?
+        render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user]) 
+      else
+        render status: 422, json: {}
+      end
+    else
+      @user = User.new(params[:user])
+      @user.password = password if password.present?
+      render status: 422, json: {errors: @user.errors} unless @user.save
+    end
   end
   
   def login
@@ -52,6 +65,19 @@ class UsersController < InheritedResources::Base
   end
   
   protected
+
+  def current_user
+    if params[:mobile]
+      if (user = User.find_by_mobile(params[:mobile]))
+        if params[:token]
+          if Devise.secure_compare(user.token, params[:token])
+            @current_user = user
+          end
+        end
+      end
+    end
+    @current_user
+  end
   
   def collection
     return @users if @users
@@ -59,14 +85,14 @@ class UsersController < InheritedResources::Base
     @users = if params[:view]
       case params[:view]
       when "followers"
-        @current_user.followers
+        current_user.followers
       when "following"
-        @current_user.followees
+        current_user.followees
       else
         User.limit(10)
       end
     elsif params[:search]
-      if User.where{ username == my{params[:search]} }.count
+      if User.where{ username == my{params[:search]} }.count > 0
         User.where{ username == my{params[:search]} }
       else
         User.where{ mobile == my{params[:search]} }

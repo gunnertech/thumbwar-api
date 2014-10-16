@@ -72,16 +72,15 @@ ActiveRecord::Schema.define(:version => 20141015144119) do
 
   create_table "thumbwars", :force => true do |t|
     t.boolean  "accepted"
-    t.integer  "challengee_id",                        :null => false
-    t.integer  "challenger_id",                        :null => false
-    t.text     "body",                                 :null => false
+    t.integer  "challengee_id",                   :null => false
+    t.integer  "challenger_id",                   :null => false
+    t.text     "body",                            :null => false
     t.datetime "expires_at"
     t.boolean  "public",        :default => true
     t.string   "wager"
     t.integer  "winner_id"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
-    t.string   "status",        :default => "pending"
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
     t.string   "url"
   end
 
