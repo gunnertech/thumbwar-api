@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, authentication_keys: [:username]
   devise :recoverable
   
-  attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :password, :public, 
+  attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :public, 
     :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username, :verification_url
 
   attr_accessor :verification_url
@@ -26,7 +26,8 @@ class User < ActiveRecord::Base
   
   before_save { |u| u.token = generate_token if token.blank? }
   after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
-  after_create :send_confirmation_code_wrapper, if: Proc.new{ |u| u.username.present? }
+  after_create :send_confirmation_code_wrapper, if: Proc.new{ |u| u.username.present? && u.inviter_id.nil? }
+  after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
   
   def to_s
     display_name    
@@ -72,6 +73,24 @@ class User < ActiveRecord::Base
   
 
   protected
+
+  def send_invitation(verification_url=nil)
+    code = rand.to_s[2..7]
+    
+    update_column(:verification_code, code)
+
+    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+    number = ENV['TWILIO_NUMBERS'].split(",").sample
+
+    body = "#{inviter} wants you to join ThumbWar. Click the link to get started: #{verification_url}?code=#{code}&mobile=#{mobile}"
+
+    client.account.sms.messages.create(
+      from: "+1#{number}",
+      to: "+#{mobile}",
+      body: body
+    )
+  end
+  handle_asynchronously :send_invitation
   
   def generate_token
     loop do
@@ -81,7 +100,6 @@ class User < ActiveRecord::Base
   end
   
   def complete_invitation_acceptance
-    update_column(:verified, true)
     
     self.followers << inviter
     inviter.followers << self
@@ -91,5 +109,9 @@ class User < ActiveRecord::Base
 
   def send_confirmation_code_wrapper
     send_confirmation_code(verification_url)
+  end
+
+  def send_invitation_wrapper
+    send_invitation(verification_url)
   end
 end
