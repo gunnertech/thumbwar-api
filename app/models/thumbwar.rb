@@ -18,6 +18,7 @@ class Thumbwar < ActiveRecord::Base
   validates :body, presence: true
   
 
+  after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
   after_create :complete_url, if: Proc.new { |tw| tw.url.present? }
   after_create :send_challenge_alert
   after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
@@ -37,6 +38,15 @@ class Thumbwar < ActiveRecord::Base
   end
   
   protected
+
+  def twitter_challengee_text
+    challengee.twitter_username || challengee.display_name
+  end
+
+  def post_to_twitter
+    challenger.twitter.update("#{body} $#{wager} #{url} /cc #{twitter_challengee_text}" ) rescue nil
+  end
+  handle_asynchronously :post_to_twitter
 
   def complete_url
     update_column(:url, url.gsub(/\{id\}/,id.to_s))
