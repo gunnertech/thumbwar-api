@@ -1,6 +1,6 @@
 class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
-  skip_before_filter :authenticate_from_token!, only: [:index, :register, :login, :forgot_password, :reset_password]
+  skip_before_filter :authenticate_from_token!, only: [:register, :login, :forgot_password, :reset_password]
   
   def register
     password = params.delete(:password)
@@ -167,19 +167,6 @@ class UsersController < InheritedResources::Base
   end
   
   protected
-
-  def current_user
-    if params[:mobile]
-      if (user = User.find_by_mobile(params[:mobile]))
-        if params[:token]
-          if Devise.secure_compare(user.token, params[:token])
-            @current_user = user
-          end
-        end
-      end
-    end
-    @current_user
-  end
   
   def collection
     return @users if @users
@@ -187,9 +174,9 @@ class UsersController < InheritedResources::Base
     @users = if params[:view]
       case params[:view]
       when "followers"
-        current_user.followers
+        @current_user.followers
       when "following"
-        current_user.followees
+        @current_user.followees
       else
         User.limit(10)
       end
