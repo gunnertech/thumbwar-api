@@ -1,6 +1,6 @@
 class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
-  skip_before_filter :authenticate_from_token!, only: :index
+  skip_before_filter :authenticate_from_token!, only: [:index, :forgot_password, :reset_password]
   
   def register
     password = params.delete(:password)
@@ -55,11 +55,11 @@ class UsersController < InheritedResources::Base
   end
 
   def forgot_password
-    if user = User.find_by_mobile(params[:mobile])
+    if user = User.find_by_mobile(params[:login]) || User.find_by_username(params[:login])
       if params[:url].present?
-        unless user.reset_password_token && user.reset_password_period_valid?
+        # unless user.reset_password_token && user.reset_password_period_valid?
           user.send_reset_password_token(params[:url])
-        end
+        # end
         render status: 200, json: {}
       else
         render status: 400, json: {error: "no [:url] param"}
@@ -70,9 +70,10 @@ class UsersController < InheritedResources::Base
   end
 
   def reset_password
-    if user = User.find_by_mobile_and_reset_password_token(params[:mobile], params[:token])
+    if user = User.find_by_mobile_and_reset_password_token(params[:mobile], params[:reset_password_token])
       if params[:password].present?
         user.reset_password!(params[:password], nil)
+        render status: 200, json: {}
       else
         render status: 400, json: {error: "no [:password] param"}
       end
