@@ -12,13 +12,13 @@ class User < ActiveRecord::Base
   belongs_to :inviter, class_name: "User", foreign_key: "inviter_id"
   
   has_many :alerts
-  has_many :challenges, class_name: "Thumbwar", foreign_key: "challengee_id"
-  has_many :followeeings, class_name: "Following", foreign_key: :follower_id
+  has_many :challenges, class_name: "Thumbwar", foreign_key: "challengee_id", dependent: :destroy
+  has_many :followeeings, class_name: "Following", foreign_key: :follower_id, dependent: :destroy
   has_many :followees, through: :followeeings
-  has_many :followerings, class_name: "Following", foreign_key: :followee_id
+  has_many :followerings, class_name: "Following", foreign_key: :followee_id, dependent: :destroy
   has_many :followers, through: :followerings
-  has_many :thumbwars, foreign_key: "challenger_id"
-  has_many :watchings
+  has_many :thumbwars, foreign_key: "challenger_id", dependent: :destroy
+  has_many :watchings, dependent: :destroy
   
 
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}
