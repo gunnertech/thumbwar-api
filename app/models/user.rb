@@ -51,6 +51,15 @@ class User < ActiveRecord::Base
     user.followerings.where{ followee_id == my{user.id} }.count > 0
   end
 
+  def twitter
+    client = Twitter::REST::Client.new do |config|
+      config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
+      config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
+      config.access_token        = twitter_token
+      config.access_token_secret = twitter_secret
+    end
+  end
+
   def send_confirmation_code(verification_url=nil)
     code = rand.to_s[2..7]
     
