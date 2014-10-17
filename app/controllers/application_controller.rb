@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   respond_to :json
   
-  before_filter :authenticate_from_token!, except: [:register, :login, :forgot_password, :reset_password]
+  before_filter :authenticate_from_token!
  
   protected
   
