@@ -60,6 +60,28 @@ class User < ActiveRecord::Base
     end
   end
 
+  def facebook
+    fa_token = facebook_token
+    if facebook_expires_at && facebook_expires_at < Time.now
+      oauth = Koala::Facebook::OAuth.new(ENV['FACEBOOK_APP_ID'], ENV['FACEBOOK_APP_SECRET'])
+      new_access_info = oauth.exchange_access_token_info(facebook_token)
+
+      new_access_token = new_access_info["access_token"]
+      new_access_expires_at = DateTime.now + new_access_info["expires"].to_i.seconds
+      
+      fa_token = new_access_token
+
+      update_attributes!(:facebook_token => new_access_token,
+                              :facebook_expires_at => new_access_expires_at )
+    end
+    @facebook ||= Koala::Facebook::API.new(fa_token)
+    block_given? ? yield(@facebook) : @facebook
+
+    rescue Koala::Facebook::APIError => e
+      logger.info e.to_s
+      nil
+  end
+
   def send_confirmation_code(verification_url=nil)
     code = rand.to_s[2..7]
     
