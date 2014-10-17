@@ -1,4 +1,5 @@
 ThumbwarApi::Application.routes.draw do
+  get "twitter_oauth", to: "users#twitter_oauth"
   post "register", to: "users#register"
   put "verify", to: "users#verify"
   post "resend_verification", to: "users#resend_verification"

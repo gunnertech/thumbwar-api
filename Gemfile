@@ -15,6 +15,9 @@ gem "mini_magick", "4.0.0.rc"
 gem "twilio-ruby"
 gem 'delayed_job_active_record'
 gem 'unicorn', '>= 4.3.1'
+gem 'oauth2'
+gem 'oauth'
+gem 'twitter'
 
 group :development do
   gem "better_errors", "2.0.0"
