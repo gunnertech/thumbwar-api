@@ -4,13 +4,13 @@ class ThumbwarsController < InheritedResources::Base
   before_filter :set_challenger_id, only: :create
   
   def watch
-    Thumbwar.find(params[:thumbwar_id]).watchers << @current_user
-    render status: 200, json: {}
+    @thumbwar = Thumbwar.find(params[:thumbwar_id])
+    @thumbwar.watchers << @current_user
   end
   
   def unwatch
-    Thumbwar.find_by_thumbwar_id_and_user_id(params[:thumbwar_id], @current_user.id).destroy rescue nil
-    render status: 200, json: {}
+    @thumbwar = Thumbwar.find(params[:thumbwar_id])
+    Watching.find_by_thumbwar_id_and_user_id(params[:thumbwar_id], @current_user.id).destroy rescue nil
   end
   
   def watchers
