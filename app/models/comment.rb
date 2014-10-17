@@ -13,7 +13,11 @@ class Comment < ActiveRecord::Base
   # NOTE: Comments belong to a user
   belongs_to :user
 
+  has_many :alerts, as: :alertable
+
   validates :user, :presence => true
+
+  after_create :create_alert
 
   default_scope order('id ASC')
 
@@ -49,4 +53,20 @@ class Comment < ActiveRecord::Base
   def self.find_commentable(commentable_str, commentable_id)
     commentable_str.constantize.find(commentable_id)
   end
+
+  def create_alert
+    commentable.watchers.each do |watcher|
+      watcher.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
+    end
+
+    if user != commentable.challengee
+      commentable.challengee.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
+    end
+    
+    if user != commentable.challenger
+      commentable.challenger.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
+    end
+
+  end
+  handle_asynchronously :create_alert
 end

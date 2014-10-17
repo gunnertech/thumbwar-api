@@ -14,11 +14,18 @@ class Alert < ActiveRecord::Base
   
   def send_sms
     client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
-    # number = ENV['TWILIO_NUMBERS'].split(",").sample
+    number = ENV['TWILIO_NUMBERS'].split(",").sample
+
+    url = if alertable_type == "Thumbwar"
+      alertable.url
+    elsif alertable_type == "Comment"
+      alertable.commentable.url
+    end
+
     client.account.sms.messages.create(
-      from: "+1#{ENV["TWILIO_NUMBER"]}",
+      from: "+1#{number}",
       to: "+#{user.mobile}",
-      body: "#{body} #{alertable.url}".squish
+      body: "#{body} #{url}".squish
     )
   end
 end
