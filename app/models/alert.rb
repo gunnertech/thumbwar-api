@@ -8,7 +8,7 @@ class Alert < ActiveRecord::Base
   validates :alertable_id, presence: true
   validates :user_id, presence: true
   
-  after_create :send_sms, if: Proc.new { |a| a.user.sms_notifications }
+  after_create :send_sms, if: Proc.new { |a| a.user.sms_notifications? }
   
   protected
   
@@ -28,4 +28,5 @@ class Alert < ActiveRecord::Base
       body: "#{body} #{url}".squish
     )
   end
+  handle_asynchronously :send_sms
 end
