@@ -4,7 +4,7 @@ class Thumbwar < ActiveRecord::Base
   alias_attribute :comments, :comment_threads
   
   attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
-    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter
+    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
     
   attr_accessor :audience_members, :status
   
@@ -20,6 +20,7 @@ class Thumbwar < ActiveRecord::Base
   
 
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
+  after_create :post_to_facebook, if: Proc.new{ |tw| tw.publish_to_facebook? }
   after_create :complete_url, if: Proc.new { |tw| tw.url.present? }
   after_create :send_challenge_alert
   after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
@@ -48,6 +49,16 @@ class Thumbwar < ActiveRecord::Base
     challenger.twitter.update("#{body} $#{wager} #{url} /cc #{twitter_challengee_text}" ) rescue nil
   end
   handle_asynchronously :post_to_twitter
+
+  def post_to_facebook
+    challenger.facebook.put_connections("me", "links", 
+      link: url.gsub(/localhost/,"test.com"),
+      name: "Thumbwar: #{challengee.display_name}",
+      message: body,
+      picture: photo.url
+    )
+  end
+  handle_asynchronously :post_to_facebook
 
   def complete_url
     update_column(:url, url.gsub(/\{id\}/,id.to_s))
