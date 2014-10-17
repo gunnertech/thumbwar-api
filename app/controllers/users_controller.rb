@@ -63,6 +63,56 @@ class UsersController < InheritedResources::Base
     Following.find_by_followee_id_and_follower_id(params[:user_id], @current_user.id).destroy rescue nil
     render status: 200, json: {}
   end
+
+  def twitter_oauth    
+    consumer = OAuth::Consumer.new(ENV['TWITTER_CONSUMER_KEY'], ENV['TWITTER_CONSUMER_SECRET'],
+    { :site => "https://api.twitter.com",
+      :request_token_path => '/oauth/request_token',
+      :access_token_path => '/oauth/access_token',
+      :authorize_path => '/oauth/authorize',
+      :scheme => :header
+    })
+    
+    if params[:oauth_verifier].present? && params[:oauth_token].present?
+      request_token = OAuth::RequestToken.new(consumer, session[:token],session[:secret])
+      token = request_token.get_access_token(oauth_verifier: params[:oauth_verifier])
+
+      @user = current_user
+      @user.twitter_token = token.token
+      @user.twitter_secret = token.secret
+      
+      client = Twitter::REST::Client.new do |config|
+        config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
+        config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
+        config.access_token        = @user.twitter_token
+        config.access_token_secret = @user.twitter_secret
+      end
+      
+      @user.twitter_id = client.user[:id]
+      @user.twitter_username = client.user[:screen_name]
+      @user.publish_to_twitter = true
+      
+      @user.save!
+
+      session.delete(:token)
+      session.delete(:secret)
+
+      # return_to = session.delete(:return_to)
+
+
+      
+      redirect_to session[:return_to]
+    else
+      request_token = consumer.get_request_token(:oauth_callback => "#{ENV['HOST']}/twitter_oauth?token=#{params[:token]}&mobile=#{params[:mobile]}")
+      # raise request_token.token.inspect
+      session[:token] = request_token.token.to_s
+      session[:secret] = request_token.secret.to_s
+
+      session[:return_to] = params[:return_to]
+
+      redirect_to request_token.authorize_url
+    end
+  end
   
   protected
 
