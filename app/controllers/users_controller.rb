@@ -1,6 +1,6 @@
 class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
-  skip_before_filter :authenticate_from_token!, only: [:index, :forgot_password, :reset_password]
+  skip_before_filter :authenticate_from_token!, only: [:index, :register, :login, :forgot_password, :reset_password]
   
   def register
     password = params.delete(:password)
