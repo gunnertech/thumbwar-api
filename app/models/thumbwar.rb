@@ -13,6 +13,7 @@ class Thumbwar < ActiveRecord::Base
   
   has_many :watchings
   has_many :watchers, through: :watchings, source: :user
+  has_many :alerts, as: :alertable
   
   validates :challengee_id, presence: true
   validates :challenger_id, presence: true
