@@ -6,7 +6,7 @@ class Thumbwar < ActiveRecord::Base
   attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
     :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
     
-  attr_accessor :audience_members, :status
+  attr_accessor :audience_members, :status, :expires_in
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
@@ -18,6 +18,8 @@ class Thumbwar < ActiveRecord::Base
   validates :challengee_id, presence: true
   validates :challenger_id, presence: true
   validates :body, presence: true
+
+  before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
   
 
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
@@ -26,11 +28,16 @@ class Thumbwar < ActiveRecord::Base
   after_create :send_challenge_alert
   after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
   after_save :make_connections, if: Proc.new { |tw| tw.accepted? } 
-  after_update :send_winner_alert, if: Proc.new { |tw| tw.winner_id_changed? }
+  after_update :send_outcome_alert, if: Proc.new { |tw| tw.winner_id_changed? }
+  after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
   
   def status
     if accepted.nil?
-      "pending"
+      if expires_at.present? && Time.now >= expires_at
+        "expired"
+      else
+        "pending"
+      end
     else
       if winner_id.nil?
         accepted ? "accepted" : "rejected"
@@ -41,6 +48,26 @@ class Thumbwar < ActiveRecord::Base
   end
   
   protected
+
+  def set_expires_at
+    self.expires_at = expires_in.minutes.from_now
+  end
+
+  def expiring_soon?
+    return false if status != 'pending' || expires_at.nil? || expires_at - created_at < 20.minutes
+    
+    expires_at <= 10.minutes.from_now
+  end
+
+  def send_expiring_soon_alert
+    challengee.alerts.create!(alertable: self, body: "Your Thumbwar is about to expire!") if expiring_soon?
+  end
+  handle_asynchronously :send_expiring_soon_alert, run_at: Proc.new { |tw| (tw.expires_in.minutes - 10.minutes).from_now }
+
+  def send_expired_alert
+    challengee.alerts.create!(alertable: self, body: "Your Thumbwar expired!") if status == 'expired'
+  end
+  handle_asynchronously :send_expired_alert, run_at: Proc.new { |tw| (tw.expires_in.minutes + 1.minute).from_now }
 
   def twitter_challengee_text
     challengee.twitter_username || challengee.display_name
@@ -77,10 +104,11 @@ class Thumbwar < ActiveRecord::Base
       to a Thumbwar!".squish)
   end
   
-  def send_winner_alert
+  def send_outcome_alert
     challengee.alerts.create!(alertable: self, body: winner_id == 0 ? "One of your Thumbwars is a push." : "You #{(winner_id == challengee_id) ? "lost" : "won"} a Thumbwar!")
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
   end
+  handle_asynchronously :send_outcome_alert
 
   def send_notice_to_audience_members_wrapper
     send_notice_to_audience_members(audience_members)    
