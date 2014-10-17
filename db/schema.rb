@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141017022847) do
+ActiveRecord::Schema.define(:version => 20141017044424) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "alertable_id",                      :null => false
@@ -72,18 +72,19 @@ ActiveRecord::Schema.define(:version => 20141017022847) do
 
   create_table "thumbwars", :force => true do |t|
     t.boolean  "accepted"
-    t.integer  "challengee_id",                         :null => false
-    t.integer  "challenger_id",                         :null => false
-    t.text     "body",                                  :null => false
+    t.integer  "challengee_id",                          :null => false
+    t.integer  "challenger_id",                          :null => false
+    t.text     "body",                                   :null => false
     t.datetime "expires_at"
-    t.boolean  "public",             :default => true
+    t.boolean  "public",              :default => true
     t.string   "wager"
     t.integer  "winner_id"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.string   "url"
     t.string   "photo"
-    t.boolean  "publish_to_twitter", :default => false
+    t.boolean  "publish_to_twitter",  :default => false
+    t.boolean  "publish_to_facebook", :default => false
   end
 
   add_index "thumbwars", ["challengee_id"], :name => "index_thumbwars_on_challengee_id"
@@ -114,6 +115,8 @@ ActiveRecord::Schema.define(:version => 20141017022847) do
     t.string   "twitter_username"
     t.integer  "twitter_id",             :limit => 8
     t.string   "twitter_secret"
+    t.datetime "facebook_expires_at"
+    t.integer  "facebook_id",            :limit => 8
   end
 
   add_index "users", ["inviter_id"], :name => "index_users_on_inviter_id"

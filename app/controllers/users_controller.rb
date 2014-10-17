@@ -104,40 +104,64 @@ class UsersController < InheritedResources::Base
       request_token = OAuth::RequestToken.new(consumer, session[:token],session[:secret])
       token = request_token.get_access_token(oauth_verifier: params[:oauth_verifier])
 
-      @user = current_user
-      @user.twitter_token = token.token
-      @user.twitter_secret = token.secret
+      user = current_user
+      user.twitter_token = token.token
+      user.twitter_secret = token.secret
       
       client = Twitter::REST::Client.new do |config|
         config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
         config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
-        config.access_token        = @user.twitter_token
-        config.access_token_secret = @user.twitter_secret
+        config.access_token        = user.twitter_token
+        config.access_token_secret = user.twitter_secret
       end
       
-      @user.twitter_id = client.user[:id]
-      @user.twitter_username = client.user[:screen_name]
-      @user.publish_to_twitter = true
+      user.twitter_id = client.user[:id]
+      user.twitter_username = client.user[:screen_name]
+      user.publish_to_twitter = true
       
-      @user.save!
+      user.save!
 
       session.delete(:token)
       session.delete(:secret)
 
-      # return_to = session.delete(:return_to)
-
-
-      
       redirect_to session[:return_to]
     else
       request_token = consumer.get_request_token(:oauth_callback => "#{ENV['HOST']}/twitter_oauth?token=#{params[:token]}&mobile=#{params[:mobile]}")
-      # raise request_token.token.inspect
+
       session[:token] = request_token.token.to_s
       session[:secret] = request_token.secret.to_s
 
       session[:return_to] = params[:return_to]
 
       redirect_to request_token.authorize_url
+    end
+  end
+
+  def facebook_oauth
+    oauth = Koala::Facebook::OAuth.new(ENV['FACEBOOK_APP_ID'], ENV['FACEBOOK_APP_SECRET'], facebook_oauth_url(mobile: params[:mobile], token: params[:token]))
+    if params[:code].present?
+      # facebook_session = oauth.try(:get_user_info_from_cookies, cookies) || oauth.get_access_token_info(params[:code])
+
+      facebook_session = oauth.get_access_token_info(params[:code])
+
+      user = current_user
+
+      user.facebook_token = facebook_session["access_token"]
+      user.facebook_expires_at = Time.now + facebook_session["expires"].to_i.seconds
+      user.publish_to_facebook = true
+
+      
+      if user.facebook_id.nil?
+        graph = Koala::Facebook::API.new(facebook_session["access_token"])
+        profile = graph.get_object("me")
+        user.facebook_id = profile["id"]
+      end
+      
+      user.save!
+      
+      redirect_to session[:return_to]
+    else
+      redirect_to oauth.url_for_oauth_code(:permissions => "publish_stream,email,user_likes,publish_actions")
     end
   end
   
