@@ -113,7 +113,7 @@ class User < ActiveRecord::Base
     client.account.sms.messages.create(
       from: "+1#{number}",
       to: "+#{mobile}",
-      body: "Please click this link to reset your ThumbWar password #{url}?reset_password_token=#{token}&mobile=#{mobile}"
+      body: "Reset your ThumbWar password #{url}?reset_password_token=#{token}&mobile=#{mobile}"
     )
   end
   handle_asynchronously :send_reset_password_token
