@@ -7,13 +7,8 @@ class UsersController < InheritedResources::Base
       if params[:user][:mobile].present?
         if (@user = User.find_by_mobile(params[:user][:mobile])) && !@user.verified?
           @user.password = password
-          @user.verified = true if params[:code] == @user.verification_code
-
-          if (id = params.delete(:id)) && (@user.id == id)
-            render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user])
-          else
-            render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user])
-          end
+          @user.verified = true if params[:code].present? && params[:code] == @user.verification_code
+          render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user])
         else
           @user = User.new(params[:user])
           @user.password = password
