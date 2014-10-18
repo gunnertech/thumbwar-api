@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   
   before_save { |u| u.token = generate_token if token.blank? }
   after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
-  after_create :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && u.inviter_id.nil? }
+  after_save :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && !u.verified? }
   after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
   
   def to_s
