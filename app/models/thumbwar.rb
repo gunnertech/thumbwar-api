@@ -105,7 +105,7 @@ class Thumbwar < ActiveRecord::Base
   end
   
   def send_outcome_alert
-    challengee.alerts.create!(alertable: self, body: winner_id == 0 ? "One of your Thumbwars is a push." : "You #{(winner_id == challengee_id) ? "lost" : "won"} a Thumbwar!")
+    challengee.alerts.create!(alertable: self, body: winner_id == 0 ? "One of your Thumbwars is a push." : "You #{(winner_id == challengee_id) ? "won" : "lost"} a Thumbwar!")
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
   end
   handle_asynchronously :send_outcome_alert
