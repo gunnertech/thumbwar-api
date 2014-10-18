@@ -3,11 +3,12 @@ class UsersController < InheritedResources::Base
   skip_before_filter :authenticate_from_token!, only: [:register, :login, :forgot_password, :reset_password]
   
   def register
-    if password = params[:user].delete(:password)
+    if password = params.delete(:password)
       if params[:user][:mobile].present?
         if (@user = User.find_by_mobile(params[:user][:mobile])) && !@user.verified?
           @user.password = password
           @user.verified = true if params[:code].present? && params[:code] == @user.verification_code
+
           render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user])
         else
           @user = User.new(params[:user])
@@ -45,7 +46,7 @@ class UsersController < InheritedResources::Base
   
   def verify
     if params[:code] == @current_user.verification_code
-      if @current_user.valid_password?(params[:user][:password])
+      if @current_user.valid_password?(params[:password])
         @current_user.update_attribute(:verified, true)
         @user = @current_user
       else
