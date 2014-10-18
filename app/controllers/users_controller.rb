@@ -58,7 +58,7 @@ class UsersController < InheritedResources::Base
   end
 
   def resend_verification
-    @current_user.send_confirmation_code(params[:verification_url])
+    @current_user.send_verification_code(params[:verification_url])
     render status: 200, json: {}
   end
 
