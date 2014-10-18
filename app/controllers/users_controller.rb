@@ -3,7 +3,7 @@ class UsersController < InheritedResources::Base
   skip_before_filter :authenticate_from_token!, only: [:register, :login, :forgot_password, :reset_password]
   
   def register
-    if password = params.delete(:password)
+    if password = params[:user].delete(:password)
       if params[:user][:mobile].present?
         if (@user = User.find_by_mobile(params[:user][:mobile])) && !@user.verified?
           @user.password = password
