@@ -68,5 +68,5 @@ class Comment < ActiveRecord::Base
     end
 
   end
-  handle_asynchronously :create_alert
+  # handle_asynchronously :create_alert
 end
