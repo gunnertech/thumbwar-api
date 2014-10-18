@@ -21,7 +21,7 @@ class UsersController < InheritedResources::Base
         render status: 400, json: {error: "no [:user][:mobile] param"}
       end
     else
-      render status: 400, json: {errors: "no [:password] param"
+      render status: 400, json: {errors: "no [:password] param"}
     end
   end
   
