@@ -48,8 +48,12 @@ class UsersController < InheritedResources::Base
   
   def verify
     if params[:code] == @current_user.verification_code
-      @current_user.update_attribute(:verified, true)
-      @user = @current_user
+      if @current_user.valid_password?(params[:user][:password])
+        @current_user.update_attribute(:verified, true)
+        @user = @current_user
+      else
+        render status: 401, json: {error: "invalid password"}
+      end
     else
       render status: 401, json: {error: "invalid code"}
     end
