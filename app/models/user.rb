@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   
   before_save { |u| u.token = generate_token if token.blank? }
   after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
-  after_create :send_confirmation_code_wrapper, if: Proc.new{ |u| u.username.present? && u.inviter_id.nil? }
+  after_create :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && u.inviter_id.nil? }
   after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
   
   def to_s
@@ -82,7 +82,7 @@ class User < ActiveRecord::Base
       nil
   end
 
-  def send_confirmation_code(verification_url=nil)
+  def send_verification_code(verification_url=nil)
     code = rand.to_s[2..7]
     
     update_column(:verification_code, code)
@@ -100,7 +100,7 @@ class User < ActiveRecord::Base
       body: body
     )
   end
-  handle_asynchronously :send_confirmation_code
+  handle_asynchronously :send_verification_code
   
   def send_reset_password_token(url)
     token = generate_reset_password_token
@@ -160,8 +160,8 @@ class User < ActiveRecord::Base
     inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
   end
 
-  def send_confirmation_code_wrapper
-    send_confirmation_code(verification_url)
+  def send_verification_code_wrapper
+    send_verification_code(verification_url)
   end
 
   def send_invitation_wrapper
