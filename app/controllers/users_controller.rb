@@ -3,19 +3,25 @@ class UsersController < InheritedResources::Base
   skip_before_filter :authenticate_from_token!, only: [:register, :login, :forgot_password, :reset_password]
   
   def register
-    password = params.delete(:password)
-    
-    if password.present? && (id = params.delete(:id)) && (@user = User.find_by_mobile(params[:user][:mobile]))
-
-      if @user.id == id && !@user.verified?
-        render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user]) 
+    if password = params.delete(:password)
+      if params[:user][:mobile].present?
+        if (@user = User.find_by_mobile(params[:user][:mobile])) && !@user.verified?
+          @user.password = password
+          if (id = params.delete(:id)) && (@user.id == id)
+            render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user])
+          else
+            render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user])
+          end
+        else
+          @user = User.new(params[:user])
+          @user.password = password
+          render status: 422, json: {errors: @user.errors} unless @user.save
+        end
       else
-        render status: 422, json: {}
+        render status: 400, json: {error: "no [:user][:mobile] param"}
       end
     else
-      @user = User.new(params[:user])
-      @user.password = password if password.present?
-      render status: 422, json: {errors: @user.errors} unless @user.save
+      render status: 400, json: {errors: "no [:password] param"
     end
   end
   
@@ -57,9 +63,7 @@ class UsersController < InheritedResources::Base
   def forgot_password
     if user = User.find_by_mobile(params[:login]) || User.find_by_username(params[:login])
       if params[:url].present?
-        # unless user.reset_password_token && user.reset_password_period_valid?
-          user.send_reset_password_token(params[:url])
-        # end
+        user.send_reset_password_token(params[:url])
         render status: 200, json: {}
       else
         render status: 400, json: {error: "no [:url] param"}
@@ -105,22 +109,21 @@ class UsersController < InheritedResources::Base
       request_token = OAuth::RequestToken.new(consumer, session[:token],session[:secret])
       token = request_token.get_access_token(oauth_verifier: params[:oauth_verifier])
 
-      user = current_user
-      user.twitter_token = token.token
-      user.twitter_secret = token.secret
+      @current_user.twitter_token = token.token
+      @current_user.twitter_secret = token.secret
       
       client = Twitter::REST::Client.new do |config|
         config.consumer_key        = ENV['TWITTER_CONSUMER_KEY']
         config.consumer_secret     = ENV['TWITTER_CONSUMER_SECRET']
-        config.access_token        = user.twitter_token
-        config.access_token_secret = user.twitter_secret
+        config.access_token        = @current_user.twitter_token
+        config.access_token_secret = @current_user.twitter_secret
       end
       
-      user.twitter_id = client.user[:id]
-      user.twitter_username = client.user[:screen_name]
-      user.publish_to_twitter = true
+      @current_user.twitter_id = client.user[:id]
+      @current_user.twitter_username = client.user[:screen_name]
+      @current_user.publish_to_twitter = true
       
-      user.save!
+      @current_user.save!
 
       session.delete(:token)
       session.delete(:secret)
@@ -141,24 +144,20 @@ class UsersController < InheritedResources::Base
   def facebook_oauth
     oauth = Koala::Facebook::OAuth.new(ENV['FACEBOOK_APP_ID'], ENV['FACEBOOK_APP_SECRET'], facebook_oauth_url(mobile: params[:mobile], token: params[:token]))
     if params[:code].present?
-      # facebook_session = oauth.try(:get_user_info_from_cookies, cookies) || oauth.get_access_token_info(params[:code])
-
       facebook_session = oauth.get_access_token_info(params[:code])
 
-      user = current_user
-
-      user.facebook_token = facebook_session["access_token"]
-      user.facebook_expires_at = Time.now + facebook_session["expires"].to_i.seconds
-      user.publish_to_facebook = true
+      @current_user.facebook_token = facebook_session["access_token"]
+      @current_user.facebook_expires_at = Time.now + facebook_session["expires"].to_i.seconds
+      @current_user.publish_to_facebook = true
 
       
-      if user.facebook_id.nil?
+      if @current_user.facebook_id.nil?
         graph = Koala::Facebook::API.new(facebook_session["access_token"])
         profile = graph.get_object("me")
-        user.facebook_id = profile["id"]
+        @current_user.facebook_id = profile["id"]
       end
       
-      user.save!
+      @current_user.save!
       
       redirect_to session[:return_to]
     else
