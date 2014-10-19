@@ -47,14 +47,14 @@ class Thumbwar < ActiveRecord::Base
     end
   end
   
+  def minutes_remaining
+    ((expires_at - Time.now)/60).round if expires_at
+  end
+  
   protected
 
   def set_expires_at
     self.expires_at = expires_in.minutes.from_now
-  end
-  
-  def minutes_remaining
-    ((expires_at - Time.now)/60).round if expires_at
   end
 
   def expiring_soon?
