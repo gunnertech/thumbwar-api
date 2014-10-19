@@ -163,6 +163,7 @@ class UsersController < InheritedResources::Base
       
       redirect_to session[:return_to]
     else
+      session[:return_to] = params[:return_to]
       redirect_to oauth.url_for_oauth_code(:permissions => "publish_stream,email,user_likes,publish_actions")
     end
   end
