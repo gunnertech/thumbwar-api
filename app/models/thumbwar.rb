@@ -4,10 +4,9 @@ class Thumbwar < ActiveRecord::Base
   alias_attribute :comments, :comment_threads
   
   attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
-    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, 
-    :minutes_remaining
+    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
     
-  attr_accessor :audience_members, :status, :expires_in, :minutes_remaining
+  attr_accessor :audience_members, :status, :expires_in
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
@@ -144,9 +143,8 @@ class Thumbwar < ActiveRecord::Base
   end
 
   def make_connections
-    challengee.followers << challenger unless challengee.follows?(challenger)
-    challenger.followers << challengee unless challenger.follows?(challengee)
-    true
+    challengee.followers << challenger unless challengee.followers.include?(challenger)
+    challenger.followers << challengee unless challenger.followers.include?(challengee)
   end
   
   def send_challenge_alert
@@ -159,7 +157,6 @@ class Thumbwar < ActiveRecord::Base
   def send_outcome_alert
     challengee.alerts.create!(alertable: self, body: winner_id == 0 ? "One of your Thumbwars is a push." : "You #{(winner_id == challengee_id) ? "won" : "lost"} a Thumbwar!")
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
-    true
   end
   handle_asynchronously :send_outcome_alert
 

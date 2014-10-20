@@ -12,12 +12,6 @@ class ThumbwarsController < InheritedResources::Base
     end
   end
   
-  def update
-    @thumbwar = Thumbwar.find(params[:id])
-    @thumbwar.update_attributes(params[:thumbwar])
-    @thumbwar.save!
-  end
-  
   def watch
     @thumbwar = Thumbwar.find(params[:thumbwar_id])
     @thumbwar.watchers << @current_user
