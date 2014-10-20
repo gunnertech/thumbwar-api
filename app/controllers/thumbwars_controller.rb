@@ -40,12 +40,8 @@ class ThumbwarsController < InheritedResources::Base
   def collection
     return @thumbwars if @thumbwars
     
-    @thumbwars = if parent.nil?
-      Thumbwar.where{ public == true }.order{ id.desc }
-    else
-      Thumbwar.joins{ watchings.outer }.where{ (challengee_id == my{parent.id}) | (challenger_id == my{parent.id}) | (watchings.user_id == my{parent.id}) }.order{ id.desc }
-    end
-    
-    @thumbwars
+    @thumbwars = params[:filter].present? ? 
+      Thumbwar.send(params[:filter].gsub(/\-/,"_"),current_user).order{ id.desc } : 
+      Thumbwar.public
   end
 end
