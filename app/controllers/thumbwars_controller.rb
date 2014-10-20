@@ -3,6 +3,15 @@ class ThumbwarsController < InheritedResources::Base
   
   before_filter :set_challenger_id, only: :create
   
+  def show
+    @thumbwar = Thumbwar.find(params[:id])
+    if @thumbwar.challenger == current_user || @thumbwar.challengee == current_user
+      show!
+    else
+      render status: 403, json: {error: "No Authorized"}
+    end
+  end
+  
   def watch
     @thumbwar = Thumbwar.find(params[:thumbwar_id])
     @thumbwar.watchers << @current_user
