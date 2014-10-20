@@ -5,6 +5,10 @@ class ApplicationController < ActionController::Base
  
   protected
   
+  def current_user
+    @current_user ||= User.where{ (mobile == my{params[:mobile]}) & (token == my{params[:token]}) } if params[:token].present? && params[:mobile].present?
+  end
+  
   def authenticate_from_token!
     if params[:mobile]
       if (user = User.find_by_mobile(params[:mobile]))

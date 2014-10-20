@@ -31,6 +31,52 @@ class Thumbwar < ActiveRecord::Base
   after_update :send_outcome_alert, if: Proc.new { |tw| tw.winner_id_changed? }
   after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
   
+  class << self
+    def mine(user=nil)
+      joins{ watchings.outer }.where{ (challengee_id == my{user.id}) | (challenger_id == my{user.id}) | (watchings.user_id == my{user.id}) }
+    end
+    
+    def public(user=nil)
+      where{ public == true }
+    end
+    
+    def wins(user=nil)
+      where{ winner_id == challenger_id }
+    end
+    
+    def pushes(user=nil)
+      where{ winner_id == 0 }
+    end
+    
+    def losses(user=nil)
+      where{ winner_id == challengee_id }
+    end
+    
+    def challengee_accepted(user)
+      where{ (challengee_id == my{user.id}) & (accepted == true) }
+    end
+    
+    def challengee_rejected(user)
+      where{ (challengee_id == my{user.id}) & (accepted == false) }
+    end
+    
+    def challengee_pending(user)
+      where{ (challengee_id == my{user.id}) & (accepted == nil) & (expires_at >= my{Time.now}) }
+    end
+    
+    def challenger_accepted(user)
+      where{ (challenger_id == my{user.id}) & (accepted == true) }
+    end
+
+    def challenger_rejected(user)
+      where{ (challenger_id == my{user.id}) & (accepted == false) }
+    end
+
+    def challenger_pending(user)
+      where{ (challenger_id == my{user.id}) & (accepted == nil) & (expires_at >= my{Time.now}) }
+    end
+  end
+  
   def status
     if accepted.nil?
       if expires_at.present? && Time.now >= expires_at
