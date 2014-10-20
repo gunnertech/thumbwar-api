@@ -61,7 +61,7 @@ class Thumbwar < ActiveRecord::Base
     end
     
     def challengee_pending(user)
-      where{ (challengee_id == my{user.id}) & (accepted == nil) & (expires_at >= my{Time.now}) }
+      where{ (challengee_id == my{user.id}) & (accepted == nil) & ((expires_at == nil) || (expires_at >= my{Time.now})) }
     end
     
     def challenger_accepted(user)
@@ -73,7 +73,7 @@ class Thumbwar < ActiveRecord::Base
     end
 
     def challenger_pending(user)
-      where{ (challenger_id == my{user.id}) & (accepted == nil) & (expires_at >= my{Time.now}) }
+      where{ (challenger_id == my{user.id}) & (accepted == nil) & ((expires_at == nil) || (expires_at >= my{Time.now})) }
     end
   end
   
@@ -145,6 +145,7 @@ class Thumbwar < ActiveRecord::Base
   def make_connections
     challengee.followers << challenger unless challengee.follows?(challenger)
     challenger.followers << challengee unless challenger.follows?(challengee)
+    true
   end
   
   def send_challenge_alert
@@ -157,6 +158,7 @@ class Thumbwar < ActiveRecord::Base
   def send_outcome_alert
     challengee.alerts.create!(alertable: self, body: winner_id == 0 ? "One of your Thumbwars is a push." : "You #{(winner_id == challengee_id) ? "won" : "lost"} a Thumbwar!")
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
+    true
   end
   handle_asynchronously :send_outcome_alert
 
