@@ -4,9 +4,10 @@ class Thumbwar < ActiveRecord::Base
   alias_attribute :comments, :comment_threads
   
   attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
-    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
+    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, 
+    :minutes_remaining
     
-  attr_accessor :audience_members, :status, :expires_in
+  attr_accessor :audience_members, :status, :expires_in, :minutes_remaining
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
