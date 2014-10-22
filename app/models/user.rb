@@ -25,12 +25,17 @@ class User < ActiveRecord::Base
   validates :username, uniqueness: true, allow_blank: true
   
   before_save { |u| u.token = generate_token if token.blank? }
+  before_save :assign_avatar, unless: Proc.new{ |u| u.avatar.present? }
   after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
   after_save :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && !u.verified? }
   after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
   
   def to_s
     display_name    
+  end
+  
+  def assign_avatar
+    self.remote_avatar_url = "#{ENV['HOST']}/images/avatars/#{(1..28).to_a.sample}.png"
   end
 
   def display_name
@@ -167,4 +172,6 @@ class User < ActiveRecord::Base
   def send_invitation_wrapper
     send_invitation(verification_url)
   end
+  
+
 end
