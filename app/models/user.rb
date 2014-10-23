@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
   def assign_avatar
     self.remote_avatar_url = "#{ENV['HOST']}/images/avatars/#{(1..28).to_a.sample}.png"
   end
-  handle_asynchronously :assign_avatar
+  # handle_asynchronously :assign_avatar
 
   def display_name
     if display_full_name? && (first_name.present? || last_name.present?)
