@@ -25,9 +25,9 @@ class PhotoUploader < CarrierWave::Uploader::Base
     process :resize_to_fill => [1280,860]
   end
 
-  version :small do
-    process :resize_to_fill => [320,215]
-  end
+  # version :small do
+  #   process :resize_to_fill => [320,215]
+  # end
 
   # Process files as they are uploaded:
   # process :scale => [200, 300]

@@ -9,6 +9,6 @@ class AlertsController < InheritedResources::Base
 
   	@alerts = @alerts.where{ read == my{params[:read]} } if params[:read].present?
 
-  	@alerts
+  	@alerts.reorder{ id.desc }
   end
 end
