@@ -29,6 +29,7 @@ class Thumbwar < ActiveRecord::Base
   after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
   after_save :make_connections, if: Proc.new { |tw| tw.accepted? } 
   after_update :send_outcome_alert, if: Proc.new { |tw| tw.winner_id_changed? }
+  after_update :send_acceptance_alert, if: Proc.new { |tw| tw.accepted_changed? }
   after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
   
   class << self
@@ -108,6 +109,11 @@ class Thumbwar < ActiveRecord::Base
     
     expires_at <= 10.minutes.from_now
   end
+  
+  def send_acceptance_alert
+    challenger.alerts.create!(alertable: self, body: "#{challengee.display_name} #{(accepted? ? 'accepted' : 'rejected')} your ThumbWar")
+  end
+  handle_asynchronously :send_acceptance_alert
 
   def send_expiring_soon_alert
     challengee.alerts.create!(alertable: self, body: "Your Thumbwar is about to expire!") if expiring_soon?
