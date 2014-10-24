@@ -19,6 +19,7 @@ gem 'oauth2'
 gem 'oauth'
 gem 'twitter'
 gem 'koala'
+gem 'acts-as-taggable-on', '~> 3.4'
 
 group :development do
   gem "better_errors", "2.0.0"
