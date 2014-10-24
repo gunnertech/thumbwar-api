@@ -1,12 +1,13 @@
 class Thumbwar < ActiveRecord::Base
   mount_uploader :photo, PhotoUploader
   acts_as_commentable
+  acts_as_taggable
   alias_attribute :comments, :comment_threads
   
   attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
-    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
+    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, :raw_body
     
-  attr_accessor :audience_members, :status, :expires_in
+  attr_accessor :audience_members, :status, :expires_in, :raw_body
   
   belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
@@ -21,16 +22,21 @@ class Thumbwar < ActiveRecord::Base
 
   before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
   
+  before_save :set_challengee_from_raw_body, if: Proc.new { |tw| tw.raw_body.present? } 
+  before_save :set_wager_from_raw_body, if: Proc.new { |tw| tw.raw_body.present? } 
+  before_save :set_tag_list_from_raw_body, if: Proc.new { |tw| tw.raw_body.present? } 
+  
 
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
   after_create :post_to_facebook, if: Proc.new{ |tw| tw.publish_to_facebook? }
   after_create :complete_url, if: Proc.new { |tw| tw.url.present? }
   after_create :send_challenge_alert
   after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
+  after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
   after_save :make_connections, if: Proc.new { |tw| tw.accepted? } 
   after_update :send_outcome_alert, if: Proc.new { |tw| tw.winner_id_changed? }
   after_update :send_acceptance_alert, if: Proc.new { |tw| tw.accepted_changed? }
-  after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
+  
   
   class << self
     def mine(user=nil)
@@ -99,6 +105,28 @@ class Thumbwar < ActiveRecord::Base
   end
   
   protected
+  
+  def set_wager_from_raw_body
+    if matches = self.raw_body.match(/\$([^ ]+)/)
+      self.wager = matches[1]
+    end
+  end
+  
+  def set_challengee_from_raw_body
+    if matches = self.raw_body.match(/\@([^ ]+)/)
+      self.challengee = User.find_by_username(matches[1]) || User.find_by_mobile(matches[1])
+    end
+  end
+  
+  def set_tag_list_from_raw_body
+    _tags = []
+    raw_body.scan(/#[^ ]+/).each do |match|
+      _tags.push(match.gsub(/#/,""))
+    end
+    
+    self.tag_list = _tags.join(",")
+    
+  end
 
   def set_expires_at
     self.expires_at = expires_in.minutes.from_now
