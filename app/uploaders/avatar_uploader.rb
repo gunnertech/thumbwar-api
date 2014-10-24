@@ -33,13 +33,13 @@ class AvatarUploader < CarrierWave::Uploader::Base
     process :resize_to_fill => [400,400]
   end
   
-  version :medium do
-    process :resize_to_fit => [600,400]
-  end
-  
-  version :background do
-    process :resize_to_fill => [960,645]
-  end
+  # version :medium do
+  #   process :resize_to_fit => [600,400]
+  # end
+  #
+  # version :background do
+  #   process :resize_to_fill => [960,645]
+  # end
 
   version :large do
     process :resize_to_fit => [1200,800]
