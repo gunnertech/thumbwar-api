@@ -7,11 +7,11 @@ class User < ActiveRecord::Base
   attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :public, 
     :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username, :verification_url
 
-  attr_accessor :verification_url
+  attr_accessor :verification_url, :skip_confirmation_code
 
   belongs_to :inviter, class_name: "User", foreign_key: "inviter_id"
   
-  has_many :alerts
+  has_many :alerts, dependent: :destroy
   has_many :challenges, class_name: "Thumbwar", foreign_key: "challengee_id", dependent: :destroy
   has_many :followeeings, class_name: "Following", foreign_key: :follower_id, dependent: :destroy
   has_many :followees, through: :followeeings
@@ -25,19 +25,21 @@ class User < ActiveRecord::Base
   validates :username, uniqueness: true, allow_blank: true
   
   before_save { |u| u.token = generate_token if token.blank? }
-  before_save :assign_avatar, unless: Proc.new{ |u| u.avatar.present? }
+  after_save :assign_avatar, unless: Proc.new{ |u| u.avatar.present? }
   after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
-  after_save :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && !u.verified? }
+  after_save :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && !u.verified? & !u.skip_confirmation_code }
   after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
   
   def to_s
-    display_name    
+    display_name
   end
   
   def assign_avatar
+    self.skip_confirmation_code = true
     self.remote_avatar_url = "#{ENV['HOST']}/images/avatars/#{(1..28).to_a.sample}.png"
+    self.save!
   end
-  # handle_asynchronously :assign_avatar
+  handle_asynchronously :assign_avatar
 
   def display_name
     if display_full_name? && (first_name.present? || last_name.present?)
@@ -88,16 +90,19 @@ class User < ActiveRecord::Base
       nil
   end
 
-  def send_verification_code(verification_url=nil)
-    code = rand.to_s[2..7]
+  def send_verification_code(verification_url=nil, code=nil)
+    if code == nil
+      code = rand.to_s[2..7]
+  
+      update_column(:verification_code, code)
+    end
     
-    update_column(:verification_code, code)
     
     client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
     number = ENV['TWILIO_NUMBERS'].split(",").sample
 
     body = verification_url.present? ? 
-      "Please click this link to verify your ThumbWar mobile number #{verification_url}?code=#{verification_code}" :
+      "Click the link or enter code #{verification_code} to verify your ThumbWar mobile #{verification_url}?code=#{verification_code}" :
       "Please enter your verification code to confirm your ThumbWar mobile number: #{code}"
 
     client.account.sms.messages.create(
@@ -163,11 +168,15 @@ class User < ActiveRecord::Base
     self.followers << inviter
     inviter.followers << self
     
-    inviter.alerts.create(alertable: self, body: "Someone you invited just joined Thumbwar!")
+    inviter.alerts.create(alertable: self, body: "#{display_name} just joined Thumbwar!")
   end
 
   def send_verification_code_wrapper
-    send_verification_code(verification_url)
+    code = rand.to_s[2..7]
+
+    update_column(:verification_code, code)
+    
+    send_verification_code(verification_url,code)
   end
 
   def send_invitation_wrapper
