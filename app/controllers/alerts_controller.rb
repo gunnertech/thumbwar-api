@@ -3,7 +3,7 @@ class AlertsController < InheritedResources::Base
   
 
   def collection
-  	return @alerts if @alerts
+    # return @alerts if @alerts
 
   	@alerts = end_of_association_chain.where{ user_id == my{@current_user.id} }
 
