@@ -22,7 +22,8 @@ class PhotoUploader < CarrierWave::Uploader::Base
   end
 
   version :large do
-    process :resize_to_fill => [1280,860]
+    # process :resize_to_fill => [1280,860]
+    process :resize_to_limit => [1280,860]
   end
 
   # version :small do
@@ -52,5 +53,22 @@ class PhotoUploader < CarrierWave::Uploader::Base
   # def filename
   #   "something.jpg" if original_filename
   # end
+  
+  protected
+
+  def resize(width, height, gravity = 'Center')
+    manipulate! do |img|
+      img.combine_options do |cmd|
+        cmd.resize "#{width}"
+        if img[:width] < img[:height]
+          cmd.gravity gravity
+          cmd.background "rgba(255,255,255,0.0)"
+          cmd.extent "#{width}x#{height}"
+        end
+      end
+      img = yield(img) if block_given?
+      img
+    end
+  end
 
 end
