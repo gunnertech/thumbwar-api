@@ -19,7 +19,7 @@ class Comment < ActiveRecord::Base
 
   after_create :create_alert
 
-  default_scope order('id ASC')
+  default_scope { order('id ASC') }
 
   # Helper class method that allows you to build a comment
   # by passing a commentable object, a user_id, and comment text
