@@ -23,8 +23,13 @@ class PhotoUploader < CarrierWave::Uploader::Base
 
   version :large do
     # process :resize_to_fill => [1280,860]
-    process :resize_to_limit => [1280,860]
+    # process :resize_to_limit => [1280,860]
+    process :resize_to_fill => [900,900]
   end
+  
+  # version :square do
+  #   process :resize_to_fill => [900,900]
+  # end
 
   # version :small do
   #   process :resize_to_fill => [320,215]

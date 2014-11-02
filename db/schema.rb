@@ -22,8 +22,8 @@ ActiveRecord::Schema.define(version: 20141031005915) do
     t.integer  "user_id",                        null: false
     t.text     "body",                           null: false
     t.boolean  "read",           default: false
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "alerts", ["alertable_id", "alertable_type"], name: "index_alerts_on_alertable_id_and_alertable_type", using: :btree
@@ -39,8 +39,8 @@ ActiveRecord::Schema.define(version: 20141031005915) do
     t.integer  "parent_id"
     t.integer  "lft"
     t.integer  "rgt"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "photo"
   end
 
@@ -57,8 +57,8 @@ ActiveRecord::Schema.define(version: 20141031005915) do
     t.datetime "failed_at"
     t.string   "locked_by"
     t.string   "queue"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
@@ -66,8 +66,8 @@ ActiveRecord::Schema.define(version: 20141031005915) do
   create_table "followings", force: true do |t|
     t.integer  "followee_id", null: false
     t.integer  "follower_id", null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "followings", ["followee_id"], name: "index_followings_on_followee_id", using: :btree
@@ -95,32 +95,30 @@ ActiveRecord::Schema.define(version: 20141031005915) do
 
   create_table "thumbwars", force: true do |t|
     t.boolean  "accepted"
-    t.integer  "challengee_id",                       null: false
     t.integer  "challenger_id",                       null: false
     t.text     "body",                                null: false
     t.datetime "expires_at"
     t.boolean  "public",              default: true
     t.string   "wager"
     t.integer  "winner_id"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "url"
     t.string   "photo"
     t.boolean  "publish_to_twitter",  default: false
     t.boolean  "publish_to_facebook", default: false
   end
 
-  add_index "thumbwars", ["challengee_id"], name: "index_thumbwars_on_challengee_id", using: :btree
   add_index "thumbwars", ["challenger_id"], name: "index_thumbwars_on_challenger_id", using: :btree
   add_index "thumbwars", ["winner_id"], name: "index_thumbwars_on_winner_id", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "encrypted_password",               default: "",    null: false
+    t.string   "encrypted_password",               default: "",   null: false
     t.string   "facebook_token"
     t.string   "first_name"
     t.integer  "inviter_id"
     t.string   "last_name"
-    t.string   "mobile",                                           null: false
+    t.string   "mobile"
     t.boolean  "public",                           default: true
     t.boolean  "publish_to_facebook"
     t.boolean  "publish_to_twitter"
@@ -129,23 +127,24 @@ ActiveRecord::Schema.define(version: 20141031005915) do
     t.boolean  "sms_notifications",                default: true
     t.string   "token"
     t.string   "twitter_token"
-    t.string   "username",                         default: "",    null: false
-    t.datetime "created_at",                                       null: false
-    t.datetime "updated_at",                                       null: false
+    t.string   "username",                         default: "",   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "avatar"
     t.string   "verification_code"
-    t.boolean  "verified",                         default: false
+    t.boolean  "verified",                         default: true
     t.string   "twitter_username"
     t.integer  "twitter_id",             limit: 8
     t.string   "twitter_secret"
     t.datetime "facebook_expires_at"
-    t.integer  "facebook_id",            limit: 8
+    t.string   "facebook_id",                                     null: false
     t.string   "email"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", using: :btree
+  add_index "users", ["facebook_id"], name: "index_users_on_facebook_id", unique: true, using: :btree
   add_index "users", ["inviter_id"], name: "index_users_on_inviter_id", using: :btree
-  add_index "users", ["mobile"], name: "index_users_on_mobile", unique: true, using: :btree
+  add_index "users", ["mobile"], name: "index_users_on_mobile", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["token"], name: "index_users_on_token", unique: true, using: :btree
   add_index "users", ["username"], name: "index_users_on_username", using: :btree
@@ -153,8 +152,8 @@ ActiveRecord::Schema.define(version: 20141031005915) do
   create_table "watchings", force: true do |t|
     t.integer  "thumbwar_id"
     t.integer  "user_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "watchings", ["thumbwar_id"], name: "index_watchings_on_thumbwar_id", using: :btree
