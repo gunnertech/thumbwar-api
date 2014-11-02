@@ -4,27 +4,25 @@ class Thumbwar < ActiveRecord::Base
   acts_as_taggable
   alias_attribute :comments, :comment_threads
   
-  attr_accessible :challengee, :challengee_id, :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
-    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, :raw_body
+  attr_accessible :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
+    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
     
-  attr_accessor :audience_members, :status, :expires_in, :raw_body
+  attr_accessor :audience_members, :status, :expires_in
   
-  belongs_to :challengee, class_name: "User", foreign_key: "challengee_id"
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
   
   has_many :watchings
   has_many :watchers, through: :watchings, source: :user
   has_many :alerts, as: :alertable
   
-  validates :challengee_id, presence: true
+  # validates :challengee_id, presence: true
   validates :challenger_id, presence: true
   validates :body, presence: true
 
   before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
   
-  before_save :set_challengee_from_raw_body, if: Proc.new { |tw| tw.raw_body.present? } 
-  before_save :set_wager_from_raw_body, if: Proc.new { |tw| tw.raw_body.present? } 
-  before_save :set_tag_list_from_raw_body, if: Proc.new { |tw| tw.raw_body.present? } 
+  before_validation :set_properties_from_body, if: Proc.new { |tw| tw.body.present? }
+  
   
 
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
@@ -40,7 +38,7 @@ class Thumbwar < ActiveRecord::Base
   
   class << self
     def mine(user=nil)
-      joins{ watchings.outer }.where{ (challengee_id == my{user.id}) | (challenger_id == my{user.id}) | (watchings.user_id == my{user.id}) }
+      joins{ watchings.outer }.where{ (challenger_id == my{user.id}) | (watchings.user_id == my{user.id}) }
     end
     
     def public(user=nil)
@@ -84,6 +82,15 @@ class Thumbwar < ActiveRecord::Base
     end
   end
   
+  def set_properties_from_body
+    set_wager_from_body
+    set_tag_list_from_body
+  end
+  
+  def has_default_photo
+    !photo.present?
+  end
+  
   def status
     if accepted.nil?
       if expires_at.present? && Time.now >= expires_at
@@ -106,21 +113,16 @@ class Thumbwar < ActiveRecord::Base
   
   protected
   
-  def set_wager_from_raw_body
-    if matches = self.raw_body.match(/\$([^ ]+)/)
+  def set_wager_from_body
+    if matches = self.body.match(/\$([^ ]+)/)
       self.wager = matches[1]
     end
   end
   
-  def set_challengee_from_raw_body
-    if matches = self.raw_body.match(/\@([^ ]+)/)
-      self.challengee = User.find_by_username(matches[1]) || User.find_by_mobile(matches[1])
-    end
-  end
   
-  def set_tag_list_from_raw_body
+  def set_tag_list_from_body
     _tags = []
-    raw_body.scan(/#[^ ]+/).each do |match|
+    body.scan(/#[^ ]+/).each do |match|
       _tags.push(match.gsub(/#/,""))
     end
     
@@ -182,10 +184,10 @@ class Thumbwar < ActiveRecord::Base
   end
   
   def send_challenge_alert
-    challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ? 
-      "You've been challenged" : 
-      "#{challenger.first_name} #{challenger.last_name} has challenged you"} 
-      to a Thumbwar!".squish)
+    # challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ?
+    #   "You've been challenged" :
+    #   "#{challenger.first_name} #{challenger.last_name} has challenged you"}
+    #   to a Thumbwar!".squish)
   end
   
   def send_outcome_alert

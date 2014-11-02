@@ -59,9 +59,9 @@ class Comment < ActiveRecord::Base
       watcher.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
     end
 
-    if user != commentable.challengee
-      commentable.challengee.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
-    end
+    # if user != commentable.challengee
+    #   commentable.challengee.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
+    # end
     
     if user != commentable.challenger
       commentable.challenger.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")

@@ -5,7 +5,8 @@ class User < ActiveRecord::Base
   devise :recoverable
   
   attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :public, 
-    :publish_to_facebook, :publish_to_twitter, :sms_notifications, :token, :twitter_token, :username, :verification_url
+    :publish_to_facebook, :publish_to_twitter, :sms_notifications, :twitter_token, :username, :verification_url, 
+    :email, :facebook_id, :remote_avatar_url
 
   attr_accessor :verification_url, :skip_confirmation_code
 
@@ -21,14 +22,16 @@ class User < ActiveRecord::Base
   has_many :watchings, dependent: :destroy
   
 
-  validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}
+  validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
   validates :username, uniqueness: true, allow_blank: true
   
   before_save { |u| u.token = generate_token if token.blank? }
-  after_save :assign_avatar, unless: Proc.new{ |u| u.avatar.present? }
+  after_save :assign_avatar, unless: Proc.new{ |u| u.avatar.present? || u.remote_avatar_url.present? }
   after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
   after_save :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && !u.verified? & !u.skip_confirmation_code }
   after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
+  
+  before_validation :generate_username, on: :create, if: Proc.new{ |u| u.username.blank? }
   
   def to_s
     display_name
@@ -130,6 +133,18 @@ class User < ActiveRecord::Base
   handle_asynchronously :send_reset_password_token
 
   protected
+  
+  def generate_username(name = nil, attempt = nil)
+    name = name || "#{first_name}#{last_name}"
+    name = "#{name}_#{attempt}" if attempt
+    
+    if User.where{ username == my{name}}.count == 0
+      self.username = name
+    else
+      attempt = attempt ? attempt + 1 : 1
+      generate_username(name,attempt)
+    end
+  end
 
   def send_invitation(verification_url=nil)
     code = rand.to_s[2..7]

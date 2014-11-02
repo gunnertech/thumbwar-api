@@ -2,7 +2,6 @@ class CreateThumbwars < ActiveRecord::Migration
   def change
     create_table :thumbwars do |t|
       t.boolean :accepted
-      t.integer :challengee_id, null: false
       t.integer :challenger_id, null: false
       t.text :body, null: false
       t.datetime :expires_at
@@ -13,7 +12,6 @@ class CreateThumbwars < ActiveRecord::Migration
       t.timestamps
     end
     
-    add_index :thumbwars, :challengee_id
     add_index :thumbwars, :challenger_id
     add_index :thumbwars, :winner_id
   end

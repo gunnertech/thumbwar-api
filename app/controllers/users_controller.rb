@@ -24,18 +24,21 @@ class UsersController < InheritedResources::Base
   end
   
   def login
-    mobile_user = User.find_by_mobile(params[:login])
-    username_user = User.find_by_username(params[:login])
-    if mobile_user || username_user
-      @user = mobile_user if mobile_user && mobile_user.valid_password?(params[:password])
-      @user ||= username_user if username_user && username_user.valid_password?(params[:password])
-      if @user
-        @user.save if @user.token.nil?
+    if @user = User.find_by_facebook_id(params[:user][:facebook_id])
+      if @user.token == params[:user][:token]
+        # HOW DO WE HANDLE THIS? ISN'T IT POSSIBLE THAT A SINGLE USER COULD HAVE MULTIPLE TOKENS? AND IF SO, WHAT PREVENTS A SPOOFER FROM
+        # POSTING A FACEBOOK ID WITH SOME BULLSHIT TOKEN TO SIGN IN AS A USER?
       else
-        render status: 401, json: {error: "invalid password"}
+        params[:user].delete([:remote_avatar_url])
+        @user.update_attributes(params[:user])
       end
     else
-      render status: 404, json: {error: "user not found"}
+      @user = User.new(params[:user])
+      @user.save!
+    end
+    
+    unless @user.valid?
+      render status: 401, json: {error: "invalid token"}
     end
   end
 

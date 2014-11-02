@@ -6,12 +6,12 @@ class ApplicationController < ActionController::Base
   protected
   
   def current_user
-    @current_user ||= User.where{ (mobile == my{params[:mobile]}) & (token == my{params[:token]}) } if params[:token].present? && params[:mobile].present?
+    @current_user ||= User.where{ (facebook_id == my{params[:facebook_id]}) & (token == my{params[:token]}) } if params[:token].present? && params[:facebook_id].present?
   end
   
   def authenticate_from_token!
-    if params[:mobile]
-      if (user = User.find_by_mobile(params[:mobile]))
+    if params[:facebook_id]
+      if (user = User.find_by_facebook_id(params[:facebook_id]))
         if params[:token]
           if Devise.secure_compare(user.token, params[:token])
             @current_user = user

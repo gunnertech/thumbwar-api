@@ -30,7 +30,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
   end
   
   version :square do
-    process :resize_to_fill => [400,400]
+    process :resize_to_fill => [900,900]
   end
   
   # version :medium do
@@ -41,9 +41,9 @@ class AvatarUploader < CarrierWave::Uploader::Base
   #   process :resize_to_fill => [960,645]
   # end
 
-  version :large do
-    process :resize_to_fit => [1200,800]
-  end
+  # version :large do
+  #   process :resize_to_fit => [1200,800]
+  # end
 
   # Provide a default URL as a default if there hasn't been a file uploaded:
   # def default_url
