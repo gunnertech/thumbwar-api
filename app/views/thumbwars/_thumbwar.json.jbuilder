@@ -1,4 +1,4 @@
-json.(thumbwar, :id, :body, :expires_at, :status, :accepted, :winner_id, :url, :wager, :minutes_remaining, :created_at, :has_default_photo)
+json.(thumbwar, :id, :body, :expires_at, :url, :wager, :minutes_remaining, :created_at, :has_default_photo, :status, :public, :comments_count)
 
 json.challenger do
   json.partial! "users/user", user: thumbwar.challenger
@@ -6,6 +6,10 @@ end
 
 json.watchers do
   json.array! thumbwar.watchers, partial: "users/user", as: :user
+end
+
+json.challenges do
+  json.array! thumbwar.challenges, partial: "challenges/challenge", as: :challenge
 end
 
 json.comments do

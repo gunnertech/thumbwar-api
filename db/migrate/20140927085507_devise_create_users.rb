@@ -13,9 +13,11 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.string :reset_password_token
       t.datetime :reset_password_sent_at
       t.boolean :sms_notifications, default: true
+      t.boolean :email_notifications, default: true
       t.string :token
       t.string :twitter_token
       t.string :username, null: false, default: ""
+      t.integer :sign_in_count, null: false, default: 0
 
       t.timestamps
     end

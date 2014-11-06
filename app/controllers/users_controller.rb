@@ -1,43 +1,41 @@
 class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
-  skip_before_filter :authenticate_from_token!, only: [:register, :login, :forgot_password, :reset_password]
+  skip_before_filter :authenticate_from_token!, only: [:login]
   
-  def register
-    if password = params.delete(:password)
-      if params[:user][:mobile].present?
-        if (@user = User.find_by_mobile(params[:user][:mobile])) && !@user.verified?
-          @user.password = password
-          @user.verified = true if params[:code].present? && params[:code] == @user.verification_code
-
-          render status: 422, json: {errors: @user.errors} unless @user.update_attributes(params[:user])
-        else
-          @user = User.new(params[:user])
-          @user.password = password
-          render status: 422, json: {errors: @user.errors} unless @user.save
-        end
-      else
-        render status: 400, json: {error: "no [:user][:mobile] param"}
-      end
+  def show
+    if params[:id] == "me"
+      @user = current_user
     else
-      render status: 400, json: {errors: "no [:password] param"}
+      @user = User.find_by_user_name_or_id(params[:id])
     end
+    
+    show!
   end
-  
+    
   def login
-    if @user = User.find_by_facebook_id(params[:user][:facebook_id])
-      if @user.token == params[:user][:token]
-        # HOW DO WE HANDLE THIS? ISN'T IT POSSIBLE THAT A SINGLE USER COULD HAVE MULTIPLE TOKENS? AND IF SO, WHAT PREVENTS A SPOOFER FROM
-        # POSTING A FACEBOOK ID WITH SOME BULLSHIT TOKEN TO SIGN IN AS A USER?
-      else
-        params[:user].delete([:remote_avatar_url])
-        @user.update_attributes(params[:user])
+    if @user = User.find_by_facebook_token(params[:user][:facebook_token])
+      unless @user.facebook_id == params[:user][:facebook_id]
+        render status: 401, json: {error: "invalid token"}
       end
     else
       @user = User.new(params[:user])
-      @user.save!
+      profile_data = @user.facebook.get_object("me")
+      
+      if user = User.find_by_facebook_id(profile_data["id"])
+        @user = user
+        @user.facebook_token = params[:user][:facebook_token]
+      elsif params[:user][:mobile].present? && (user = User.find_by_mobile(params[:user][:mobile]))
+        if user.facebook_id.blank? ## THIS MEANS THEY WERE INVITED BY SOMEONE VIA MOBILE NUMBER
+          @user = user
+          @user.attributes = params[:user]
+        end
+      end
     end
     
-    unless @user.valid?
+    if @user.valid?
+      @user.sign_in_count = @user.sign_in_count + 1
+      @user.save!
+    else
       render status: 401, json: {error: "invalid token"}
     end
   end
@@ -47,57 +45,14 @@ class UsersController < InheritedResources::Base
     render status: 200, json: {}
   end
   
-  def verify
-    if params[:code] == @current_user.verification_code
-      if @current_user.valid_password?(params[:password])
-        @current_user.update_attribute(:verified, true)
-        @user = @current_user
-      else
-        render status: 401, json: {error: "invalid password"}
-      end
-    else
-      render status: 401, json: {error: "invalid code"}
-    end
-  end
-
-  def resend_verification
-    @current_user.send_verification_code(params[:verification_url])
-    render status: 200, json: {}
-  end
-
-  def forgot_password
-    if user = User.find_by_mobile(params[:login]) || User.find_by_username(params[:login])
-      if params[:url].present?
-        user.send_reset_password_token(params[:url])
-        render status: 200, json: {}
-      else
-        render status: 400, json: {error: "no [:url] param"}
-      end
-    else
-      render status: 404, json: {error: "user not found"}
-    end
-  end
-
-  def reset_password
-    if user = User.find_by_mobile_and_reset_password_token(params[:mobile], params[:reset_password_token])
-      if params[:password].present?
-        user.reset_password!(params[:password], nil)
-        render status: 200, json: {}
-      else
-        render status: 400, json: {error: "no [:password] param"}
-      end
-    else
-      render status: 404, json: {error: "user not found"}
-    end
-  end
-  
   def follow
-    User.find(params[:user_id]).followers << @current_user
+    @current_user.followees << User.find(params[:user_id])
     render status: 200, json: {}
   end
   
   def unfollow
-    Following.find_by_followee_id_and_follower_id(params[:user_id], @current_user.id).destroy rescue nil
+    @current_user.followees.delete(User.find(params[:user_id]))
+    # Following.find_by_followee_id_and_follower_id(params[:user_id], @current_user.id).destroy
     render status: 200, json: {}
   end
 
@@ -189,7 +144,7 @@ class UsersController < InheritedResources::Base
       if User.where{ username == my{params[:search]} }.count > 0
         User.where{ username == my{params[:search]} }
       else
-        User.where{ mobile == my{params[:search]} }
+        User.where{ facebook_id == my{params[:search]} }
       end
     else
       User.limit(10)

@@ -1,13 +1,10 @@
 Rails.application.routes.draw do
+  resources :challenges
+
   get "twitter_oauth", to: "users#twitter_oauth"
   get "facebook_oauth", to: "users#facebook_oauth"
-  post "register", to: "users#register"
-  put "verify", to: "users#verify"
-  post "resend_verification", to: "users#resend_verification"
   post "login", to: "users#login"
   delete "logout", to: "users#logout"
-  put "forgot_password", to: "users#forgot_password"
-  put "reset_password", to: "users#reset_password"
 
   resources :users do
     resources :thumbwars, only: :index
