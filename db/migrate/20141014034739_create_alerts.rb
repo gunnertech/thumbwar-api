@@ -5,6 +5,7 @@ class CreateAlerts < ActiveRecord::Migration
       t.integer :user_id, null: false
       t.text :body, null: false
       t.boolean :read, default: false
+      t.boolean :opened, default: false
 
       t.timestamps
     end

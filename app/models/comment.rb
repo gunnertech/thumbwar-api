@@ -58,10 +58,10 @@ class Comment < ActiveRecord::Base
     commentable.watchers.each do |watcher|
       watcher.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
     end
-
-    # if user != commentable.challengee
-    #   commentable.challengee.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")
-    # end
+    
+    commentable.challenges.where{status != 'rejected' }.each do |challenge|
+      challenge.user.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment") unless user == challenge.user
+    end
     
     if user != commentable.challenger
       commentable.challenger.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment")

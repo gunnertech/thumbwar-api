@@ -1,16 +1,7 @@
 class ThumbwarsController < InheritedResources::Base
-  belongs_to :user, optional: true
+  # belongs_to :user, optional: true
   
   before_filter :set_challenger_id, only: :create
-  
-  def show
-    @thumbwar = Thumbwar.find(params[:id])
-    if @thumbwar.challenger == current_user || @thumbwar.challengee == current_user
-      show!
-    else
-      render status: 403, json: {error: "No Authorized"}
-    end
-  end
   
   def watch
     @thumbwar = Thumbwar.find(params[:thumbwar_id])
@@ -40,8 +31,39 @@ class ThumbwarsController < InheritedResources::Base
   def collection
     return @thumbwars if @thumbwars
     
-    @thumbwars = params[:filter].present? ? 
-      Thumbwar.send(params[:filter].gsub(/\-/,"_"),current_user).order{ id.desc } : 
-      Thumbwar.public
+    @thumbwars = end_of_association_chain.reorder{ id.desc }
+    
+    if params[:user_id]
+      user = User.find_by_user_name_or_id(params[:user_id])
+    else
+      user = current_user
+    end
+    
+    if params[:view] == 'timeline'
+      my_thumbwar_ids = user.thumbwars.pluck('id')
+      followee_ids = user.followees.pluck('id')
+      followee_thumbwar_ids = Thumbwar.where{ (public == true) & (challenger_id >> my{followee_ids}) }.pluck('id')
+      challenge_thumbwar_ids = user.challenges.pluck('thumbwar_id')
+    
+      thumbwar_ids = my_thumbwar_ids + followee_thumbwar_ids + challenge_thumbwar_ids
+    
+
+      @thumbwars = @thumbwars.where{ id >> my{thumbwar_ids.uniq} }
+    elsif params[:view] == 'mine'
+      my_thumbwar_ids = user.thumbwars.pluck('id')
+      @thumbwars = @thumbwars.where{ id >> my{my_thumbwar_ids} }
+    else
+      @thumbwars = @thumbwars.where{ public == true }
+    end
+    
+    if params[:q].present?
+      if params[:q].start_with?('$')
+        @thumbwars = @thumbwars.where{ wager == my{params[:q].gsub(/^\$/,"")} }
+      elsif params[:q].start_with?('#')
+        @thumbwars = @thumbwars.tagged_with(params[:q].gsub(/^#/,""))
+      end
+    end
+    
+    @thumbwars
   end
 end

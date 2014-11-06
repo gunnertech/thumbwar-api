@@ -13,7 +13,8 @@ class User < ActiveRecord::Base
   belongs_to :inviter, class_name: "User", foreign_key: "inviter_id"
   
   has_many :alerts, dependent: :destroy
-  has_many :challenges, class_name: "Thumbwar", foreign_key: "challengee_id", dependent: :destroy
+  has_many :challenges
+  has_many :thumbwar_challenges, through: :challenges, class_name: "Thumbwar", foreign_key: :thumbwar_id
   has_many :followeeings, class_name: "Following", foreign_key: :follower_id, dependent: :destroy
   has_many :followees, through: :followeeings
   has_many :followerings, class_name: "Following", foreign_key: :followee_id, dependent: :destroy
@@ -24,17 +25,31 @@ class User < ActiveRecord::Base
 
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
   validates :username, uniqueness: true, allow_blank: true
-  
-  before_save { |u| u.token = generate_token if token.blank? }
-  after_save :assign_avatar, unless: Proc.new{ |u| u.avatar.present? || u.remote_avatar_url.present? }
-  after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.username_was.blank? && u.username.present? }
-  after_save :send_verification_code_wrapper, if: Proc.new{ |u| u.username.present? && !u.verified? & !u.skip_confirmation_code }
-  after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
+  validates :facebook_id, presence: true, uniqueness: true, allow_blank: true
   
   before_validation :generate_username, on: :create, if: Proc.new{ |u| u.username.blank? }
   
+  before_save { |u| u.token = generate_token if token.blank? }
+  
+  after_save :assign_avatar, unless: Proc.new{ |u| u.avatar.present? || u.remote_avatar_url.present? }
+  after_save :complete_invitation_acceptance, if: Proc.new{ |u| u.inviter_id.present? && u.facebook_id_was.blank? && u.facebook_id.present? }
+  
+  after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
+  after_create :create_welcome_alert
+  
+  class << self
+    def find_by_user_name_or_id(id)
+      find_by_email(id) || find(id)
+    end
+  end
+  
+  
   def to_s
     display_name
+  end
+  
+  def name
+    "#{first_name} #{last_name}"
   end
   
   def assign_avatar
@@ -93,50 +108,11 @@ class User < ActiveRecord::Base
       nil
   end
 
-  def send_verification_code(verification_url=nil, code=nil)
-    if code == nil
-      code = rand.to_s[2..7]
-  
-      update_column(:verification_code, code)
-    end
-    
-    
-    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
-    number = ENV['TWILIO_NUMBERS'].split(",").sample
-
-    body = verification_url.present? ? 
-      "Click the link or enter code #{verification_code} to verify your ThumbWar mobile #{verification_url}?code=#{verification_code}" :
-      "Please enter your verification code to confirm your ThumbWar mobile number: #{code}"
-
-    client.account.sms.messages.create(
-      from: "+1#{number}",
-      to: "+#{mobile}",
-      body: body
-    )
-  end
-  handle_asynchronously :send_verification_code
-  
-  def send_reset_password_token(url)
-    token = generate_reset_password_token
-    update_column(:reset_password_token, token)
-    update_column(:reset_password_sent_at, Time.now)
-    
-    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
-    number = ENV['TWILIO_NUMBERS'].split(",").sample
-
-    client.account.sms.messages.create(
-      from: "+1#{number}",
-      to: "+#{mobile}",
-      body: "Reset your ThumbWar password #{url}?reset_password_token=#{token}&mobile=#{mobile}"
-    )
-  end
-  handle_asynchronously :send_reset_password_token
-
   protected
   
   def generate_username(name = nil, attempt = nil)
     name = name || "#{first_name}#{last_name}"
-    name = "#{name}_#{attempt}" if attempt
+    name = "#{name}#{attempt}" if attempt
     
     if User.where{ username == my{name}}.count == 0
       self.username = name
@@ -147,20 +123,25 @@ class User < ActiveRecord::Base
   end
 
   def send_invitation(verification_url=nil)
-    code = rand.to_s[2..7]
-    
-    update_column(:verification_code, code)
+    if mobile
+      body = "#{inviter} wants you to join ThumbWar. Click the link to get started: #{verification_url}?mobile=#{mobile}"
+      client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+      number = ENV['TWILIO_NUMBERS'].split(",").sample
 
-    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
-    number = ENV['TWILIO_NUMBERS'].split(",").sample
-
-    body = "#{inviter} wants you to join ThumbWar. Click the link to get started: #{verification_url}?code=#{code}&mobile=#{mobile}"
-
-    client.account.sms.messages.create(
-      from: "+1#{number}",
-      to: "+#{mobile}",
-      body: body
-    )
+      client.account.sms.messages.create(
+        from: "+1#{number}",
+        to: "+#{mobile}",
+        body: body
+      )
+    else
+      body = "#{inviter} wants you to join ThumbWar. Click the link to get started: #{verification_url}?email=#{email}"
+      ActionMailer::Base.mail(
+        from: (inviter.email||"no-reply@thumbwarapp.com"), 
+        to: email, 
+        subject: "#{inviter} wants you to join ThumbWar", 
+        body: body
+      ).deliver rescue nil
+    end
   end
   handle_asynchronously :send_invitation
   
@@ -180,22 +161,18 @@ class User < ActiveRecord::Base
   
   def complete_invitation_acceptance
     
-    self.followers << inviter
+    # self.followers << inviter
     inviter.followers << self
     
     inviter.alerts.create(alertable: self, body: "#{display_name} just joined Thumbwar!")
   end
 
-  def send_verification_code_wrapper
-    code = rand.to_s[2..7]
-
-    update_column(:verification_code, code)
-    
-    send_verification_code(verification_url,code)
-  end
-
   def send_invitation_wrapper
     send_invitation(verification_url)
+  end
+  
+  def create_welcome_alert
+    alerts.create(alertable: self, body: "Get started with Thumbwar!")
   end
   
 

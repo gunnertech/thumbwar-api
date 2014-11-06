@@ -18,6 +18,9 @@ Rails.application.configure do
   log_level_env_override = Logger.const_get(ENV['LOG_LEVEL'].try(:upcase)) rescue nil
   config.logger.level = log_level_env_override || Logger.const_get(Rails.configuration.log_level.to_s.upcase)
   
+  config.action_mailer.delivery_method = :sendmail
+  config.action_mailer.perform_deliveries = true
+  
 
   config.active_support.deprecation = :log
 end

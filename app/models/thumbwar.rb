@@ -4,23 +4,23 @@ class Thumbwar < ActiveRecord::Base
   acts_as_taggable
   alias_attribute :comments, :comment_threads
   
-  attr_accessible :challenger, :challenger_id, :body, :expires_in, :status, :wager, 
-    :accepted, :winner_id, :audience_members, :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
+  attr_accessible :challenger, :challenger_id, :body, :expires_in, :wager, :status,
+    :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
     
-  attr_accessor :audience_members, :status, :expires_in
+  attr_accessor :expires_in
   
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
   
   has_many :watchings
   has_many :watchers, through: :watchings, source: :user
   has_many :alerts, as: :alertable
+  has_many :challenges
+  has_many :opponents, through: :challenges, foreign_key: :user_id, source: :user
   
-  # validates :challengee_id, presence: true
   validates :challenger_id, presence: true
   validates :body, presence: true
 
   before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
-  
   before_validation :set_properties_from_body, if: Proc.new { |tw| tw.body.present? }
   
   
@@ -28,58 +28,18 @@ class Thumbwar < ActiveRecord::Base
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
   after_create :post_to_facebook, if: Proc.new{ |tw| tw.publish_to_facebook? }
   after_create :complete_url, if: Proc.new { |tw| tw.url.present? }
-  after_create :send_challenge_alert
-  after_create :send_notice_to_audience_members_wrapper, if: Proc.new { |tw| tw.audience_members.present? }
   after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
-  after_save :make_connections, if: Proc.new { |tw| tw.accepted? } 
-  after_update :send_outcome_alert, if: Proc.new { |tw| tw.winner_id_changed? }
-  after_update :send_acceptance_alert, if: Proc.new { |tw| tw.accepted_changed? }
+  
+  after_update :send_outcome_alert, if: Proc.new { |tw| tw.status_changed? }
+  
+  after_save :add_opponents, if: Proc.new { |tw| tw.body.present? } 
   
   
   class << self
-    def mine(user=nil)
-      joins{ watchings.outer }.where{ (challenger_id == my{user.id}) | (watchings.user_id == my{user.id}) }
-    end
-    
-    def public(user=nil)
-      where{ public == true }
-    end
-    
-    def wins(user=nil)
-      where{ winner_id == challenger_id }
-    end
-    
-    def pushes(user=nil)
-      where{ winner_id == 0 }
-    end
-    
-    def losses(user=nil)
-      where{ winner_id == challengee_id }
-    end
-    
-    def challengee_accepted(user)
-      where{ (challengee_id == my{user.id}) & (accepted == true) }
-    end
-    
-    def challengee_rejected(user)
-      where{ (challengee_id == my{user.id}) & (accepted == false) }
-    end
-    
-    def challengee_pending(user)
-      where{ (challengee_id == my{user.id}) & (accepted == nil) & ((expires_at == nil) || (expires_at >= my{Time.now})) }
-    end
-    
-    def challenger_accepted(user)
-      where{ (challenger_id == my{user.id}) & (accepted == true) }
-    end
-
-    def challenger_rejected(user)
-      where{ (challenger_id == my{user.id}) & (accepted == false) }
-    end
-
-    def challenger_pending(user)
-      where{ (challenger_id == my{user.id}) & (accepted == nil) & ((expires_at == nil) || (expires_at >= my{Time.now})) }
-    end
+  end
+  
+  def comments_count
+    comments.count
   end
   
   def set_properties_from_body
@@ -90,23 +50,7 @@ class Thumbwar < ActiveRecord::Base
   def has_default_photo
     !photo.present?
   end
-  
-  def status
-    if accepted.nil?
-      if expires_at.present? && Time.now >= expires_at
-        "expired"
-      else
-        "pending"
-      end
-    else
-      if winner_id.nil?
-        accepted ? "accepted" : "rejected"
-      else
-        winner_id == 0 ? "push" : winner_id == challenger_id ? "win" : "loss"
-      end
-    end
-  end
-  
+    
   def minutes_remaining
     ((expires_at - Time.now)/60).round if expires_at
   end
@@ -114,15 +58,28 @@ class Thumbwar < ActiveRecord::Base
   protected
   
   def set_wager_from_body
-    if matches = self.body.match(/\$([^ ]+)/)
+    if matches = body.match(/\$([^ \-]+)/)
       self.wager = matches[1]
+    end
+  end
+  
+  def add_opponents
+    body.scan(/@[^ \-]+/).each do |match|
+      user = User.where{ lower(username) == my{match.gsub(/@/,"").try(:downcase)} }.first
+      
+      if user && !opponents.include?(user)
+        c = challenges.build
+        c.user = user
+        c.challenger = challenger
+        c.save!
+      end
     end
   end
   
   
   def set_tag_list_from_body
     _tags = []
-    body.scan(/#[^ ]+/).each do |match|
+    body.scan(/#[^ \-]+/).each do |match|
       _tags.push(match.gsub(/#/,""))
     end
     
@@ -135,39 +92,41 @@ class Thumbwar < ActiveRecord::Base
   end
 
   def expiring_soon?
-    return false if status != 'pending' || expires_at.nil? || expires_at - created_at < 20.minutes
+    return false if expires_at.nil? || expires_at - created_at < 20.minutes
     
     expires_at <= 10.minutes.from_now
   end
-  
-  def send_acceptance_alert
-    challenger.alerts.create!(alertable: self, body: "#{challengee.display_name} #{(accepted? ? 'accepted' : 'rejected')} your ThumbWar")
-  end
-  handle_asynchronously :send_acceptance_alert
 
   def send_expiring_soon_alert
-    challengee.alerts.create!(alertable: self, body: "Your Thumbwar is about to expire!") if expiring_soon?
+    challenges.where{ status == 'pending' }.each do |challenge|
+      challenge.user.alerts.create!(alertable: self, body: "Your Thumbwar is about to expire!") if expiring_soon?
+    end
   end
   handle_asynchronously :send_expiring_soon_alert, run_at: Proc.new { |tw| (tw.expires_in.minutes - 10.minutes).from_now }
 
-  def send_expired_alert
-    challengee.alerts.create!(alertable: self, body: "Your Thumbwar expired!") if status == 'expired'
-  end
-  handle_asynchronously :send_expired_alert, run_at: Proc.new { |tw| (tw.expires_in.minutes + 1.minute).from_now }
-
-  def twitter_challengee_text
-    challengee.twitter_username || challengee.display_name
+  
+  def twitter_body
+    _body = body
+    body.scan(/@[^ ]+/).each do |match|
+      user = User.where{ lower(username) == my{match.gsub(/@/,"").try(:downcase)} }.first
+      if user
+        name = user.twitter_username.present? ? "@#{user.twitter_username}" : ""
+        _body = _body.gsub(Regexp.new(match),name)
+      end
+    end
+    
+    _body
   end
 
   def post_to_twitter
-    challenger.twitter.update("#{body} $#{wager} #{url} /cc #{twitter_challengee_text}" ) rescue nil
+    challenger.twitter.update("#{twitter_body} #{url}" ) rescue nil
   end
   handle_asynchronously :post_to_twitter
 
   def post_to_facebook
     challenger.facebook.put_connections("me", "links", 
       link: url.gsub(/localhost/,"test.com"),
-      name: "Thumbwar: #{challengee.display_name}",
+      name: "Thumbwar Challenge!",
       message: body,
       picture: photo.url
     )
@@ -177,40 +136,19 @@ class Thumbwar < ActiveRecord::Base
   def complete_url
     update_column(:url, url.gsub(/\{id\}/,id.to_s))
   end
-
-  def make_connections
-    challengee.followers << challenger unless challengee.followers.include?(challenger)
-    challenger.followers << challengee unless challenger.followers.include?(challengee)
-  end
-  
-  def send_challenge_alert
-    # challengee.alerts.create!(alertable: self, body: "#{challenger.to_s.blank? ?
-    #   "You've been challenged" :
-    #   "#{challenger.first_name} #{challenger.last_name} has challenged you"}
-    #   to a Thumbwar!".squish)
-  end
-  
+    
   def send_outcome_alert
-    challengee.alerts.create!(alertable: self, body: winner_id == 0 ? "One of your Thumbwars is a push." : "You #{(winner_id == challengee_id) ? "won" : "lost"} a Thumbwar!")
+    challenges.where{ status == 'accepted' }.each do |challenge|
+      new_outcome = status == 'push' ? 'push' : status == 'house_won' ? 'loss' : status == 'house_lost' ? 'win' : nil
+      if new_outcome
+        challenge.outcome = new_outcome
+        challenge.save!
+      end
+      
+    end
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
   end
   handle_asynchronously :send_outcome_alert
 
-  def send_notice_to_audience_members_wrapper
-    send_notice_to_audience_members(audience_members)    
-  end
-
-  def send_notice_to_audience_members(audience_members)
-    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
-    audience_members.each do |user|
-      number = ENV['TWILIO_NUMBERS'].split(",").sample
-      client.account.sms.messages.create(
-        from: "+1#{number}",
-        to: "+#{user["mobile"]}",
-        body: "#{challenger} wants you to see a Thumbwar. #{url}"
-      )
-    end
-  end
-  handle_asynchronously :send_notice_to_audience_members
 
 end

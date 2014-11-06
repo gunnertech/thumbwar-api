@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141031005915) do
+ActiveRecord::Schema.define(version: 20141102211537) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,12 +22,27 @@ ActiveRecord::Schema.define(version: 20141031005915) do
     t.integer  "user_id",                        null: false
     t.text     "body",                           null: false
     t.boolean  "read",           default: false
+    t.boolean  "opened",         default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "alerts", ["alertable_id", "alertable_type"], name: "index_alerts_on_alertable_id_and_alertable_type", using: :btree
   add_index "alerts", ["user_id"], name: "index_alerts_on_user_id", using: :btree
+
+  create_table "challenges", force: true do |t|
+    t.integer  "user_id",                           null: false
+    t.integer  "thumbwar_id",                       null: false
+    t.string   "status",        default: "pending", null: false
+    t.string   "outcome"
+    t.integer  "challenger_id",                     null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "challenges", ["challenger_id"], name: "index_challenges_on_challenger_id", using: :btree
+  add_index "challenges", ["thumbwar_id"], name: "index_challenges_on_thumbwar_id", using: :btree
+  add_index "challenges", ["user_id"], name: "index_challenges_on_user_id", using: :btree
 
   create_table "comments", force: true do |t|
     t.integer  "commentable_id",   default: 0
@@ -94,13 +109,12 @@ ActiveRecord::Schema.define(version: 20141031005915) do
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
 
   create_table "thumbwars", force: true do |t|
-    t.boolean  "accepted"
-    t.integer  "challenger_id",                       null: false
-    t.text     "body",                                null: false
+    t.integer  "challenger_id",                               null: false
+    t.text     "body",                                        null: false
     t.datetime "expires_at"
     t.boolean  "public",              default: true
     t.string   "wager"
-    t.integer  "winner_id"
+    t.string   "status",              default: "in_progress", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "url"
@@ -110,7 +124,6 @@ ActiveRecord::Schema.define(version: 20141031005915) do
   end
 
   add_index "thumbwars", ["challenger_id"], name: "index_thumbwars_on_challenger_id", using: :btree
-  add_index "thumbwars", ["winner_id"], name: "index_thumbwars_on_winner_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "encrypted_password",               default: "",   null: false
@@ -125,9 +138,11 @@ ActiveRecord::Schema.define(version: 20141031005915) do
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.boolean  "sms_notifications",                default: true
+    t.boolean  "email_notifications",              default: true
     t.string   "token"
     t.string   "twitter_token"
     t.string   "username",                         default: "",   null: false
+    t.integer  "sign_in_count",                    default: 0,    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "avatar"
@@ -137,12 +152,12 @@ ActiveRecord::Schema.define(version: 20141031005915) do
     t.integer  "twitter_id",             limit: 8
     t.string   "twitter_secret"
     t.datetime "facebook_expires_at"
-    t.string   "facebook_id",                                     null: false
+    t.string   "facebook_id"
     t.string   "email"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", using: :btree
-  add_index "users", ["facebook_id"], name: "index_users_on_facebook_id", unique: true, using: :btree
+  add_index "users", ["facebook_id"], name: "index_users_on_facebook_id", using: :btree
   add_index "users", ["inviter_id"], name: "index_users_on_inviter_id", using: :btree
   add_index "users", ["mobile"], name: "index_users_on_mobile", using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
