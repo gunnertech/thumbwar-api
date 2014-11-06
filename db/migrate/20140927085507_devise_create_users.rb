@@ -18,6 +18,9 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.string :twitter_token
       t.string :username, null: false, default: ""
       t.integer :sign_in_count, null: false, default: 0
+      t.integer :wins, null: false, default: 0
+      t.integer :losses, null: false, default: 0
+      t.integer :pushes, null: false, default: 0
 
       t.timestamps
     end

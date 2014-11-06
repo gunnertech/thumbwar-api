@@ -31,6 +31,7 @@ class Thumbwar < ActiveRecord::Base
   after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
   
   after_update :send_outcome_alert, if: Proc.new { |tw| tw.status_changed? }
+  after_update :update_challenger_record, if: Proc.new { |tw| tw.status_changed? }
   
   after_save :add_opponents, if: Proc.new { |tw| tw.body.present? } 
   
@@ -135,6 +136,26 @@ class Thumbwar < ActiveRecord::Base
 
   def complete_url
     update_column(:url, url.gsub(/\{id\}/,id.to_s))
+  end
+  
+  def update_challenger_record
+    if status_was == 'house_won'
+      challenger.decrement(:wins)
+    elsif status_was == 'house_lost'
+      challenger.decrement(:losses)
+    elsif status_was == 'push'
+      challenger.decrement(:pushes)
+    end
+    
+    if status == 'house_won'
+      challenger.increment(:wins)
+    elsif status == 'house_lost'
+      challenger.increment(:losses)
+    elsif status == 'push'
+      challenger.increment(:pushes)
+    end
+    
+    challenger.save!
   end
     
   def send_outcome_alert

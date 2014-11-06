@@ -1,4 +1,4 @@
-json.(alert, :id, :body, :alertable_type)
+json.(alert, :id, :body, :alertable_type, :read, :opened)
 
 json.alertable do
   if alert.alertable.is_a? User
