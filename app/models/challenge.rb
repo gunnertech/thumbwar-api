@@ -27,6 +27,23 @@ class Challenge < ActiveRecord::Base
   end
   
   def create_outcome_alert
+    if outcome_was == 'win'
+      user.decrement(:wins)
+    elsif outcome_was == 'loss'
+      user.decrement(:losses)
+    elsif outcome_was == 'push'
+      user.decrement(:pushes)
+    end
+    
+    if outcome == 'win'
+      user.increment(:wins)
+    elsif outcome == 'loss'
+      user.increment(:losses)
+    elsif outcome == 'push'
+      user.increment(:pushes)
+    end
+    
+    user.save!
     user.alerts.create!(alertable: thumbwar, body: outcome == 'push' ? "One of your Thumbwars is a push." : "You #{(outcome == 'win') ? "won" : "lost"} a Thumbwar!")
   end
 end

@@ -143,6 +143,9 @@ ActiveRecord::Schema.define(version: 20141102211537) do
     t.string   "twitter_token"
     t.string   "username",                         default: "",   null: false
     t.integer  "sign_in_count",                    default: 0,    null: false
+    t.integer  "wins",                             default: 0,    null: false
+    t.integer  "losses",                           default: 0,    null: false
+    t.integer  "pushes",                           default: 0,    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "avatar"
