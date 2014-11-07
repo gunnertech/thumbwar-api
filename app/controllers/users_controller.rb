@@ -141,7 +141,13 @@ class UsersController < InheritedResources::Base
         User.limit(10)
       end
     elsif params[:search]
-      if User.where{ username == my{params[:search]} }.count > 0
+      if params[:search].match(/@/)
+        User.where{ email == my{params[:search]} }
+      elsif !params[:search].gsub(/[^a-zA-Z]/,"").match(/\D/)
+        search = params[:search].gsub(/\D/,"")
+        search = "1#{search}" if search.length < 11
+        User.where{ mobile == my{search} }
+      elsif User.where{ username == my{params[:search]} }.count > 0
         User.where{ username == my{params[:search]} }
       else
         User.where{ facebook_id == my{params[:search]} }
