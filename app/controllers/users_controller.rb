@@ -6,7 +6,7 @@ class UsersController < InheritedResources::Base
     if params[:id] == "me"
       @user = current_user
     else
-      @user = User.find_by_user_name_or_id(params[:id])
+      @user = User.find_by_username_or_id(params[:id])
     end
     
     show!
@@ -141,7 +141,10 @@ class UsersController < InheritedResources::Base
         User.limit(10)
       end
     elsif params[:search]
-      if params[:search].match(/@/)
+      if params[:search].match(/,/)
+        searches = params[:search].split(",")
+        User.where{ (email >> my{searches}) | (mobile >> my{searches}) }
+      elsif params[:search].match(/@/)
         User.where{ email == my{params[:search]} }
       elsif !params[:search].gsub(/[^a-zA-Z]/,"").match(/\D/)
         search = params[:search].gsub(/\D/,"")
