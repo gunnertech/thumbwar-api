@@ -34,7 +34,7 @@ class ThumbwarsController < InheritedResources::Base
     @thumbwars = end_of_association_chain.reorder{ id.desc }
     
     if params[:user_id]
-      user = User.find_by_user_name_or_id(params[:user_id])
+      user = User.find_by_username_or_id(params[:user_id])
     else
       user = current_user
     end
