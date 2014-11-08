@@ -41,7 +41,7 @@ class UsersController < InheritedResources::Base
   end
 
   def logout
-    @current_user.update_attribute(:token, nil)
+    @current_user.update_attribute(:token, nil) if @current_user
     render status: 200, json: {}
   end
   
