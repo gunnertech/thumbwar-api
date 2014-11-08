@@ -1,6 +1,6 @@
 class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
-  skip_before_filter :authenticate_from_token!, only: [:login]
+  skip_before_filter :authenticate_from_token!, only: [:login, :logout]
   
   def show
     if params[:id] == "me"
