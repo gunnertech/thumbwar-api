@@ -38,8 +38,8 @@ class User < ActiveRecord::Base
   after_create :create_welcome_alert
   
   class << self
-    def find_by_user_name_or_id(id)
-      find_by_email(id) || find(id)
+    def find_by_username_or_id(id)
+      find_by_username(id) || find(id)
     end
   end
   
