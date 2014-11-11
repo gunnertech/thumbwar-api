@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
         render status: 404, json: {error: "user not found"}
       end
     else
-      render status: 400, json: {error: "no [:mobile] param"}
+      render status: 400, json: {error: "no [:facebook_id] param"}
     end
   end
 end

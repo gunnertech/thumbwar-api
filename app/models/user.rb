@@ -172,7 +172,7 @@ class User < ActiveRecord::Base
   end
   
   def create_welcome_alert
-    alerts.create(alertable: self, body: "Get started with Thumbwar!")
+    alerts.create(alertable: self, body: "Get started with ThumbWar! (This will be a three-step wizard that will walk new users through ThumbWar)")
   end
   
 
