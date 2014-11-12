@@ -10,3 +10,7 @@ json.avatar do |avatar|
   # avatar.lage_url user.avatar.large.url
   # avatar.url user.avatar.url
 end
+
+json.devices do
+  json.array! user.devices, partial: "devices/device", as: :device
+end

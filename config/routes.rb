@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :devices
+
   resources :challenges
 
   get "twitter_oauth", to: "users#twitter_oauth"
