@@ -1,0 +1,1 @@
+json.(device, :id, :token, :user_id, :device_type)

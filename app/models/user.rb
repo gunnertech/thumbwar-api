@@ -21,6 +21,8 @@ class User < ActiveRecord::Base
   has_many :followers, through: :followerings
   has_many :thumbwars, foreign_key: "challenger_id", dependent: :destroy
   has_many :watchings, dependent: :destroy
+  has_many :devices, dependent: :destroy
+  
   
 
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
