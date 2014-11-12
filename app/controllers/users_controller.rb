@@ -90,7 +90,7 @@ class UsersController < InheritedResources::Base
 
       redirect_to session[:return_to]
     else
-      request_token = consumer.get_request_token(:oauth_callback => "#{ENV['HOST']}/twitter_oauth?token=#{params[:token]}&mobile=#{params[:mobile]}")
+      request_token = consumer.get_request_token(:oauth_callback => "#{ENV['HOST']}/twitter_oauth?token=#{params[:token]}&facebook_id=#{params[:facebook_id]}")
 
       session[:token] = request_token.token.to_s
       session[:secret] = request_token.secret.to_s
