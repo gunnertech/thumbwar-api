@@ -112,6 +112,7 @@ GEM
       dotenv (~> 0.11.1)
       thor (~> 0.19.1)
     formatador (0.2.5)
+    grocer (0.6.0)
     has_scope (0.6.0.rc)
       actionpack (>= 3.2, < 5)
       activesupport (>= 3.2, < 5)
@@ -243,6 +244,7 @@ DEPENDENCIES
   devise (= 3.4.0)
   fog (= 1.24.0)
   foreman (= 0.75.0)
+  grocer
   inherited_resources (= 1.5.0)
   jbuilder (= 2.2.4)
   koala (= 1.10.1)
