@@ -37,7 +37,7 @@ class Alert < ActiveRecord::Base
       notification = Grocer::Notification.new(
         device_token:      device.token,
         alert:             body,
-        badge:             user.alerts.count
+        badge:             user.alerts.where{ read == false }.count
         # category:          "a category",         # optional; used for custom notification actions
         # sound:             "siren.aiff",         # optional
         # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
