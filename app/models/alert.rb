@@ -9,6 +9,7 @@ class Alert < ActiveRecord::Base
   validates :user_id, presence: true
   
   after_create :send_sms, if: Proc.new { |a| a.user.mobile.present? && a.user.sms_notifications? && !a.user.facebook_id.blank? }
+  after_create :send_push
   after_create :send_email, if: Proc.new { |a| a.user.email.present? && a.user.email_notifications? && !a.user.facebook_id.blank? }
   
   def url
@@ -32,19 +33,22 @@ class Alert < ActiveRecord::Base
       # retries:     3                         # optional
     )
     
-    notification = Grocer::Notification.new(
-      device_token:      "4055dc48a67d7f7656a7a01fb4159964f4f6d81de1d22ae67703f44195544f56",
-      alert:             "Hello from Grocer!",
-      badge:             1
-      # category:          "a category",         # optional; used for custom notification actions
-      # sound:             "siren.aiff",         # optional
-      # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
-      # identifier:        1234,                 # optional; must be an integer
-      # content_available: true                  # optional; any truthy value will set 'content-available' to 1
-    )
+    user.devices.where{ device_type == 'ios' }.each do |device|
+      notification = Grocer::Notification.new(
+        device_token:      device.token,
+        alert:             body,
+        badge:             user.alerts.count
+        # category:          "a category",         # optional; used for custom notification actions
+        # sound:             "siren.aiff",         # optional
+        # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
+        # identifier:        1234,                 # optional; must be an integer
+        # content_available: true                  # optional; any truthy value will set 'content-available' to 1
+      )
 
-    pusher.push(notification)
+      pusher.push(notification)
+    end
   end
+  handle_asynchronously :send_push
   
   def send_sms
     client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
