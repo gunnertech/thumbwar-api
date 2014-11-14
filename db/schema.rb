@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141112222828) do
+ActiveRecord::Schema.define(version: 20141114052059) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,6 +182,7 @@ ActiveRecord::Schema.define(version: 20141112222828) do
     t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "side"
   end
 
   add_index "watchings", ["thumbwar_id"], name: "index_watchings_on_thumbwar_id", using: :btree
