@@ -5,7 +5,12 @@ class ThumbwarsController < InheritedResources::Base
   
   def watch
     @thumbwar = Thumbwar.find(params[:thumbwar_id])
-    @thumbwar.watchers << @current_user
+    @watching = Watching.new
+    @watching.side = params[:side]
+    @watching.user = @current_user
+    @watching.thumbwar = @thumbwar
+    
+    @watching.save!
   end
   
   def unwatch

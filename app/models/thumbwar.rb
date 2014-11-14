@@ -139,17 +139,17 @@ class Thumbwar < ActiveRecord::Base
   end
   
   def update_challenger_record
-    if status_was == 'house_won'
+    if status_was == 'win'
       challenger.decrement(:wins)
-    elsif status_was == 'house_lost'
+    elsif status_was == 'loss'
       challenger.decrement(:losses)
     elsif status_was == 'push'
       challenger.decrement(:pushes)
     end
     
-    if status == 'house_won'
+    if status == 'win'
       challenger.increment(:wins)
-    elsif status == 'house_lost'
+    elsif status == 'loss'
       challenger.increment(:losses)
     elsif status == 'push'
       challenger.increment(:pushes)
@@ -160,7 +160,7 @@ class Thumbwar < ActiveRecord::Base
     
   def send_outcome_alert
     challenges.where{ status == 'accepted' }.each do |challenge|
-      new_outcome = status == 'push' ? 'push' : status == 'house_won' ? 'loss' : status == 'house_lost' ? 'win' : nil
+      new_outcome = status == 'push' ? 'push' : status == 'win' ? 'loss' : status == 'loss' ? 'win' : nil
       if new_outcome
         challenge.outcome = new_outcome
         challenge.save!
