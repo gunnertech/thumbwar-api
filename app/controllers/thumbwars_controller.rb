@@ -69,6 +69,16 @@ class ThumbwarsController < InheritedResources::Base
       end
     end
     
+    if params[:last].present? && params[:last].to_i > 0
+      @thumbwars = @thumbwars.where{ id < my{params[:last].to_i}}
+    end
+    
+    if params[:newest].present? && params[:newest].to_i > 0
+      @thumbwars = @thumbwars.where{ id > my{params[:newest].to_i}}
+    end
+    
+    @thumbwars = @thumbwars.limit(10)
+    
     @thumbwars
   end
 end
