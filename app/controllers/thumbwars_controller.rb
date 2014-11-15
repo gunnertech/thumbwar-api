@@ -38,10 +38,10 @@ class ThumbwarsController < InheritedResources::Base
     
     @thumbwars = end_of_association_chain.reorder{ id.desc }
     
-    if params[:user_id]
-      user = User.find_by_username_or_id(params[:user_id])
-    else
+    if params[:user_id].blank? || params[:user_id] == "me"
       user = current_user
+    else
+      user = User.find_by_username_or_id(params[:user_id])
     end
     
     if params[:view] == 'timeline'
