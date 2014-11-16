@@ -39,8 +39,8 @@ class Alert < ActiveRecord::Base
         alert:             body,
         badge:             (user.alerts.where{ read == false }.count),
         custom: {
-          "message": body,
-          "url": url
+          message: body,
+          url: url
         }
         
         # category:          "a category",         # optional; used for custom notification actions
