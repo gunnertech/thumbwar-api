@@ -34,20 +34,21 @@ class Alert < ActiveRecord::Base
     )
     
     user.devices.where{ device_type == 'ios' }.each do |device|
+      
+      # category:          "a category",         # optional; used for custom notification actions
+      # sound:             "siren.aiff",         # optional
+      # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
+      # identifier:        1234,                 # optional; must be an integer
+      # content_available: true                  # optional; any truthy value will set 'content-available' to 1
       notification = Grocer::Notification.new(
         device_token:      device.token,
         alert:             body,
         badge:             (user.alerts.where{ read == false }.count),
+        content_available: true,
         custom: {
           message: body,
           url: url
         }
-        
-        # category:          "a category",         # optional; used for custom notification actions
-        # sound:             "siren.aiff",         # optional
-        # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
-        # identifier:        1234,                 # optional; must be an integer
-        # content_available: true                  # optional; any truthy value will set 'content-available' to 1
       )
 
       pusher.push(notification)
