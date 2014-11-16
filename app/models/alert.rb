@@ -38,15 +38,16 @@ class Alert < ActiveRecord::Base
         device_token:      device.token,
         alert:             body,
         badge:             (user.alerts.where{ read == false }.count),
+        custom: {
+          "message": body,
+          "url": url
+        }
+        
         # category:          "a category",         # optional; used for custom notification actions
         # sound:             "siren.aiff",         # optional
         # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
         # identifier:        1234,                 # optional; must be an integer
         # content_available: true                  # optional; any truthy value will set 'content-available' to 1
-        custom: {
-          "message": body,
-          "url": url
-        }
       )
 
       pusher.push(notification)
