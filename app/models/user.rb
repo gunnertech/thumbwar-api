@@ -41,7 +41,7 @@ class User < ActiveRecord::Base
   
   class << self
     def find_by_username_or_id(id)
-      find_by_username(id) || find(id)
+      User.where{ lower(username) == my{id.to_s.downcase} }.first || find(id)
     end
   end
   
