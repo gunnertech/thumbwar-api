@@ -1,44 +1,35 @@
 You need to pass two parameters with every single request:
 
-token: User's unique authentication token returned after signing up or logging in.
-mobile: User's mobile number.
+token: User's unique authentication token returned after authenticating with Facebook.
+facebook_id: User's unique facebook id, obtained during the first authentication.
 
-There are only two requests where that's not the case:
-
-POST /register
-
-Params
-  mobile (required)
-  username
-  password
-  first_name
-  last_name
-  sms_notifications
-  public
-  inviter_id
-
-Sample Response
-  {
-    "user":{
-      "first_name":null,
-      "id":2,
-      "last_name":null,
-      "mobile":"55555555555",
-      "username":""
-    }
-  }
+There is only one request where that's not the case:
 
 POST /login
 
 Params
-  login (required)
-  password (required)
-
+  user[:facebook_token] (required)
+  user[:facebook_id] (required)
+  user[:first_name] (required)
+  user[:last_name] (required)
+  user[:remote_avatar_url] (required)
+  user[:email]
+  user[:mobile]
+  
+  
 Sample Response
   {
     "user":{
       "mobile":"55555555555",
-      "token":"ZsGkS8nyrx3T_Bzj28pX"
+      "token":"ZsGkS8nyrx3T_Bzj28pX",
+      "facebook_id": "xxxxxxxxxxx", 
+      "facebook_token": "xxxxxxxxxxx",
+      "email": "xxxxxxxxxxx@xxxxxxxxxxx.com", 
+      "first_name": "Cody", 
+      "last_name": "Swann",
+      "avatar": {
+        "square_url": "http://xxxxxxxxxxxx"
+      }
     }
   }
 
