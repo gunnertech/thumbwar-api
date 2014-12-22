@@ -129,14 +129,20 @@ class UsersController < InheritedResources::Base
   protected
   
   def collection
+    if params[:user_id] == "me"
+      @user = current_user
+    else
+      @user = User.find_by_username_or_id(params[:user_id])
+    end
+    
     return @users if @users
     
     @users = if params[:view]
       case params[:view]
       when "followers"
-        @current_user.followers
+        @user.followers
       when "following"
-        @current_user.followees
+        @user.followees
       else
         User.limit(10)
       end

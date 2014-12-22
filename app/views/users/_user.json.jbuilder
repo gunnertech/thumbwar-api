@@ -11,6 +11,6 @@ json.avatar do |avatar|
   # avatar.url user.avatar.url
 end
 
-json.devices do
-  json.array! user.devices, partial: "devices/device", as: :device
-end
+# json.devices do
+#  json.array! user.devices, partial: "devices/device", as: :device
+# end
