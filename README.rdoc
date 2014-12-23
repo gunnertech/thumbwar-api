@@ -969,4 +969,49 @@ Sample Response
     "opened": true,
     "alertable":{} <----- can be user / comment / thumbwar
   }
-    
+
+
+== Challenge
+
+POST /challenges/:id
+
+Params
+  challenge[:status], //pending, accepted, rejected
+  challenge[:outcome], //win, loss, push 
+  challenge[:thumbwar_id], (required)
+  challenge[:user_id], (required)
+  challenge[:challenger_id] (required)
+  
+  
+Sample Response
+  {
+    "id":1, 
+    "user_id":1, 
+    "thumbwar_id":1, 
+    "status":'accepted', 
+    "challenger_id":1, 
+    "created_at":"<timestamp>", 
+    "updated_at":"<timestamp>"
+  }
+        
+
+PUT /challenges/:id
+
+Params
+  challenge[:status], //pending, accepted, rejected
+  challenge[:outcome], //win, loss, push 
+  challenge[:thumbwar_id], 
+  challenge[:user_id], 
+  challenge[:challenger_id]
+  
+Sample Response
+  {
+    "id":1, 
+    "user_id":1, 
+    "thumbwar_id":1, 
+    "status":'accepted', 
+    "challenger_id":1, 
+    "created_at":"<timestamp>", 
+    "updated_at":"<timestamp>"
+  }
+        
