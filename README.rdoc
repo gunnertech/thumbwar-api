@@ -1,3 +1,5 @@
+Current Host: 
+
 You need to pass two parameters with every single request:
 
 token: User's unique authentication token returned after authenticating with Facebook.
