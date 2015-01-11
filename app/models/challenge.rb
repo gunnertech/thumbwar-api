@@ -11,7 +11,13 @@ class Challenge < ActiveRecord::Base
   
   after_save :create_status_alert, if: Proc.new{|c| c.status_changed? && c.status != 'pending' }
   
+  before_validation :set_challenger
+  
   protected
+  
+  def set_challenger
+    self.challenger_id = thumbwar.challenger_id
+  end
   
   def create_challenge_alert
     user.alerts.create!(alertable: thumbwar, body: "#{challenger.display_name} challenged you to a ThumbWar!")
