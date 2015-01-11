@@ -1055,7 +1055,7 @@ Sample Response
     "updated_at":"<timestamp>"
   }
 
-curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"outcome\":\"win\",\"thumbwar_id\":\"win\"}"
+curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"thumbwar_id\":94}"
 
 PUT /challenges/:id
 

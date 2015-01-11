@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   protected
   
   def current_user
-    @current_user ||= User.where{ (facebook_id == my{params[:facebook_id]}) & (token == my{params[:token]}) } if params[:token].present? && params[:facebook_id].present?
+    @current_user ||= User.where{ (facebook_id == my{params[:facebook_id]}) & (token == my{params[:token]}) }.first if params[:token].present? && params[:facebook_id].present?
   end
   
   def authenticate_from_token!
