@@ -48,13 +48,19 @@ Sample Response
       }
     }
   }
-  
+
+curl
+  curl "https://thumbwar-api-staging.herokuapp.com/login" -H "Content-type:application/json" --data "{\"facebook_token\":\"CAAMBJZB44Qf8BANFIZA6a6C5qKMY5lKijeI390IX2kYJZCTL24cUWWNWbGPnRnsNl0NmM2vXZCGGNH31F6ZBlTg5Od2hiOrAptbz2Cxn99dMPTlsIghDTQi2N82I99eXDXHHKZB8mzZC5F7WkZC0bq8DYk4wBRgWZBQZCrutHso27ft6bjfDpwD9ksZAogbO2Ayc1tjQiCs3uHEMGd3YxXcjtupoK7Xwyygfr8ZD\", \"facebook_id\":\"10105888271388751\", \"first_name\":\"Cody\", \"last_name\":\"Swann\"}"
+
 == Users
 
-POST /logout
+DELETE /logout
 
 Sample Response
   {}
+  
+curl
+  curl "https://thumbwar-api-staging.herokuapp.com/logout?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X DELETE --data "{}"
 
 GET /users/:user_id
 
@@ -93,7 +99,7 @@ Sample Response
   {}
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/2/follow" -H "Content-type:application/json" --data "{\"token\":\"QAbHkj97TqNdgkmL622v\",\"facebook_id\":\"10105888271388751\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/2/follow?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{}"
 
 POST /users/:user_id/unfollow
 
