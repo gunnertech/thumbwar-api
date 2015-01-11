@@ -1,4 +1,4 @@
-Current Host: https://thumbwar-api-staging.herokuapp.com/ 
+Current Host: https://thumbwar-api-staging.herokuapp.com 
 
 You need to pass two parameters with every single request:
 
