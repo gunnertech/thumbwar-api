@@ -101,7 +101,7 @@ Sample Response
   {}
 
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/2/unfollow" -H "Content-type:application/json" --data "{\"token\":\"QAbHkj97TqNdgkmL622v\",\"facebook_id\":\"10105888271388751\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/2/unfollow?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{}"
   
 GET /users/:user_id/followers
 
@@ -1040,7 +1040,6 @@ POST /challenges
 
 Params
   challenge[:status], //pending, accepted, rejected (pending is default)
-  challenge[:outcome], //win, loss, push  (nil is default)
   challenge[:thumbwar_id], (required)
   
   
@@ -1061,9 +1060,8 @@ PUT /challenges/:id
 
 Params
   challenge[:status], //pending, accepted, rejected
-  challenge[:outcome], //win, loss, push 
   challenge[:thumbwar_id]
-  
+    
 Sample Response
   {
     "id":1, 
@@ -1074,4 +1072,9 @@ Sample Response
     "created_at":"<timestamp>", 
     "updated_at":"<timestamp>"
   }
-        
+
+curl 
+  curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"accepted\"}"
+  
+  curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"rejected\"}"
+       
