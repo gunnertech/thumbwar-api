@@ -89,7 +89,7 @@ class Thumbwar < ActiveRecord::Base
   end
 
   def set_expires_at
-    self.expires_at = expires_in.minutes.from_now
+    self.expires_at = expires_in.to_i.minutes.from_now
   end
 
   def expiring_soon?
