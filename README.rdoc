@@ -1,11 +1,21 @@
-Current Host: https://thumbwar-api-staging.herokuapp.com 
+== Current Host
+
+https://thumbwar-api-staging.herokuapp.com 
+
+== Note on examples
+
+The Examples below are all hardcoded with values, which may need to be updated as the data changes
+
+== Authorization of requests
 
 You need to pass two parameters with every single request:
 
 token: User's unique authentication token returned after authenticating with Facebook.
 facebook_id: User's unique facebook id, obtained during the first authentication.
 
-There is only one request where that's not the case:
+There is only one request where that's not the case (POST /login).
+
+== Authentication
 
 POST /login
 
