@@ -1006,6 +1006,7 @@ GET /alerts
 
 Params
   :read - boolean (optional)
+  :last_seen_id - integer (optional)
   
 Sample Response
   {
