@@ -1,5 +1,5 @@
 class Watching < ActiveRecord::Base
-  attr_accessible :thumbwar_id, :user_id
+  attr_accessible :thumbwar_id, :user_id, :side
   
   belongs_to :thumbwar
   belongs_to :user

@@ -4,8 +4,8 @@ json.challenger do
   json.partial! "users/user", user: thumbwar.challenger
 end
 
-json.watchers do
-  json.array! thumbwar.watchers, partial: "users/user", as: :user
+json.watchings do
+  json.array! thumbwar.watchings, partial: "watchings/watching", as: :user
 end
 
 json.challenges do
