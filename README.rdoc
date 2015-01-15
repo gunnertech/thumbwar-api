@@ -1008,14 +1008,17 @@ Params
   :read - boolean (optional)
   
 Sample Response
-  [{
-    "id": 1, 
-    "body": "A Body",
-    "alertable_type": "User | Thumbwar | Comment",
-    "read": true, 
-    "opened": true,
-    "alertable":{} <----- can be user / comment / thumbwar
-  }]
+  {
+    "result_count": 1,
+    "alerts": [{
+      "id": 1, 
+      "body": "A Body",
+      "alertable_type": "User | Thumbwar | Comment",
+      "read": true, 
+      "opened": true,
+      "alertable":{} <----- can be user / comment / thumbwar
+    }]
+  }
   
 curl
   curl "https://thumbwar-api-staging.herokuapp.com/alerts?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
