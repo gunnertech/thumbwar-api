@@ -10,7 +10,12 @@ class AlertsController < InheritedResources::Base
   	@alerts = @alerts.where{ read == my{params[:read]} } if params[:read].present?
     
     @result_count = @alerts.count
+    
+    @last_seen_id = params[:last_seen_id]
+    
+    @alerts.where{ id > my{@last_seen_id}} if @last_seen_id.present?
+    
 
-  	@alerts.reorder{ id.desc }
+  	@alerts.reorder{ id.desc }.limit(20)
   end
 end
