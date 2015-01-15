@@ -5,7 +5,7 @@ json.challenger do
 end
 
 json.watchings do
-  json.array! thumbwar.watchings, partial: "watchings/watching", as: :user
+  json.array! thumbwar.watchings, partial: "watchings/watching", as: :watching
 end
 
 json.challenges do
