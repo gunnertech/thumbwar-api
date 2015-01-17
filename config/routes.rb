@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   end
 
   resources :thumbwars do
-    resources :comments, only: :create
+    resources :comments, only: [:create, :index]
 
     post "watch"
     post "unwatch"
