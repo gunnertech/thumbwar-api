@@ -592,8 +592,8 @@ curl
 POST /thumbwars
 
 Params
-  :challenger_id (required)
   :body (required)
+  :opponent_id
   :expires_in
   :wager
   :photo
@@ -606,13 +606,15 @@ Sample Response
   {}
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"challenger_id\":\"2\",\"body\":\"I can beat your face\",\"expires_in\":20,\"wager\":\"cookies\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"expires_in\":20,\"wager\":\"cookies\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"challenger_id\":\"2\",\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"opponent_id\":2,\"expires_in\":20,\"wager\":\"cookies\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"challenger_id\":\"2\",\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
   
-  curl -i  -F "thumbwar[challenger_id]=2" -F "thumbwar[body]=This is an image file" -F "thumbwar[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg" "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
+  
+  curl -i  -F "thumbwar[body]=This is an image file" -F "thumbwar[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg" "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751"
   
 PUT /thumbwars/:id
 
@@ -1142,6 +1144,7 @@ curl
 POST /challenges
 
 Params
+  challenge[:user_id], (required)
   challenge[:status], //pending, accepted, rejected (pending is default)
   challenge[:thumbwar_id], (required)
   
@@ -1157,7 +1160,7 @@ Sample Response
     "updated_at":"<timestamp>"
   }
 
-curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"thumbwar_id\":94}"
+curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"thumbwar_id\":94,\"user_id\":2}"
 
 PUT /challenges/:id
 

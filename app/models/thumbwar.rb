@@ -7,7 +7,7 @@ class Thumbwar < ActiveRecord::Base
   attr_accessible :challenger, :challenger_id, :body, :expires_in, :wager, :status,
     :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
     
-  attr_accessor :expires_in
+  attr_accessor :expires_in, :opponent_id
   
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
   
@@ -34,6 +34,7 @@ class Thumbwar < ActiveRecord::Base
   after_update :update_challenger_record, if: Proc.new { |tw| tw.status_changed? }
   
   after_save :add_opponents, if: Proc.new { |tw| tw.body.present? } 
+  after_save :add_opponent, if: Proc.new { |tw| tw.opponent_id.present? } 
   
   
   class << self
@@ -74,6 +75,18 @@ class Thumbwar < ActiveRecord::Base
         c.challenger = challenger
         c.save!
       end
+    end
+  end
+  
+  def add_opponent
+    
+    user = User.find_by_id(opponent_id)
+    
+    if user && !opponents.include?(user)
+      c = challenges.build
+      c.user = user
+      c.challenger = challenger
+      c.save!
     end
   end
   
