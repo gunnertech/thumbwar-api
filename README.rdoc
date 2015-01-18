@@ -1152,7 +1152,7 @@ Sample Response
 
 curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I smell terrible\"}"
 
-curl -i -F "comment[body]=test" "comment[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg"  "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751"
+curl -i -F "comment[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg"  "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751"
 
 GET /thumbwars/:thumbwar_id/comments
   
