@@ -5,7 +5,7 @@ class Thumbwar < ActiveRecord::Base
   alias_attribute :comments, :comment_threads
   
   attr_accessible :challenger, :challenger_id, :body, :expires_in, :wager, :status,
-    :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook
+    :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, :opponent_id
     
   attr_accessor :expires_in, :opponent_id
   
