@@ -1,6 +1,7 @@
 class UsersController < InheritedResources::Base
   belongs_to :user, optional: true
   skip_before_filter :authenticate_from_token!, only: [:login, :logout]
+  prepend_before_filter :set_inviter_id, only: :create
   
   def show
     if params[:id] == "me"
@@ -127,6 +128,10 @@ class UsersController < InheritedResources::Base
   end
   
   protected
+  
+  def set_inviter_id
+    params[:user][:inviter_id] = @current_user.id
+  end
   
   def collection
     if params[:user_id] == "me"
