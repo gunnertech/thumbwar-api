@@ -148,6 +148,8 @@ Params
   :first_name (required)
   :last_name (required)
   :email
+  :remote_avatar_url
+  :avatar
 
 Sample Response
   {
@@ -179,6 +181,50 @@ Sample Response
   
 curl
   curl "https://thumbwar-api-staging.herokuapp.com/users?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"facebook_id\":\"1234567\",\"first_name\":\"James\",\"last_name\":\"Nickerson\"}"
+  
+  
+PUT /users/:id
+
+Params
+  :first_name
+  :last_name
+  :email
+  :mobile
+  :remote_avatar_url
+  :avatar
+  :public
+  
+
+Sample Response
+  {
+    "user":{
+      "id": 1,
+      "username":"codyswann",
+      "displayname":"Cody Swann",
+      "public":true,
+      "publish_to_facebook":true,
+      "publish_to_twitter":true,
+      "sms_notifications":true,
+      "email_notifications":true,
+      "verified":true,
+      "sign_in_count":1,
+      "wins":0,
+      "losses":0,
+      "pushes":0,
+      "mobile":"55555555555",
+      "facebook_id": "xxxxxxxxxxx", 
+      "facebook_token": "xxxxxxxxxxx",
+      "email": "xxxxxxxxxxx@xxxxxxxxxxx.com", 
+      "first_name": "Cody", 
+      "last_name": "Swann",
+      "avatar": {
+        "square_url": "http://xxxxxxxxxxxx"
+      }
+    }
+  }
+  
+curl
+  curl "https://thumbwar-api-staging.herokuapp.com/users/1?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"first_name\":\"james\",\"last_name\":\"duck\"}"
     
 
 POST /users/:user_id/follow
@@ -268,6 +314,19 @@ curl
   curl "https://thumbwar-api-staging.herokuapp.com/users/1/following?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
   
 
+== Devices
+
+POST /devices
+
+Params
+  :device_type (must be 'ios' right now)(required)
+  :token (string required)
+  
+Sample Response
+  {}
+  
+curl
+  curl "https://thumbwar-api-staging.herokuapp.com/devices?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"token\":\"4055dc48a67d7f7656a7a01fb4159964f4f6d81de1d22ae67703f44195544f56\",\"device_type\":\"ios\"}"
 
 == Thumbwars
 
