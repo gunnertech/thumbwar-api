@@ -3,7 +3,7 @@ class ChallengesController < InheritedResources::Base
 
   protected
   
-  def set_user_id
+  def set_challenger_id
     params[:challenge][:challenger_id] = current_user.id
   end
 end
