@@ -19,6 +19,24 @@ class Alert < ActiveRecord::Base
       alertable.commentable.url
     end
   end
+
+  def subject_type
+    if alertable_type == "Thumbwar" || alertable_type == "Comment"
+      "thumbwar"
+    elsif alertable_type == "User"
+      "user"
+    end
+  end
+
+  def subject_id
+    if alertable_type == "Thumbwar"
+      alertable_id
+    elsif alertable_type == "User"
+      alertable_id
+    elsif alertable_type == "Comment"
+      alertable.commentable_id
+    end
+  end
   
   protected
   
@@ -47,7 +65,9 @@ class Alert < ActiveRecord::Base
         content_available: true,
         custom: {
           message: body,
-          url: url
+          url: url,
+          subject_type: subject_type,
+          subject_id: subject_id
         }
       )
 
