@@ -345,6 +345,8 @@ Sample Response
         "created_at": "<timestamp>",
         "has_default_photo": true,
         "status": "win",
+        "challengers_proposed_outcome": "win",
+        "opponents_proposed_outcome": "win",
         "public": true,
         "comments_count": 10,
         "photo": {
@@ -503,6 +505,8 @@ Sample Response
         "created_at": "<timestamp>",
         "has_default_photo": true,
         "status": "win",
+        "challengers_proposed_outcome": "win",
+        "opponents_proposed_outcome": "win",
         "public": true,
         "comments_count": 10,
         "photo": {
@@ -682,12 +686,20 @@ Params
   :body
   :expires_in
   :wager
-  :status (enum 'in_progress' | 'win' | 'loss' | 'push' ) (defaults to 'in_progress')
+  :opponents_proposed_outcome (enum 'win' | 'loss' ) (defaults to nil)
+  :challengers_proposed_outcome (enum 'win' | 'loss' ) (defaults to nil)
   :photo
   :remote_photo_url
   :url (not used)
   :publish_to_twitter (not used) 
   :publish_to_facebook (not used)
+  
+Notes
+  If neither equal nil and opponents_proposed_outcome == challengers_proposed_outcome and both == 'win', the result will be a win for the challenger.
+  
+  If neither equal nil and opponents_proposed_outcome == challengers_proposed_outcome and both == 'loss', the result will be a loss for the challenger.
+  
+  If neither equal nil and opponents_proposed_outcome != challengers_proposed_outcome, the result will be a push.
   
 Sample Response
   {
@@ -700,6 +712,8 @@ Sample Response
     "created_at": "<timestamp>",
     "has_default_photo": true,
     "status": "win",
+    "challengers_proposed_outcome": "win",
+    "opponents_proposed_outcome": "win",
     "public": true,
     "comments_count": 10,
     "photo": {
@@ -854,6 +868,8 @@ Sample Response
     "created_at": "<timestamp>",
     "has_default_photo": true,
     "status": "win",
+    "challengers_proposed_outcome": "win",
+    "opponents_proposed_outcome": "win",
     "public": true,
     "comments_count": 10,
     "photo": {
@@ -1004,6 +1020,8 @@ Sample Response
     "created_at": "<timestamp>",
     "has_default_photo": true,
     "status": "win",
+    "challengers_proposed_outcome": "win",
+    "opponents_proposed_outcome": "win",
     "public": true,
     "comments_count": 10,
     "photo": {

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141114052059) do
+ActiveRecord::Schema.define(version: 20150126160814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,18 +119,20 @@ ActiveRecord::Schema.define(version: 20141114052059) do
   add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
 
   create_table "thumbwars", force: true do |t|
-    t.integer  "challenger_id",                               null: false
-    t.text     "body",                                        null: false
+    t.integer  "challenger_id",                                        null: false
+    t.text     "body",                                                 null: false
     t.datetime "expires_at"
-    t.boolean  "public",              default: true
+    t.boolean  "public",                       default: true
     t.string   "wager"
-    t.string   "status",              default: "in_progress", null: false
+    t.string   "status",                       default: "in_progress", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "url"
     t.string   "photo"
-    t.boolean  "publish_to_twitter",  default: false
-    t.boolean  "publish_to_facebook", default: false
+    t.boolean  "publish_to_twitter",           default: false
+    t.boolean  "publish_to_facebook",          default: false
+    t.string   "challengers_proposed_outcome"
+    t.string   "opponents_proposed_outcome"
   end
 
   add_index "thumbwars", ["challenger_id"], name: "index_thumbwars_on_challenger_id", using: :btree
