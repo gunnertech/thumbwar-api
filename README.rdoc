@@ -845,11 +845,15 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"status\":\"win\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"challengers_proposed_outcome\":\"win\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"status\":\"loss\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"opponents_proposed_outcome\":\"win\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"status\":\"push\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"challengers_proposed_outcome\":\"loss\"}"
+  
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"opponents_proposed_outcome\":\"win\"}"
+  
+
   
   
 POST /thumbwars/:thumbwar_id/watch
