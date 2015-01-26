@@ -5,7 +5,9 @@ class Thumbwar < ActiveRecord::Base
   alias_attribute :comments, :comment_threads
   
   attr_accessible :challenger, :challenger_id, :body, :expires_in, :wager, :status,
-    :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, :opponent_id
+    :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, :opponent_id,
+    :opponents_proposed_outcome, :challengers_proposed_outcome
+
     
   attr_accessor :expires_in, :opponent_id
   
@@ -23,6 +25,7 @@ class Thumbwar < ActiveRecord::Base
   before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
   before_validation :set_properties_from_body, if: Proc.new { |tw| tw.body.present? }
   
+  before_save :set_status
   
 
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
@@ -130,6 +133,18 @@ class Thumbwar < ActiveRecord::Base
     end
     
     _body
+  end
+  
+  def set_status
+    if opponents_proposed_outcome.present? && challengers_proposed_outcome.present?
+      if opponents_proposed_outcome == challengers_proposed_outcome
+        self.status = challengers_proposed_outcome
+      else
+        self.status = 'push'
+      end
+    end
+    
+    return true
   end
 
   def post_to_twitter
