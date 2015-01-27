@@ -130,7 +130,7 @@ class UsersController < InheritedResources::Base
   protected
   
   def set_inviter_id
-    params[:user][:inviter_id] = @current_user.id
+    params[:user][:inviter_id] = current_user.id unless current_user.nil?
   end
   
   def collection
