@@ -144,7 +144,7 @@ curl
 POST /users
 
 Params
-  :facebook_id (required)
+  :facebook_id
   :first_name (required)
   :last_name (required)
   :email
