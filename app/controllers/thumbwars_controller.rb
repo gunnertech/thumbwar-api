@@ -57,9 +57,9 @@ class ThumbwarsController < InheritedResources::Base
     elsif params[:view] == 'mine'
       my_thumbwar_ids = user.thumbwars.pluck('id')
       @thumbwars = @thumbwars.where{ id >> my{my_thumbwar_ids} }
-    elsif params[:view] == 'wins'
+    elsif params[:view] == 'won'
       @thumbwars = @thumbwars.where{ ((status == 'win') & (challenger_id == my{user.id}) ) |  ((status == 'loss') & (challenger_id != my{user.id}) )}
-    elsif params[:view] == 'losses'
+    elsif params[:view] == 'lost'
       @thumbwars = @thumbwars.where{ ((status == 'loss') & (challenger_id == my{user.id}) ) |  ((status == 'win') & (challenger_id != my{user.id}) )}
     else
       @thumbwars = @thumbwars.where{ public == true }
