@@ -486,7 +486,7 @@ curl
 GET /thumbwars
 
 Params
-  :view (required, enum: 'timeline' | 'mine' | 'public')
+  :view (required, enum: 'timeline' | 'mine' | 'public' | 'wins' | 'losses')
   :user_id (defaults to logged in user)
   :q (tag search, must be either "$something" or "#something")
   :last (the id of the last thumbwar locally)
