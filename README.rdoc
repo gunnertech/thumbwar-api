@@ -56,6 +56,15 @@ Sample Response
       "avatar": {
         "square_url": "http://xxxxxxxxxxxx"
       }
+      
+      "devices": [
+        {
+          "id": 1, 
+          "token": "Some Token", 
+          "user_id": 1,
+          "device_type": "ios"
+        }
+      ]
     }
   }
 
