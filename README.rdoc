@@ -162,29 +162,27 @@ Params
 
 Sample Response
   {
-    "user":{
-      "id": 1,
-      "username":"codyswann",
-      "display_name":"Cody Swann",
-      "public":true,
-      "publish_to_facebook":true,
-      "publish_to_twitter":true,
-      "sms_notifications":true,
-      "email_notifications":true,
-      "verified":true,
-      "sign_in_count":1,
-      "wins":0,
-      "losses":0,
-      "pushes":0,
-      "mobile":"55555555555",
-      "facebook_id": "xxxxxxxxxxx", 
-      "facebook_token": "xxxxxxxxxxx",
-      "email": "xxxxxxxxxxx@xxxxxxxxxxx.com", 
-      "first_name": "Cody", 
-      "last_name": "Swann",
-      "avatar": {
-        "square_url": "http://xxxxxxxxxxxx"
-      }
+    "id": 1,
+    "username":"codyswann",
+    "display_name":"Cody Swann",
+    "public":true,
+    "publish_to_facebook":true,
+    "publish_to_twitter":true,
+    "sms_notifications":true,
+    "email_notifications":true,
+    "verified":true,
+    "sign_in_count":1,
+    "wins":0,
+    "losses":0,
+    "pushes":0,
+    "mobile":"55555555555",
+    "facebook_id": "xxxxxxxxxxx", 
+    "facebook_token": "xxxxxxxxxxx",
+    "email": "xxxxxxxxxxx@xxxxxxxxxxx.com", 
+    "first_name": "Cody", 
+    "last_name": "Swann",
+    "avatar": {
+      "square_url": "http://xxxxxxxxxxxx"
     }
   }
   
@@ -206,29 +204,27 @@ Params
 
 Sample Response
   {
-    "user":{
-      "id": 1,
-      "username":"codyswann",
-      "display_name":"Cody Swann",
-      "public":true,
-      "publish_to_facebook":true,
-      "publish_to_twitter":true,
-      "sms_notifications":true,
-      "email_notifications":true,
-      "verified":true,
-      "sign_in_count":1,
-      "wins":0,
-      "losses":0,
-      "pushes":0,
-      "mobile":"55555555555",
-      "facebook_id": "xxxxxxxxxxx", 
-      "facebook_token": "xxxxxxxxxxx",
-      "email": "xxxxxxxxxxx@xxxxxxxxxxx.com", 
-      "first_name": "Cody", 
-      "last_name": "Swann",
-      "avatar": {
-        "square_url": "http://xxxxxxxxxxxx"
-      }
+    "id": 1,
+    "username":"codyswann",
+    "display_name":"Cody Swann",
+    "public":true,
+    "publish_to_facebook":true,
+    "publish_to_twitter":true,
+    "sms_notifications":true,
+    "email_notifications":true,
+    "verified":true,
+    "sign_in_count":1,
+    "wins":0,
+    "losses":0,
+    "pushes":0,
+    "mobile":"55555555555",
+    "facebook_id": "xxxxxxxxxxx", 
+    "facebook_token": "xxxxxxxxxxx",
+    "email": "xxxxxxxxxxx@xxxxxxxxxxx.com", 
+    "first_name": "Cody", 
+    "last_name": "Swann",
+    "avatar": {
+      "square_url": "http://xxxxxxxxxxxx"
     }
   }
   
