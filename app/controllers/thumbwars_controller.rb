@@ -1,5 +1,5 @@
 class ThumbwarsController < InheritedResources::Base
-  # belongs_to :user, optional: true
+  belongs_to :user, optional: true
   
   before_filter :set_challenger_id, only: :create
   
