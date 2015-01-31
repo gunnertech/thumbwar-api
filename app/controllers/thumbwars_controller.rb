@@ -38,8 +38,6 @@ class ThumbwarsController < InheritedResources::Base
     
     @thumbwars = end_of_association_chain.reorder{ id.desc }
     
-    raise @thumbwars.to_yaml
-    
     if params[:user_id].blank? || params[:user_id] == "me"
       user = current_user
     else
