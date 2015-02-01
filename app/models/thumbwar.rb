@@ -24,6 +24,7 @@ class Thumbwar < ActiveRecord::Base
 
   before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
   before_validation :set_properties_from_body, if: Proc.new { |tw| tw.body.present? }
+  before_validation :strip_dollar_sign, if: Proc.new { |tw| tw.wager.present? && tw.wager.start_with?("$") }
   
   before_save :set_status
   
@@ -164,6 +165,10 @@ class Thumbwar < ActiveRecord::Base
 
   def complete_url
     update_column(:url, url.gsub(/\{id\}/,id.to_s))
+  end
+  
+  def strip_dollar_sign
+    self.wager = wager.gsub(/^\$/,"")
   end
   
   def update_challenger_record
