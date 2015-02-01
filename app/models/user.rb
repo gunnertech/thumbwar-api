@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   
 
   validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
-  validates :username, uniqueness: true, allow_blank: true
+  validates :username, uniqueness: true
   validates :facebook_id, presence: true, uniqueness: true, allow_blank: true
   
   before_validation :generate_username, on: :create, if: Proc.new{ |u| u.username.blank? }
