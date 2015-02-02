@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   validates :facebook_id, presence: true, uniqueness: true, allow_blank: true
   
   before_validation :generate_username, on: :create, if: Proc.new{ |u| u.username.blank? }
+  before_validation :standardize_mobile, if: Proc.new{ |u| u.mobile.changed? && u.mobile.present? }
   
   before_save { |u| u.token = generate_token if token.blank? }
   
@@ -175,6 +176,16 @@ class User < ActiveRecord::Base
   
   def create_welcome_alert
     alerts.create(alertable: self, body: "Get started with ThumbWar! (This will be a three-step wizard that will walk new users through ThumbWar)")
+  end
+  
+  def standardize_mobile
+    if mobile.length == 10
+      self.mobile = "1#{mobile}"
+    end
+    
+    if mobile.length >= 11
+      self.mobile = mobile.gsub(/\D/,"")
+    end
   end
   
 
