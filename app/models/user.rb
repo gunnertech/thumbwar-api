@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   validates :facebook_id, presence: true, uniqueness: true, allow_blank: true
   
   before_validation :generate_username, on: :create, if: Proc.new{ |u| u.username.blank? }
-  before_validation :standardize_mobile, if: Proc.new{ |u| u.mobile.changed? && u.mobile.present? }
+  before_validation :standardize_mobile, if: Proc.new{ |u| u.mobile_changed? && u.mobile.present? }
   
   before_save { |u| u.token = generate_token if token.blank? }
   
