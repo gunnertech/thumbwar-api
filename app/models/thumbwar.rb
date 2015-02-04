@@ -32,7 +32,7 @@ class Thumbwar < ActiveRecord::Base
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
   after_create :post_to_facebook, if: Proc.new{ |tw| tw.publish_to_facebook? }
   after_create :complete_url, if: Proc.new { |tw| tw.url.present? }
-  after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at > 20.minutes.from_now }
+  after_create :send_expiring_soon_alert, if: Proc.new { |tw| tw.expires_at.present? && tw.expires_at.to_i > 20.minutes.from_now }
   
   after_update :send_outcome_alert, if: Proc.new { |tw| tw.status_changed? }
   after_update :update_challenger_record, if: Proc.new { |tw| tw.status_changed? }
@@ -120,7 +120,7 @@ class Thumbwar < ActiveRecord::Base
       challenge.user.alerts.create!(alertable: self, body: "Your Thumbwar is about to expire!") if expiring_soon?
     end
   end
-  handle_asynchronously :send_expiring_soon_alert, run_at: Proc.new { |tw| (tw.expires_in.minutes - 10.minutes).from_now }
+  handle_asynchronously :send_expiring_soon_alert, run_at: Proc.new { |tw| (tw.expires_in.to_i.minutes - 10.minutes).from_now }
 
   
   def twitter_body
