@@ -69,7 +69,7 @@ Sample Response
   }
 
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/login" -H "Content-type:application/json" --data "{\"facebook_token\":\"CAAMBJZB44Qf8BANFIZA6a6C5qKMY5lKijeI390IX2kYJZCTL24cUWWNWbGPnRnsNl0NmM2vXZCGGNH31F6ZBlTg5Od2hiOrAptbz2Cxn99dMPTlsIghDTQi2N82I99eXDXHHKZB8mzZC5F7WkZC0bq8DYk4wBRgWZBQZCrutHso27ft6bjfDpwD9ksZAogbO2Ayc1tjQiCs3uHEMGd3YxXcjtupoK7Xwyygfr8ZD\", \"facebook_id\":\"10105888271388751\", \"first_name\":\"Cody\", \"last_name\":\"Swann\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/login" -H "Content-type:application/json" --data "{\"facebook_token\":\"CAAMBJZB44Qf8BANFIZA6a6C5qKMY5lKijeI390IX2kYJZCTL24cUWWNWbGPnRnsNl0NmM2vXZCGGNH31F6ZBlTg5Od2hiOrAptbz2Cxn99dMPTlsIghDTQi2N82I99eXDXHHKZB8mzZC5F7WkZC0bq8DYk4wBRgWZBQZCrutHso27ft6bjfDpwD9ksZAogbO2Ayc1tjQiCs3uHEMGd3YxXcjtupoK7Xwyygfr8ZD\", \"facebook_id\":\"10106161156180441\", \"first_name\":\"Cody\", \"last_name\":\"Swann\"}"
 
 == Users
 
@@ -79,7 +79,7 @@ Sample Response
   {}
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/logout?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X DELETE --data "{}"
+  curl "https://thumbwar-api-staging.herokuapp.com/logout?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X DELETE --data "{}"
 
 GET /users/:user_id
 
@@ -110,7 +110,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/1?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/1?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
   
 GET /users
 
@@ -148,7 +148,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751&search=10105888271388751" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/users?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441&search=10106161156180441" -H "Content-type:application/json"
 
 POST /users
 
@@ -187,7 +187,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"facebook_id\":\"1234567\",\"first_name\":\"James\",\"last_name\":\"Nickerson\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/users?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"facebook_id\":\"1234567\",\"first_name\":\"James\",\"last_name\":\"Nickerson\"}"
   
   
 PUT /users/:id
@@ -229,7 +229,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/1?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"first_name\":\"james\",\"last_name\":\"duck\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/1?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"first_name\":\"james\",\"last_name\":\"duck\"}"
     
 
 POST /users/:user_id/follow
@@ -238,7 +238,7 @@ Sample Response
   {}
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/2/follow?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{}"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/2/follow?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{}"
 
 POST /users/:user_id/unfollow
 
@@ -246,7 +246,7 @@ Sample Response
   {}
 
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/2/unfollow?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{}"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/2/unfollow?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{}"
   
 GET /users/:user_id/followers
 
@@ -281,7 +281,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/1/followers?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/1/followers?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
 
 GET /users/:user_id/following
 
@@ -316,7 +316,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/1/following?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/1/following?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
   
 
 == Devices
@@ -331,7 +331,7 @@ Sample Response
   {}
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/devices?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"token\":\"4055dc48a67d7f7656a7a01fb4159964f4f6d81de1d22ae67703f44195544f56\",\"device_type\":\"ios\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/devices?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"token\":\"4055dc48a67d7f7656a7a01fb4159964f4f6d81de1d22ae67703f44195544f56\",\"device_type\":\"ios\"}"
 
 == Thumbwars
 
@@ -485,7 +485,7 @@ Sample Response
   }
 
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/users/1/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/users/1/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
   
   
 GET /thumbwars
@@ -645,17 +645,17 @@ Sample Response
   }
 
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751&view=mine" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441&view=mine" -H "Content-type:application/json"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751&user_id=2&view=timeline" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441&user_id=2&view=timeline" -H "Content-type:application/json"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751&q=%24money&view=public" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441&q=%24money&view=public" -H "Content-type:application/json"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751&q=%23test&view=public" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441&q=%23test&view=public" -H "Content-type:application/json"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751&view=public&newest=1" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441&view=public&newest=1" -H "Content-type:application/json"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751&view=public&last=50" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441&view=public&last=50" -H "Content-type:application/json"
 
 POST /thumbwars
 
@@ -674,15 +674,15 @@ Sample Response
   {}
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"expires_in\":20,\"wager\":\"cookies\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"expires_in\":20,\"wager\":\"cookies\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"opponent_id\":2,\"expires_in\":20,\"wager\":\"cookies\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"opponent_id\":2,\"expires_in\":20,\"wager\":\"cookies\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"body\":\"I can beat your face\",\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
   
-  curl -i  -F "thumbwar[body]=This is an image file" -F "thumbwar[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg" "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751"
+  curl -i  -F "thumbwar[body]=This is an image file" -F "thumbwar[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg" "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441"
   
 PUT /thumbwars/:id
 
@@ -850,13 +850,13 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"challengers_proposed_outcome\":\"win\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"challengers_proposed_outcome\":\"win\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"opponents_proposed_outcome\":\"win\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"opponents_proposed_outcome\":\"win\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"challengers_proposed_outcome\":\"loss\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"challengers_proposed_outcome\":\"loss\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"opponents_proposed_outcome\":\"win\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"opponents_proposed_outcome\":\"win\"}"
   
 
   
@@ -1010,9 +1010,9 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/watch?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"side\":\"challenger\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/watch?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"side\":\"challenger\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/watch?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"side\":\"opponents\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/watch?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"side\":\"opponents\"}"
   
   
 POST /thumbwars/:thumbwar_id/unwatch
@@ -1162,9 +1162,9 @@ Sample Response
   }
 
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/unwatch?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"side\":\"challenger\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/unwatch?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"side\":\"challenger\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/unwatch?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"side\":\"opponents\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/unwatch?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"side\":\"opponents\"}"
   
 == Alerts
 
@@ -1188,7 +1188,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/alerts?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/alerts?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
 
 GET /alerts/:id
   
@@ -1203,7 +1203,7 @@ Sample Response
   }
   
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
+  curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
 
 PUT /alerts/:id
 
@@ -1221,18 +1221,18 @@ Sample Response
   }
 
 curl
-  curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"read\":0}"
+  curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"read\":0}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"read\":1}"
+  curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"read\":1}"
 
 == Challenge
 
 POST /challenges
 
 Params
-  challenge[:user_id], (required)
-  challenge[:status], //pending, accepted, rejected (pending is default)
-  challenge[:thumbwar_id], (required)
+  :user_id, (required)
+  :status, //pending, accepted, rejected (pending is default)
+  :thumbwar_id, (required)
   
   
 Sample Response
@@ -1246,13 +1246,13 @@ Sample Response
     "updated_at":"<timestamp>"
   }
 
-curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"thumbwar_id\":94,\"user_id\":2}"
+curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"thumbwar_id\":94,\"user_id\":2}"
 
 PUT /challenges/:id
 
 Params
-  challenge[:status], //pending, accepted, rejected
-  challenge[:thumbwar_id]
+  :status, //pending, accepted, rejected
+  :thumbwar_id
     
 Sample Response
   {
@@ -1266,9 +1266,9 @@ Sample Response
   }
 
 curl 
-  curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"accepted\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"accepted\"}"
   
-  curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"rejected\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"rejected\"}"
        
        
 == Comment
@@ -1317,9 +1317,9 @@ Sample Response
     }
   }
 
-curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json" --data "{\"body\":\"I smell terrible\"}"
+curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"body\":\"I smell terrible\"}"
 
-curl -i -F "comment[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg"  "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751"
+curl -i -F "comment[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg"  "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441"
 
 GET /thumbwars/:thumbwar_id/comments
   
@@ -1348,4 +1348,4 @@ Sample Response
    }
 ]
 
-curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10105888271388751" -H "Content-type:application/json"
+curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
