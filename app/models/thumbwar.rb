@@ -21,7 +21,9 @@ class Thumbwar < ActiveRecord::Base
   
   validates :challenger_id, presence: true
   validates :body, presence: true
+  validates :status, inclusion: { in: %w(in_progress win loss push), message: "%{value} is not a valid status" }
 
+  before_validation :set_default_status, unless: Proc.new{ |tw| tw.status.present? }
   before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
   before_validation :set_properties_from_body, if: Proc.new { |tw| tw.body.present? }
   before_validation :strip_dollar_sign, if: Proc.new { |tw| tw.wager.present? && tw.wager.start_with?("$") }
@@ -203,6 +205,10 @@ class Thumbwar < ActiveRecord::Base
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
   end
   handle_asynchronously :send_outcome_alert
+  
+  def set_default_status
+    self.status = 'in_progress'
+  end
 
 
 end
