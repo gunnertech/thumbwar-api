@@ -1252,7 +1252,6 @@ PUT /challenges/:id
 
 Params
   :status, //pending, accepted, rejected
-  :thumbwar_id
     
 Sample Response
   {
@@ -1265,7 +1264,7 @@ Sample Response
     "updated_at":"<timestamp>"
   }
 
- 
+curl 
   curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"accepted\"}"
   
   curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"rejected\"}"
