@@ -1246,7 +1246,7 @@ Sample Response
     "updated_at":"<timestamp>"
   }
 
-curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"thumbwar_id\":94,\"user_id\":2}"
+  curl "https://thumbwar-api-staging.herokuapp.com/challenges?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"thumbwar_id\":94,\"user_id\":2}"
 
 PUT /challenges/:id
 
@@ -1265,7 +1265,7 @@ Sample Response
     "updated_at":"<timestamp>"
   }
 
-curl 
+ 
   curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"accepted\"}"
   
   curl "https://thumbwar-api-staging.herokuapp.com/challenges/99?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"thumbwar_id\":94,\"status\":\"rejected\"}"
@@ -1317,9 +1317,9 @@ Sample Response
     }
   }
 
-curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"body\":\"I smell terrible\"}"
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"body\":\"I smell terrible\"}"
 
-curl -i -F "comment[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg"  "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441"
+  curl -i -F "comment[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg"  "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441"
 
 GET /thumbwars/:thumbwar_id/comments
   
