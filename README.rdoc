@@ -1324,27 +1324,28 @@ GET /thumbwars/:thumbwar_id/comments
   
   
 Sample Response
-[
-   {
-      "id":166,
-      "commentable_id":94,
-      "commentable_type":"Thumbwar",
-      "title":null,
-      "body":"I smell terrible",
-      "subject":null,
-      "user_id":1,
-      "parent_id":null,
-      "lft":329,
-      "rgt":330,
-      "created_at":"2015-01-17T06:04:13.235Z",
-      "updated_at":"2015-01-17T06:04:13.235Z",
-      "photo":{
-         "url":"http://thumbwar-api-staging.herokuapp.com/images/fallback/photos/default.png",
-         "large":{
-            "url":"http://thumbwar-api-staging.herokuapp.com/images/fallback/photos/large_default.png"
-         }
-      }
-   }
-]
+  [
+     {
+        "id":166,
+        "commentable_id":94,
+        "commentable_type":"Thumbwar",
+        "title":null,
+        "body":"I smell terrible",
+        "subject":null,
+        "user_id":1,
+        "parent_id":null,
+        "lft":329,
+        "rgt":330,
+        "created_at":"2015-01-17T06:04:13.235Z",
+        "updated_at":"2015-01-17T06:04:13.235Z",
+        "photo":{
+           "url":"http://thumbwar-api-staging.herokuapp.com/images/fallback/photos/default.png",
+           "large":{
+              "url":"http://thumbwar-api-staging.herokuapp.com/images/fallback/photos/large_default.png"
+           }
+        }
+     }
+  ]
 
-curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
+curl 
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94/comments?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json"
