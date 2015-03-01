@@ -6,9 +6,9 @@ class User < ActiveRecord::Base
   
   attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :public, 
     :publish_to_facebook, :publish_to_twitter, :sms_notifications, :twitter_token, :username, :verification_url, 
-    :email, :facebook_id, :remote_avatar_url
+    :email, :facebook_id, :remote_avatar_url, :facebook_ids
 
-  attr_accessor :verification_url, :skip_confirmation_code
+  attr_accessor :verification_url, :skip_confirmation_code, :facebook_ids
 
   belongs_to :inviter, class_name: "User", foreign_key: "inviter_id"
   
@@ -39,6 +39,7 @@ class User < ActiveRecord::Base
   
   after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
   after_create :create_welcome_alert
+  after_create :send_alerts_to_facebook_friends_wrapper, if: Proc.new{ |u| u.facebook_ids.present? }
   
   class << self
     def find_by_username_or_id(id)
@@ -187,6 +188,19 @@ class User < ActiveRecord::Base
       self.mobile = mobile.gsub(/\D/,"")
     end
   end
+  
+  def send_alerts_to_facebook_friends_wrapper
+    send_alerts_to_facebook_friends(facebook_ids)
+  end
+  
+  def send_alerts_to_facebook_friends(facebook_ids)
+    facebook_ids.split(",").each do |facebook_id|
+      if user = User.find_by_facebook_id(facebook_id)
+        user.alerts.create(alertable: self, body: "Your Facebook Friend #{self.to_s} is on ThumbWar. Challenge them now!")
+      end
+    end
+  end
+  handle_asynchronously :send_alerts_to_facebook_friends
   
 
 end
