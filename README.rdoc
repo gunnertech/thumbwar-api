@@ -27,6 +27,7 @@ Params
   user[:remote_avatar_url] (required)
   user[:email]
   user[:mobile]
+  user[:facebook_ids] (optional - comma delimited string of facebook_ids)
   
   
 Sample Response
