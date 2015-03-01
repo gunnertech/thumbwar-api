@@ -691,8 +691,8 @@ Params
   :body
   :expires_in
   :wager
-  :opponents_proposed_outcome (enum 'win' | 'loss' ) (defaults to nil)
-  :challengers_proposed_outcome (enum 'win' | 'loss' ) (defaults to nil)
+  :opponents_proposed_outcome (enum 'win' | 'loss' | 'push' ) (defaults to nil)
+  :challengers_proposed_outcome (enum 'win' | 'loss' | 'push' ) (defaults to nil)
   :photo
   :remote_photo_url
   :url (not used)
