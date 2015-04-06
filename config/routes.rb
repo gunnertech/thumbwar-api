@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   resources :devices
 
   resources :challenges
+  
+  resources :evidence_photos, only: :create
 
   get "twitter_oauth", to: "users#twitter_oauth"
   get "facebook_oauth", to: "users#facebook_oauth"

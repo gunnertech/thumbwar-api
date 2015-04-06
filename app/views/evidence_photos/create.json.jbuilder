@@ -1,0 +1,1 @@
+json.partial! "evidence_photos/evidence_photo", evidence_photo: resource
