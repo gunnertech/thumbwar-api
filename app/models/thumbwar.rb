@@ -13,10 +13,11 @@ class Thumbwar < ActiveRecord::Base
   
   belongs_to :challenger, class_name: "User", foreign_key: "challenger_id"
   
-  has_many :watchings
+  has_many :evidence_photos, dependent: :destroy
+  has_many :watchings, dependent: :destroy
   has_many :watchers, through: :watchings, source: :user
   has_many :alerts, as: :alertable
-  has_many :challenges
+  has_many :challenges, dependent: :destroy
   has_many :opponents, through: :challenges, foreign_key: :user_id, source: :user
   
   validates :challenger_id, presence: true

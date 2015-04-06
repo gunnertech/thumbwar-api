@@ -359,6 +359,18 @@ Sample Response
           "url": "http://xxxxx",
           "large_url": "http://xxxxx"
         },
+        "evidence_photos": [
+          {
+            "id":1, 
+            "user_id":1, 
+            "thumbwar_id":1, 
+            "has_default_photo":false,
+            "url": "http://blah",
+            "large_url": "http://blah",
+            "created_at":"<timestamp>", 
+            "updated_at":"<timestamp>"
+          }
+        ],
         "watchings": [
           "side": "opponents",
           "user": {
@@ -519,6 +531,18 @@ Sample Response
           "url": "http://xxxxx",
           "large_url": "http://xxxxx"
         },
+        "evidence_photos": [
+          {
+            "id":1, 
+            "user_id":1, 
+            "thumbwar_id":1, 
+            "has_default_photo":false,
+            "url": "http://blah",
+            "large_url": "http://blah",
+            "created_at":"<timestamp>", 
+            "updated_at":"<timestamp>"
+          }
+        ],
         "watchings": [
           "side": "opponents",
           "user": {
@@ -726,6 +750,18 @@ Sample Response
       "url": "http://xxxxx",
       "large_url": "http://xxxxx"
     },
+    "evidence_photos": [
+      {
+        "id":1, 
+        "user_id":1, 
+        "thumbwar_id":1, 
+        "has_default_photo":false,
+        "url": "http://blah",
+        "large_url": "http://blah",
+        "created_at":"<timestamp>", 
+        "updated_at":"<timestamp>"
+      }
+    ],
     "watchings": [
       "side": "opponents",
       "user": {
@@ -886,6 +922,18 @@ Sample Response
       "url": "http://xxxxx",
       "large_url": "http://xxxxx"
     },
+    "evidence_photos": [
+      {
+        "id":1, 
+        "user_id":1, 
+        "thumbwar_id":1, 
+        "has_default_photo":false,
+        "url": "http://blah",
+        "large_url": "http://blah",
+        "created_at":"<timestamp>", 
+        "updated_at":"<timestamp>"
+      }
+    ],
     "watchings": [
       "side": "opponents",
       "user": {
@@ -1038,6 +1086,18 @@ Sample Response
       "url": "http://xxxxx",
       "large_url": "http://xxxxx"
     },
+    "evidence_photos": [
+      {
+        "id":1, 
+        "user_id":1, 
+        "thumbwar_id":1, 
+        "has_default_photo":false,
+        "url": "http://blah",
+        "large_url": "http://blah",
+        "created_at":"<timestamp>", 
+        "updated_at":"<timestamp>"
+      }
+    ],
     "watchings": [
       "side": "opponents",
       "user": {
@@ -1222,9 +1282,39 @@ Sample Response
   }
 
 curl
+
   curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"read\":0}"
   
   curl "https://thumbwar-api-staging.herokuapp.com/alerts/22?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X PUT --data "{\"read\":1}"
+  
+== Evidence Photo
+
+POST /evidence_photos
+
+Params
+  :thumbwar_id, (required)
+  :photo, (required if remote_photo_url is not provided)
+  :remote_photo_url (required if photo is not provided)
+  
+  
+Sample Response
+  {
+    "id":1, 
+    "user_id":1, 
+    "thumbwar_id":1, 
+    "has_default_photo":false,
+    "url": "http://blah",
+    "large_url": "http://blah",
+    "created_at":"<timestamp>", 
+    "updated_at":"<timestamp>"
+  }
+  
+curl
+
+  curl "https://thumbwar-api-staging.herokuapp.com/evidence_photos?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" --data "{\"thumbwar_id\":1,\"remote_photo_url\":\"http://cbsradionews.files.wordpress.com/2013/09/gene-simmons-by-afpgetty.jpg\"}"
+  
+  curl -i  -F "evidence_photos[thumbwar_id]=1" -F "evidence_photos[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg" "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441"
+
 
 == Challenge
 

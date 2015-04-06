@@ -4,6 +4,10 @@ json.challenger do
   json.partial! "users/user", user: thumbwar.challenger
 end
 
+json.evidence_photos do
+  json.array! thumbwar.evidence_photos, partial: "evidence_photo/evidence_photos", as: :evidence_photo
+end
+
 json.watchings do
   json.array! thumbwar.watchings, partial: "watchings/watching", as: :watching
 end

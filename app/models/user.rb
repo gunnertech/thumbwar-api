@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
 
   belongs_to :inviter, class_name: "User", foreign_key: "inviter_id"
   
+  has_many :evidence_photos, dependent: :destroy
   has_many :alerts, dependent: :destroy
   has_many :challenges, dependent: :destroy
   has_many :thumbwar_challenges, through: :challenges, class_name: "Thumbwar", foreign_key: :thumbwar_id
