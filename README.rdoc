@@ -509,6 +509,7 @@ Params
   :q (tag search, must be either "$something" or "#something")
   :last (the id of the last thumbwar locally)
   :newest (the id of the newest thumbwar locally)
+  :status (win, loss, push)
 
 Sample Response
   {

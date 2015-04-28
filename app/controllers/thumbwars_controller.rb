@@ -81,6 +81,10 @@ class ThumbwarsController < InheritedResources::Base
       @thumbwars = @thumbwars.where{ id > my{params[:newest].to_i}}
     end
     
+    if params[:status].present?
+      @thumbwars = @thumbwars.where{ status == my{params[:status]}}
+    end
+    
     @thumbwars = @thumbwars.limit(10)
     
     @thumbwars
