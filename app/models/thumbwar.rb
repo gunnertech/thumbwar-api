@@ -6,7 +6,7 @@ class Thumbwar < ActiveRecord::Base
   
   attr_accessible :challenger, :challenger_id, :body, :expires_in, :wager, :status,
     :url, :photo, :remote_photo_url, :publish_to_twitter, :publish_to_facebook, :opponent_id,
-    :opponents_proposed_outcome, :challengers_proposed_outcome
+    :opponents_proposed_outcome, :challengers_proposed_outcome, :public
 
     
   attr_accessor :expires_in, :opponent_id
