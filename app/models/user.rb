@@ -48,6 +48,10 @@ class User < ActiveRecord::Base
     end
   end
   
+  def in_progress_count
+    Challenge.where{ ( user_id == my{id} || challenger_id == my{id}) && (status == 'accepted') }.count
+  end
+  
   
   def to_s
     display_name
