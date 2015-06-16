@@ -61,6 +61,8 @@ class ThumbwarsController < InheritedResources::Base
       @thumbwars = @thumbwars.joins{ challenges }.where{ ((status == 'win') & (challenger_id == my{user.id}) ) |  ((status == 'loss') & (challenges.user_id == my{user.id}) )}
     elsif params[:view] == 'lost'
       @thumbwars = @thumbwars.joins{ challenges }.where{ ((status == 'loss') & (challenger_id == my{user.id}) ) |  ((status == 'win') & (challenges.user_id == my{user.id}) )}
+    elsif params[:view] == 'push'
+      @thumbwars = @thumbwars.joins{ challenges }.where{ ((status == 'loss') & (challenger_id == my{user.id}) ) |  ((status == 'win') & (challenges.user_id == my{user.id}) )}
     else
       @thumbwars = @thumbwars.where{ public == true }
     end
