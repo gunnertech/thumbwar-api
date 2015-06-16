@@ -87,6 +87,8 @@ class ThumbwarsController < InheritedResources::Base
       @thumbwars = @thumbwars.where{ status == my{params[:status]}}
     end
     
+    @count = @thumbwars.count
+    
     @thumbwars = @thumbwars.limit(10)
     
     @thumbwars
