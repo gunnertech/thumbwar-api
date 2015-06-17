@@ -49,7 +49,7 @@ class User < ActiveRecord::Base
   end
   
   def in_progress_count
-    Challenge.where{ ( (user_id == my{id}) | (challenger_id == my{id})) & (status == 'accepted') }.count
+    Thumbwar.joins{ challenges }.where{ ( (challenges.user_id == my{id}) | (challenger_id == my{id})) & ((challenges.status == 'accepted') & (status == 'in_progress')) }.count
   end
   
   
