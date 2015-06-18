@@ -5,6 +5,8 @@ class Challenge < ActiveRecord::Base
   belongs_to :thumbwar
   belongs_to :challenger, class_name: "User", foreign_key: 'challenger_id'
   
+  validates :status, inclusion: { in: %w(pending accepted rejected), message: "%{value} is not a valid status" }
+  
   after_create :create_challenge_alert, if: Proc.new{|c| c.status == 'pending' }
   
   after_update :create_outcome_alert, if: Proc.new{|c| c.outcome_changed? }
