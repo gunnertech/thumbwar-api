@@ -1,7 +1,7 @@
 class EvidencePhotosController < InheritedResources::Base
   # belongs_to :user, optional: true
   
-  before_filter :set_user_id, only: :create
+  before_filter :set_challenger_id, only: :create
   
   protected
   
