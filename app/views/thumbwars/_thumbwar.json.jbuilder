@@ -5,7 +5,7 @@ json.challenger do
 end
 
 json.evidence_photos do
-  json.array! thumbwar.evidence_photos, partial: "evidence_photo/evidence_photos", as: :evidence_photo
+  json.array! thumbwar.evidence_photos, partial: "evidence_photos/evidence_photo", as: :evidence_photo
 end
 
 json.watchings do
