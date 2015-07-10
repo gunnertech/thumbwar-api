@@ -163,9 +163,9 @@ class UsersController < InheritedResources::Base
         end
         
         if l_name.present? && f_name.present?
-          User.where{ (first_name == my{f_name}) & (last_name == my{l_name}) }
+          User.where{ (first_name =~ "#{f_name}%") & (last_name =~ "#{l_name}%") }
         elsif f_name.present?
-          User.where{ first_name == my{f_name} }
+          User.where{ first_name =~ "#{f_name}%" }
         else
           User.where{ id == 0 }
         end
