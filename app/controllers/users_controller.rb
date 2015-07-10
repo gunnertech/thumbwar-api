@@ -155,11 +155,17 @@ class UsersController < InheritedResources::Base
       params[:search] = params[:search].squish
       if params[:search].match(/ /)
         name_pieces = params[:search].split(" ")
-        l_name = name_pieces.last
-        f_name = (name_pieces - [l_name]).join(" ")
+        if name_pieces.count > 1
+          l_name = name_pieces.last
+          f_name = (name_pieces - [l_name]).join(" ")
+        else
+          f_name = name_pieces.first
+        end
         
         if l_name.present? && f_name.present?
           User.where{ (first_name == my{f_name}) & (last_name == my{l_name}) }
+        elsif f_name.present?
+          User.where{ first_name == my{f_name} }
         else
           User.where{ id == 0 }
         end

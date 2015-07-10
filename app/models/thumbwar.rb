@@ -43,6 +43,8 @@ class Thumbwar < ActiveRecord::Base
   after_save :add_opponents, if: Proc.new { |tw| tw.body.present? } 
   after_save :add_opponent, if: Proc.new { |tw| tw.opponent_id.present? } 
   
+  after_save :create_proposed_outcome_alert
+  
   
   class << self
   end
@@ -149,6 +151,22 @@ class Thumbwar < ActiveRecord::Base
     end
     
     return true
+  end
+  
+  def create_proposed_outcome_alert
+    if opponents_proposed_outcome_changed? && opponents_proposed_outcome != challengers_proposed_outcome
+      if opponents_proposed_outcome == 'push'
+        user.alerts.create!(alertable: self, body: "Your opponent says you tied!")
+      else
+        user.alerts.create!(alertable: self, body: "Your opponent says they #{(opponents_proposed_outcome == 'loss') ? "won" : "lost"}!")
+      end
+    elsif challengers_proposed_outcome_changed? && opponents_proposed_outcome != challengers_proposed_outcome
+      if challengers_proposed_outcome_changed == 'push'
+        opponents.first.alerts.create!(alertable: self, body: "Your opponent says you tied!")
+      else
+        opponents.first.create!(alertable: self, body: "Your opponent says they #{(challengers_proposed_outcome == 'win') ? "won" : "lost"}!")
+      end
+    end
   end
 
   def post_to_twitter
