@@ -152,7 +152,18 @@ class UsersController < InheritedResources::Base
         User.limit(10)
       end
     elsif params[:search]
-      if params[:search].match(/,/)
+      params[:search] = params[:search].squish
+      if params[:search].match(/ /)
+        name_pieces = params[:search].split(" ")
+        l_name = name_pieces.last
+        f_name = (name_pieces - [l_name]).join(" ")
+        
+        if l_name.present? && f_name.present?
+          User.where{ (first_name == my{f_name}) & (last_name == my{l_name}) }
+        else
+          User.where{ id == 0 }
+        end
+      elsif params[:search].match(/,/)
         searches = params[:search].split(",")
         User.where{ (email >> my{searches}) | (mobile >> my{searches}) }
       elsif params[:search].match(/@/)
