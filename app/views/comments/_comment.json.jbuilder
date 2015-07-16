@@ -1,4 +1,4 @@
-json.(comment, :id, :body, :commentable_type, :commentable_id)
+json.(comment, :id, :body, :commentable_type, :commentable_id, :created_at)
 
 if comment.photo.present?
   json.photo do |photo|
