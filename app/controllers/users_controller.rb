@@ -153,7 +153,16 @@ class UsersController < InheritedResources::Base
       end
     elsif params[:search]
       params[:search] = params[:search].squish
-      if params[:search].match(/ /)
+      if params[:search].match(/,/)
+        searches = params[:search].split(",")
+        User.where{ (email >> my{searches}) | (mobile >> my{searches}) }
+      elsif params[:search].match(/@/)
+        User.where{ email == my{params[:search]} }
+      elsif User.where{ username == my{params[:search]} }.count > 0
+        User.where{ username == my{params[:search]} }
+      elsif User.where{ facebook_id == my{params[:search]} }.count > 0
+        User.where{ facebook_id == my{params[:search]} }
+      elsif !params[:search].match(/\d/,"")
         name_pieces = params[:search].split(" ")
         if name_pieces.count > 1
           l_name = name_pieces.last
@@ -169,19 +178,7 @@ class UsersController < InheritedResources::Base
         else
           User.where{ id == 0 }
         end
-      elsif params[:search].match(/,/)
-        searches = params[:search].split(",")
-        User.where{ (email >> my{searches}) | (mobile >> my{searches}) }
-      elsif params[:search].match(/@/)
-        User.where{ email == my{params[:search]} }
-      # elsif !params[:search].gsub(/[^a-zA-Z]/,"").match(/\D/)
-      #   search = params[:search].gsub(/\D/,"")
-      #   search = "1#{search}" if search.length < 11
-      #   User.where{ mobile == my{search} }
-      elsif User.where{ username == my{params[:search]} }.count > 0
-        User.where{ username == my{params[:search]} }
-      elsif User.where{ facebook_id == my{params[:search]} }.count > 0
-        User.where{ facebook_id == my{params[:search]} }
+        
       else
         search = params[:search].gsub(/\D/,"")
         search = "1#{search}" if search.length < 11
