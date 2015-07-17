@@ -162,7 +162,7 @@ class UsersController < InheritedResources::Base
         User.where{ username == my{params[:search]} }
       elsif User.where{ facebook_id == my{params[:search]} }.count > 0
         User.where{ facebook_id == my{params[:search]} }
-      elsif !params[:search].match(/\d/,"")
+      elsif !params[:search].to_s.match(/\d/)
         name_pieces = params[:search].split(" ")
         if name_pieces.count > 1
           l_name = name_pieces.last
