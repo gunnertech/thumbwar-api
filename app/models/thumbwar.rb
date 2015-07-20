@@ -156,9 +156,9 @@ class Thumbwar < ActiveRecord::Base
   def create_proposed_outcome_alert
     if opponents_proposed_outcome_changed? && opponents_proposed_outcome != challengers_proposed_outcome
       if opponents_proposed_outcome == 'push'
-        user.alerts.create!(alertable: self, body: "Your opponent says you tied!")
+        challenger.alerts.create!(alertable: self, body: "Your opponent says you tied!")
       else
-        user.alerts.create!(alertable: self, body: "Your opponent says they #{(opponents_proposed_outcome == 'loss') ? "won" : "lost"}!")
+        challenger.alerts.create!(alertable: self, body: "Your opponent says they #{(opponents_proposed_outcome == 'loss') ? "won" : "lost"}!")
       end
     elsif challengers_proposed_outcome_changed? && opponents_proposed_outcome != challengers_proposed_outcome
       if challengers_proposed_outcome_changed == 'push'
