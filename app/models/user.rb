@@ -6,7 +6,7 @@ class User < ActiveRecord::Base
   
   attr_accessible :avatar, :facebook_token, :first_name, :inviter, :inviter_id, :last_name, :mobile, :public, 
     :publish_to_facebook, :publish_to_twitter, :sms_notifications, :twitter_token, :username, :verification_url, 
-    :email, :facebook_id, :remote_avatar_url, :facebook_ids
+    :email, :facebook_id, :remote_avatar_url, :facebook_ids, :opponent_has_seen_popup, :challenger_has_seen_popup
 
   attr_accessor :verification_url, :skip_confirmation_code, :facebook_ids
 
