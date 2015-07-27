@@ -1,4 +1,7 @@
-json.(thumbwar, :id, :body, :expires_at, :url, :wager, :minutes_remaining, :created_at, :has_default_photo, :status, :public, :comments_count, :opponents_proposed_outcome, :challengers_proposed_outcome)
+json.(thumbwar, :id, :body, :expires_at, :url, :wager, :minutes_remaining,
+:created_at, :has_default_photo, :status, :public, :comments_count,
+:opponents_proposed_outcome, :challengers_proposed_outcome,
+:opponent_has_seen_popup, :challenger_has_seen_popup)
 
 json.challenger do
   json.partial! "users/user", user: thumbwar.challenger
