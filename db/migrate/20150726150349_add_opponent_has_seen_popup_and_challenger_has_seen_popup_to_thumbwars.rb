@@ -4,3 +4,4 @@ class AddOpponentHasSeenPopupAndChallengerHasSeenPopupToThumbwars < ActiveRecord
     add_column :thumbwars, :challenger_has_seen_popup, :boolean, default: false
   end
 end
+
