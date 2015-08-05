@@ -14,9 +14,12 @@
 /log/*.log
 /tmp
 
+.DS_Store
+
 .port
 
 /config/database.yml
 .env
 /public/uploads
 ck.pem
+
