@@ -73,7 +73,7 @@ class ThumbwarsController < InheritedResources::Base
       @thumbwars = @thumbwars.where{ public == true }
     end
 
-    if params[:with_me].present? && params[:with_me]
+    if params[:with_me].present? && params[:with_me] == "true"
       @thumbwars = @thumbwars.where{ (challenges.user_id == my{current_user.id}) | (challenger_id == my{current_user.id}) }
     end
     
