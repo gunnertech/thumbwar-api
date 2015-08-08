@@ -48,10 +48,14 @@ class ThumbwarsController < InheritedResources::Base
       my_thumbwar_ids = user.thumbwars.pluck('id')
       followee_ids = user.followees.pluck('id')
       followee_thumbwar_ids = Thumbwar.where{ (public == true) & (challenger_id >> my{followee_ids}) }.pluck('id')
+
+      # This is temporary until we decide to make friendship mutual
+      follower_ids = user.followers.pluck('id')
+      follower_thumbwar_ids = Thumbwar.where{ (public == true) & (challenger_id >> my{follower_ids}) }.pluck('id')
+
       challenge_thumbwar_ids = user.challenges.pluck('thumbwar_id')
     
-      thumbwar_ids = my_thumbwar_ids + followee_thumbwar_ids + challenge_thumbwar_ids
-    
+      thumbwar_ids = my_thumbwar_ids + followee_thumbwar_ids + challenge_thumbwar_ids + follower_thumbwar_ids
 
       @thumbwars = @thumbwars.where{ id >> my{thumbwar_ids.uniq} }
     elsif params[:view] == 'mine'
@@ -67,6 +71,10 @@ class ThumbwarsController < InheritedResources::Base
       @thumbwars = @thumbwars.joins{ challenges }.where{ ( (status == 'in_progress') & (challenges.status == 'accepted') ) & ( (challenges.user_id == my{user.id}) | (challenger_id == my{user.id}) ) }
     else
       @thumbwars = @thumbwars.where{ public == true }
+    end
+
+    if params[:with_me].present? && params[:with_me]
+      @thumbwars = @thumbwars.where{ (challenges.user_id == my{current_user.id}) | (challenger_id == my{current_user.id}) }
     end
     
     if params[:q].present?
