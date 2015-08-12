@@ -15,7 +15,11 @@ class UsersController < InheritedResources::Base
     
   def login
     if @user = User.find_by_facebook_token(params[:user][:facebook_token])
-      unless @user.facebook_id == params[:user][:facebook_id]
+      if @user.facebook_id == params[:user][:facebook_id]
+        if new_avatar_url = params[:user][:remote_avatar_url]
+          @user.update_attribute(:remote_avatar_url, new_avatar_url)
+        end
+      else
         render status: 401, json: {error: "invalid token"}
       end
     else
