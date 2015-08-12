@@ -76,6 +76,8 @@ class ThumbwarsController < InheritedResources::Base
     if params[:with_me].present? && params[:with_me] == "true"
       @thumbwars = @thumbwars.where{ (challenges.user_id == my{current_user.id}) | (challenger_id == my{current_user.id}) }
     end
+
+    @total_count = @thumbwars.count
     
     if params[:q].present?
       if params[:q].start_with?('$')
