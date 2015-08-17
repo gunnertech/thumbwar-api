@@ -133,7 +133,8 @@ class User < ActiveRecord::Base
 
   def send_invitation(verification_url=nil)
     if mobile
-      body = "#{inviter} wants you to join ThumbWar. Click the link to get started: #{verification_url}?mobile=#{mobile}"
+      #{verification_url}?mobile=#{mobile}"
+      body = "#{inviter} wants you to join ThumbWar. Click the link to get started: https://itunes.apple.com/us/app/thumbwar-social-betting/id934665382?mt=8"
       client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
       number = ENV['TWILIO_NUMBERS'].split(",").sample
 
