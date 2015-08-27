@@ -1,6 +1,6 @@
 class AddLastUserToCounterRefToThumbwar < ActiveRecord::Migration
   def change
-    add_reference :thumbwars, :last_user_to_counter, index: true, foreign_key: true
+    add_column :thumbwars, :last_user_to_counter, :integer
   end
 end
 
