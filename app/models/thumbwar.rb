@@ -172,7 +172,7 @@ class Thumbwar < ActiveRecord::Base
   end
 
   def update_last_war_counter
-    self.last_user_to_counter = me.id
+    self.last_user_to_counter = @current_user.id
   end
 
   def post_to_twitter
