@@ -31,6 +31,7 @@ class Thumbwar < ActiveRecord::Base
   before_validation :strip_dollar_sign, if: Proc.new { |tw| tw.wager.present? && tw.wager.start_with?("$") }
   
   before_save :set_status
+  before_save :update_last_war_counter
   
 
   after_create :post_to_twitter, if: Proc.new{ |tw| tw.publish_to_twitter? }
@@ -45,7 +46,6 @@ class Thumbwar < ActiveRecord::Base
   after_save :add_opponent, if: Proc.new { |tw| tw.opponent_id.present? } 
   
   after_save :create_proposed_outcome_alert
-  after_save :update_last_war_counter
   
   
   class << self
@@ -172,21 +172,15 @@ class Thumbwar < ActiveRecord::Base
   end
 
   def update_last_war_counter
-    puts "Begin"
     if last_user_to_counter == nil
       last_user_to_counter = challenger_id
-      puts "was nil"
     else
       if last_user_to_counter == challenger_id
         last_user_to_counter = opponent_id
-        puts "was challenger"
       else
         last_user_to_counter = challenger_id
-        puts "was opponent"
       end
     end
-
-    p last_user_to_counter
   end
 
   def post_to_twitter
