@@ -181,6 +181,8 @@ class Thumbwar < ActiveRecord::Base
         last_user_to_counter = challenger_id
       end
     end
+
+    return true
   end
 
   def post_to_twitter
