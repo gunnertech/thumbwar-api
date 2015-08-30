@@ -45,6 +45,7 @@ class Thumbwar < ActiveRecord::Base
   after_save :add_opponent, if: Proc.new { |tw| tw.opponent_id.present? } 
   
   after_save :create_proposed_outcome_alert
+  after_save :update_last_war_counter
   
   
   class << self
@@ -168,6 +169,10 @@ class Thumbwar < ActiveRecord::Base
         opponents.first.create!(alertable: self, body: "Your opponent says they #{(challengers_proposed_outcome == 'win') ? "won" : "lost"}!")
       end
     end
+  end
+
+  def update_last_war_counter
+    self.last_user_to_counter = me.id
   end
 
   def post_to_twitter
