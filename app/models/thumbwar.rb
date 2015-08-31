@@ -66,7 +66,15 @@ class Thumbwar < ActiveRecord::Base
   def minutes_remaining
     ((expires_at - Time.now)/60).round if expires_at
   end
-  
+
+  def update_last_war_counter(user)
+    self.update(last_user_to_counter: user.id)
+
+    p last_user_to_counter
+
+    return true
+  end
+
   protected
   
   def set_wager_from_body
@@ -168,14 +176,6 @@ class Thumbwar < ActiveRecord::Base
         opponents.first.create!(alertable: self, body: "Your opponent says they #{(challengers_proposed_outcome == 'win') ? "won" : "lost"}!")
       end
     end
-  end
-
-  def update_last_war_counter(user)
-    self.update(last_user_to_counter: user.id)
-
-    p last_user_to_counter
-
-    return true
   end
 
   def post_to_twitter
