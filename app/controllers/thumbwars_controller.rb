@@ -28,14 +28,12 @@ class ThumbwarsController < InheritedResources::Base
   end
 
   def update
-    puts "Called Edit"
     @thumbwar = Thumbwar.find(params[:id])
     @thumbwar.update_last_war_counter(@current_user)
     update!
   end
 
   def create
-    puts "Called Super"
     @thumbwar = Thumbwar.new(params[:thumbwar])
     @thumbwar.update_last_war_counter(@current_user)
     create!
