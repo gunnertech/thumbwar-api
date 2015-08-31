@@ -173,16 +173,15 @@ class Thumbwar < ActiveRecord::Base
 
   def update_last_war_counter
     puts "Enter"
+    p opponent_id
+
     if last_user_to_counter == nil
       self.last_user_to_counter = challenger_id
-      puts "Made Challenger"
     else
       if last_user_to_counter == challenger_id
         self.last_user_to_counter = opponent_id
-        puts "Made Opp"
       else
         self.last_user_to_counter = challenger_id
-        puts "Made Challger"
       end
     end
 
