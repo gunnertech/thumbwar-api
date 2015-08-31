@@ -28,11 +28,13 @@ class ThumbwarsController < InheritedResources::Base
   end
 
   def edit
+    puts "Called Edit"
     super
     Thumbwar.update_last_war_counter(@current_user)
   end
 
   def create
+    puts "Called Super"
     super
     Thumbwar.update_last_war_counter(@current_user)
   end
