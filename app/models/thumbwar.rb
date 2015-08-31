@@ -70,8 +70,6 @@ class Thumbwar < ActiveRecord::Base
   def update_last_war_counter(user)
     self.update(last_user_to_counter: user.id)
 
-    p last_user_to_counter
-
     return true
   end
 
