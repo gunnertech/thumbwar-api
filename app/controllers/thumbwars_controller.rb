@@ -26,6 +26,16 @@ class ThumbwarsController < InheritedResources::Base
     resource.update_attribute(:winner_id, 0)
     render status: 200, json: {}
   end
+
+  def edit
+    super
+    Thumbwar.update_last_war_counter(@current_user)
+  end
+
+  def create
+    super
+    Thumbwar.update_last_war_counter(@current_user)
+  end
   
   protected
   
