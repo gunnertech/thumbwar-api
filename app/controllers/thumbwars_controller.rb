@@ -27,16 +27,18 @@ class ThumbwarsController < InheritedResources::Base
     render status: 200, json: {}
   end
 
-  def edit
+  def update
     puts "Called Edit"
-    super
-    Thumbwar.update_last_war_counter(@current_user)
+    @thumbwar = Thumbwar.find(params[:id])
+    @thumbwar.update_last_war_counter(@current_user)
+    update!
   end
 
   def create
     puts "Called Super"
-    super
-    Thumbwar.update_last_war_counter(@current_user)
+    @thumbwar = Thumbwar.new(params[:thumbwar])
+    @thumbwar.update_last_war_counter(@current_user)
+    create!
   end
   
   protected
