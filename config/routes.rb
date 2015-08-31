@@ -19,6 +19,9 @@ Rails.application.routes.draw do
     get ":view", to: "users#index"
   end
 
+  post "thumbwars", to: "thumbwars#create"
+  put "thumbwars", to: "thumbwars#edit"
+
   resources :thumbwars do
     resources :comments, only: [:create, :index]
 
