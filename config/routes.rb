@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   get "twitter_oauth", to: "users#twitter_oauth"
   get "facebook_oauth", to: "users#facebook_oauth"
   post "login", to: "users#login"
+  post "verify", to: "users#verify"
   delete "logout", to: "users#logout"
 
   resources :users do

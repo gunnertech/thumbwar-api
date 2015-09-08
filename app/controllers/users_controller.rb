@@ -12,7 +12,61 @@ class UsersController < InheritedResources::Base
     
     show!
   end
+
+  def update
+    if params[:mobile] != nil
+      users = User.where(mobile: params[:mobile])
+
+      for user in users
+        if user && user.facebook_token
+          unless user == current_user
+            render status: 409, json: {error: "mobile exists"}
+            return
+          end
+        else
+        end
+      end
+
+      current_user.send_verification_sms(params[:mobile])
+    end
+
+    update!
+  end
     
+  def verify
+    if params[:verification_code] == current_user.verification_code
+      current_user.verified = true
+      current_user.save
+
+      # Merge all the wars for the invited version if exists
+      users = User.where(mobile: current_user.mobile)
+      user_from_contact = nil
+
+      for user in users
+        if user && !user.facebook_token
+          user_from_contact = user
+          break
+        end
+      end
+
+      # This user was indeed invited -> Merge the users
+      if user_from_contact
+        wars_from_friends = Challenge.where(user_id: user_from_contact.id)
+
+        for war in wars_from_friends
+          war.user_id = current_user.id
+          war.save!
+        end
+
+        user_from_contact.delete
+      end
+
+      render status: 200, json: {}
+    else
+      render status: 401, json: {error: "invalid code"}
+    end
+  end
+
   def login
     if @user = User.find_by_facebook_token(params[:user][:facebook_token])
       if @user.facebook_id == params[:user][:facebook_id]

@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
   
   
 
-  validates :mobile, presence: true, uniqueness: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
+  validates :mobile, presence: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
   validates :username, uniqueness: true
   validates :facebook_id, presence: true, uniqueness: true, allow_blank: true
   
@@ -48,6 +48,21 @@ class User < ActiveRecord::Base
     end
   end
   
+  def send_verification_sms(newMobile)
+    client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
+    number = ENV['TWILIO_NUMBERS'].split(",").sample
+    self.verification_code = rand(0000..9999).to_s.rjust(4, "0")
+    self.verified = false
+    self.save!
+
+    client.account.sms.messages.create(
+      from: "+1#{number}",
+      to: "+#{newMobile}",
+      body: "Your confirmation code is: #{self.verification_code}"
+    )
+  end
+  handle_asynchronously :send_verification_sms
+
   def in_progress_count
     Thumbwar.joins{ challenges }.where{ ( (challenges.user_id == my{id}) | (challenger_id == my{id})) & ((challenges.status == 'accepted') & (status == 'in_progress')) }.count
   end
@@ -133,7 +148,6 @@ class User < ActiveRecord::Base
 
   def send_invitation(verification_url=nil)
     if mobile
-      #{verification_url}?mobile=#{mobile}"
       body = "#{inviter} challenged you to a Thumbwar: https://itunes.apple.com/us/app/thumbwar-social-betting/id934665382?mt=8"
       client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
       number = ENV['TWILIO_NUMBERS'].split(",").sample
@@ -182,9 +196,9 @@ class User < ActiveRecord::Base
   end
   
   def create_welcome_alert
-    # alerts.create(alertable: self, body: "Get started with ThumbWar! (This will be a three-step wizard that will walk new users through ThumbWar)")
+    alerts.create(alertable: self, body: "Welcome to Thumbwar! This will be where you will receive various alerts informing you about your Thumbwars!")
   end
-  
+
   def standardize_mobile
     if mobile.length == 10
       self.mobile = "1#{mobile}"
@@ -207,6 +221,4 @@ class User < ActiveRecord::Base
     end
   end
   handle_asynchronously :send_alerts_to_facebook_friends
-  
-
 end

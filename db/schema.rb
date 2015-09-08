@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150710221957) do
+ActiveRecord::Schema.define(version: 20150906042623) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -144,12 +144,15 @@ ActiveRecord::Schema.define(version: 20150710221957) do
     t.boolean  "publish_to_facebook",          default: false
     t.string   "challengers_proposed_outcome"
     t.string   "opponents_proposed_outcome"
+    t.boolean  "opponent_has_seen_popup",      default: false
+    t.boolean  "challenger_has_seen_popup",    default: false
+    t.integer  "last_user_to_counter"
   end
 
   add_index "thumbwars", ["challenger_id"], name: "index_thumbwars_on_challenger_id", using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "encrypted_password",               default: "",   null: false
+    t.string   "encrypted_password",               default: "",    null: false
     t.string   "facebook_token"
     t.string   "first_name"
     t.integer  "inviter_id"
@@ -164,16 +167,16 @@ ActiveRecord::Schema.define(version: 20150710221957) do
     t.boolean  "email_notifications",              default: true
     t.string   "token"
     t.string   "twitter_token"
-    t.string   "username",                         default: "",   null: false
-    t.integer  "sign_in_count",                    default: 0,    null: false
-    t.integer  "wins",                             default: 0,    null: false
-    t.integer  "losses",                           default: 0,    null: false
-    t.integer  "pushes",                           default: 0,    null: false
+    t.string   "username",                         default: "",    null: false
+    t.integer  "sign_in_count",                    default: 0,     null: false
+    t.integer  "wins",                             default: 0,     null: false
+    t.integer  "losses",                           default: 0,     null: false
+    t.integer  "pushes",                           default: 0,     null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "avatar"
     t.string   "verification_code"
-    t.boolean  "verified",                         default: true
+    t.boolean  "verified",                         default: false
     t.string   "twitter_username"
     t.integer  "twitter_id",             limit: 8
     t.string   "twitter_secret"

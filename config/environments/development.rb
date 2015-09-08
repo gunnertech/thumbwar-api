@@ -20,7 +20,8 @@ Rails.application.configure do
   
   config.action_mailer.delivery_method = :sendmail
   config.action_mailer.perform_deliveries = true
-  
+
+  config.reload_classes_only_on_change = false
 
   config.active_support.deprecation = :log
 end
