@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
     client.account.sms.messages.create(
       from: "+1#{number}",
       to: "+#{newMobile}",
-      body: "Your confirmation code is: #{self.verification_code}"
+      body: "Your Thumbwar verification code is: #{self.verification_code}"
     )
   end
   handle_asynchronously :send_verification_sms
