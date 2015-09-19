@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150906042623) do
+ActiveRecord::Schema.define(version: 20150915000000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,7 +163,7 @@ ActiveRecord::Schema.define(version: 20150906042623) do
     t.boolean  "publish_to_twitter"
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
-    t.boolean  "sms_notifications",                default: true
+    t.boolean  "sms_notifications",                default: false
     t.boolean  "email_notifications",              default: true
     t.string   "token"
     t.string   "twitter_token"
