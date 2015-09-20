@@ -22,6 +22,7 @@ gem "twitter", "5.11.0"
 gem "koala", "1.10.1"
 gem "acts-as-taggable-on", "3.4.2"
 gem 'grocer'
+gem 'newrelic_rpm'
 
 group :development do
   gem "better_errors", "2.0.0"
