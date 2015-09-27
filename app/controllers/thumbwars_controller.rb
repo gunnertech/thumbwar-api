@@ -89,7 +89,7 @@ class ThumbwarsController < InheritedResources::Base
       @thumbwars = @thumbwars.where{ (challenges.user_id == my{current_user.id}) | (challenger_id == my{current_user.id}) }
     end
 
-    @thumbwars = @thumbwars.joins{ challenges }.where{ status == 'accepted' } # This line only works for the current 1v1 System
+    #@thumbwars = @thumbwars.joins{ challenges }.where{ status == 'accepted' } # This line only works for the current 1v1 System
     @total_count = @thumbwars.count
     
     if params[:q].present?
