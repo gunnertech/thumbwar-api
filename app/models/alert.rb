@@ -9,7 +9,7 @@ class Alert < ActiveRecord::Base
   validates :user_id, presence: true
   
   after_create :send_sms, if: Proc.new { |a| a.user.mobile.present? && a.user.sms_notifications? && !a.user.facebook_id.blank? }
-  after_create :send_push
+  after_create :create_pushes
   after_create :send_email, if: Proc.new { |a| a.user.email.present? && a.user.email_notifications? && !a.user.facebook_id.blank? }
   
   def url
@@ -40,7 +40,7 @@ class Alert < ActiveRecord::Base
   
   protected
   
-  def send_push
+  def send_push(device)
     pem = ENV['APNS_PEM'].length < 9 ? "#{Rails.root}/#{ENV['APNS_PEM']}" : StringIO.new(ENV['APNS_PEM'])
     # raise pem
     pusher = Grocer.pusher(
@@ -50,7 +50,32 @@ class Alert < ActiveRecord::Base
       # port:        2195,                     # optional
       # retries:     3                         # optional
     )
+    
+    # category:          "a category",         # optional; used for custom notification actions
+    # sound:             "siren.aiff",         # optional
+    # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
+    # identifier:        1234,                 # optional; must be an integer
+    # content_available: true                  # optional; any truthy value will set 'content-available' to 1
+    notification = Grocer::Notification.new(
+      device_token:      device.token,
+      alert:             body,
+      badge:             (user.alerts.where{ read == false }.count),
+      content_available: true,
+      custom: {
+        message: body,
+        url: url,
+        subject_type: subject_type,
+        subject_id: subject_id
+      }
+    )
 
+    pusher.push(notification)
+  end
+  
+  handle_asynchronously :send_push
+  
+  def create_pushes
+    pem = ENV['APNS_PEM'].length < 9 ? "#{Rails.root}/#{ENV['APNS_PEM']}" : StringIO.new(ENV['APNS_PEM'])
 
     feedback = Grocer.feedback(
       certificate: pem,      # required
@@ -67,32 +92,12 @@ class Alert < ActiveRecord::Base
     end
     
     if user
-    
       user.devices.where{ device_type == 'ios' }.each do |device|
-      
-        # category:          "a category",         # optional; used for custom notification actions
-        # sound:             "siren.aiff",         # optional
-        # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
-        # identifier:        1234,                 # optional; must be an integer
-        # content_available: true                  # optional; any truthy value will set 'content-available' to 1
-        notification = Grocer::Notification.new(
-          device_token:      device.token,
-          alert:             body,
-          badge:             (user.alerts.where{ read == false }.count),
-          content_available: true,
-          custom: {
-            message: body,
-            url: url,
-            subject_type: subject_type,
-            subject_id: subject_id
-          }
-        )
-
-        pusher.push(notification)
+        send_push(device)
       end
     end
   end
-  handle_asynchronously :send_push
+  handle_asynchronously :create_pushes
   
   def send_sms
     client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
