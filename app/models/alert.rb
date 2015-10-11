@@ -50,28 +50,46 @@ class Alert < ActiveRecord::Base
       # port:        2195,                     # optional
       # retries:     3                         # optional
     )
-    
-    user.devices.where{ device_type == 'ios' }.each do |device|
-      
-      # category:          "a category",         # optional; used for custom notification actions
-      # sound:             "siren.aiff",         # optional
-      # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
-      # identifier:        1234,                 # optional; must be an integer
-      # content_available: true                  # optional; any truthy value will set 'content-available' to 1
-      notification = Grocer::Notification.new(
-        device_token:      device.token,
-        alert:             body,
-        badge:             (user.alerts.where{ read == false }.count),
-        content_available: true,
-        custom: {
-          message: body,
-          url: url,
-          subject_type: subject_type,
-          subject_id: subject_id
-        }
-      )
 
-      pusher.push(notification)
+
+    feedback = Grocer.feedback(
+      certificate: pem,      # required
+      passphrase:  ENV['APNS_PASSPHRASE'],                       # optional
+      gateway:     "feedback.push.apple.com", # optional; See note below.
+      port:        2196,                      # optional
+      retries:     3                          # optional
+    )
+
+    feedback.each do |attempt|
+      puts "Device #{attempt.device_token} failed at #{attempt.timestamp}"
+  
+      Device.where{ token == my{attempt.device_token} }.destroy_all
+    end
+    
+    if user
+    
+      user.devices.where{ device_type == 'ios' }.each do |device|
+      
+        # category:          "a category",         # optional; used for custom notification actions
+        # sound:             "siren.aiff",         # optional
+        # expiry:            Time.now + 60*60,     # optional; 0 is default, meaning the message is not stored
+        # identifier:        1234,                 # optional; must be an integer
+        # content_available: true                  # optional; any truthy value will set 'content-available' to 1
+        notification = Grocer::Notification.new(
+          device_token:      device.token,
+          alert:             body,
+          badge:             (user.alerts.where{ read == false }.count),
+          content_available: true,
+          custom: {
+            message: body,
+            url: url,
+            subject_type: subject_type,
+            subject_id: subject_id
+          }
+        )
+
+        pusher.push(notification)
+      end
     end
   end
   handle_asynchronously :send_push
