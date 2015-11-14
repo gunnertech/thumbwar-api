@@ -54,7 +54,6 @@ class Thumbwar < ActiveRecord::Base
   end
   
   def set_properties_from_body
-    set_wager_from_body
     set_tag_list_from_body
   end
   
@@ -73,12 +72,6 @@ class Thumbwar < ActiveRecord::Base
   end
 
   protected
-  
-  def set_wager_from_body
-    if matches = body.match(/\$([^ \-]+)/)
-      self.wager = matches[1]
-    end
-  end
   
   def add_opponents
     body.scan(/@[^ \-]+/).each do |match|
