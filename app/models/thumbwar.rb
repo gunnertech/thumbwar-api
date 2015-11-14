@@ -28,7 +28,6 @@ class Thumbwar < ActiveRecord::Base
   before_validation :set_default_status, unless: Proc.new{ |tw| tw.status.present? }
   before_validation :set_expires_at, if: Proc.new{ |tw| tw.expires_in.present? }
   before_validation :set_properties_from_body, if: Proc.new { |tw| tw.body.present? }
-  before_validation :strip_dollar_sign, if: Proc.new { |tw| tw.wager.present? && tw.wager.start_with?("$") }
   
   before_save :set_status
   
