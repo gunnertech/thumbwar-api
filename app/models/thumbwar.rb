@@ -194,10 +194,6 @@ class Thumbwar < ActiveRecord::Base
     update_column(:url, url.gsub(/\{id\}/,id.to_s))
   end
   
-  def strip_dollar_sign
-    self.wager = wager.gsub(/^\$/,"")
-  end
-  
   def update_challenger_record
     if status_was == 'win'
       challenger.decrement(:wins)
