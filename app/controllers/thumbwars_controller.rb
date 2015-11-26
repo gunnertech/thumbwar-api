@@ -85,6 +85,22 @@ class ThumbwarsController < InheritedResources::Base
       @thumbwars = @thumbwars.joins{ challenges }.where{ ((status == 'push') & (challenger_id == my{user.id}) ) |  ((status == 'push') & (challenges.user_id == my{user.id}) )}
     elsif params[:view] == 'in_progress'
       @thumbwars = @thumbwars.joins{ challenges }.where{ ( (status == 'in_progress') & (challenges.status == 'accepted') ) & ( (challenges.user_id == my{user.id}) | (challenger_id == my{user.id}) ) }
+    # elsif params[:view] == 'popup'
+    #   my_thumbwar_ids = []
+    #   my_thumbwar_ids = @thumbwars.joins{ challenges }.where{ ( (status == 'in_progress') & (challenges.status == 'pending') ) & ( (challenges.user_id == my{user.id}) ) }.pluck('id')
+    #   retarded_evidence_check_thumbwars = @thumbwars.joins{ challenges }.where{
+    #     ( (status == 'in_progress') & (challenges.status == 'accepted') ) &
+    #     ( (challenger_id == my{user.id}) ) &
+    #     ( (opponents_proposed_outcome != challengers_proposed_outcome) )
+    #   }
+    #
+    #   retarded_evidence_check_thumbwars.each do |thumbwar|
+    #     if thumbwar.comments.reorder{ id.asc }.last.body.match(/--evidence/) && thumbwar.comments.reorder{ id.asc }.last.user == current_user
+    #       my_thumbwar_ids.push(thumbwar.id)
+    #     end
+    #   end
+    #
+    #   @thumbwars = @thumbwars.where{ id >> my{my_thumbwar_ids} }
     else
       @thumbwars = @thumbwars.where{ public == true }
     end
