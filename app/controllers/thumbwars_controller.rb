@@ -29,7 +29,11 @@ class ThumbwarsController < InheritedResources::Base
 
   def update
     @thumbwar = Thumbwar.find(params[:id])
-    @thumbwar.update_last_war_counter(@current_user)
+    wasCountered = !(@thumbwar.body == params[:body]) || !(@thumbwar.wager == params[:wager])
+    if wasCountered
+      @thumbwar.update_last_war_counter(@current_user)
+    end
+
     update!
   end
 
