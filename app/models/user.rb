@@ -26,8 +26,6 @@ class User < ActiveRecord::Base
   
   
 
-  validates :mobile, presence: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
-  
   before_validation :generate_username, on: :create, if: Proc.new{ |u| u.username.blank? }
   before_validation :standardize_mobile, if: Proc.new{ |u| u.mobile_changed? && u.mobile.present? }
   
