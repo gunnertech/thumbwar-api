@@ -6,14 +6,14 @@ class ApplicationController < ActionController::Base
   protected
   
   def current_user
-    facebook_id = request.headers['thumbwar-facebook-id'] || params[:facebook_id]
-    token = request.headers['thumbwar-auth-token'] || params[:token]
+    facebook_id = request.headers['thumbwar-facebook-id']
+    token = request.headers['thumbwar-auth-token']
     @current_user ||= User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.first if token && facebook_id
   end
   
   def authenticate_from_token!
-    facebook_id = request.headers['thumbwar-facebook-id'] || params[:facebook_id]
-    token = request.headers['thumbwar-auth-token'] || params[:token]
+    facebook_id = request.headers['thumbwar-facebook-id']
+    token = request.headers['thumbwar-auth-token']
     if facebook_id
       if (user = User.find_by_facebook_id(facebook_id))
         if token
