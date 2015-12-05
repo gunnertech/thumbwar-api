@@ -193,10 +193,6 @@ class UsersController < InheritedResources::Base
   protected
   
   def set_inviter_id
-    p params
-    p current_user
-    p params[:user]
-    p current_user.id
     params[:user][:inviter_id] = current_user.id unless current_user.nil?
   end
   
