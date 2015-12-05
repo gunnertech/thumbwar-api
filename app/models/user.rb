@@ -26,6 +26,11 @@ class User < ActiveRecord::Base
   
   
 
+  validates :mobile, presence: true, length: {in: 11..15}, format: {with: /\A\d+\z/}, allow_nil: true
+  validates :username, uniqueness: true
+  validates :facebook_id, presence: true, uniqueness: true, allow_blank: true
+  validates :facebook_token, uniqueness: true, allow_nil: true
+  
   before_validation :generate_username, on: :create, if: Proc.new{ |u| u.username.blank? }
   before_validation :standardize_mobile, if: Proc.new{ |u| u.mobile_changed? && u.mobile.present? }
   
