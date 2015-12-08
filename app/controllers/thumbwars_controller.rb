@@ -29,18 +29,13 @@ class ThumbwarsController < InheritedResources::Base
 
   def update
     @thumbwar = Thumbwar.find(params[:id])
+    # TODO: Track the image Changes
     wasCountered = !(@thumbwar.body == params[:body]) || !(@thumbwar.wager == params[:wager])
     if wasCountered
       @thumbwar.update_last_war_counter(@current_user)
     end
 
     update!
-  end
-
-  def create
-    @thumbwar = Thumbwar.new(params[:thumbwar])
-    @thumbwar.update_last_war_counter(@current_user)
-    create!
   end
   
   protected
