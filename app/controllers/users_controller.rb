@@ -13,6 +13,16 @@ class UsersController < InheritedResources::Base
     show!
   end
 
+  def collection
+    @users = end_of_association_chain
+
+    if !params[:limitTo].present?
+      @users = @users.limit(params[:limitTo].to_i)
+    end
+
+    @users
+  end
+
   def update
     if params[:mobile] != nil
       users = User.where(mobile: params[:mobile])
