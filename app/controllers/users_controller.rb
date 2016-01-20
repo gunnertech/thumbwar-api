@@ -250,6 +250,10 @@ class UsersController < InheritedResources::Base
     else
       User.limit(10)
     end
+
+    if params[:limitTo].present?
+      @users = @users.limit(params[:limitTo].to_i)
+    end
     
     @users
   end
