@@ -42,7 +42,7 @@ class Alert < ActiveRecord::Base
   
   def send_push(device)
     pem = ENV['APNS_PEM'].length < 9 ? "#{Rails.root}/#{ENV['APNS_PEM']}" : StringIO.new(ENV['APNS_PEM'])
-    puts pem
+    puts pem.string
     # raise pem
     pusher = Grocer.pusher(
       certificate: pem,      # required
