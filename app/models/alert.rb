@@ -42,10 +42,11 @@ class Alert < ActiveRecord::Base
   
   def send_push(device)
     pem = ENV['APNS_PEM'].length < 9 ? "#{Rails.root}/#{ENV['APNS_PEM']}" : StringIO.new(ENV['APNS_PEM'])
+    Rails.logger.log(pem)
     # raise pem
     pusher = Grocer.pusher(
       certificate: pem,      # required
-      passphrase:  ENV['APNS_PASSPHRASE'],                       # optional
+      # passphrase:  ENV['APNS_PASSPHRASE'],                       # optional
       gateway:     ENV['APNS_GATEWAY']#, # optional; See note below.
       # port:        2195,                     # optional
       # retries:     3                         # optional

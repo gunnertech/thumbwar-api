@@ -63,7 +63,7 @@ class UsersController < InheritedResources::Base
 
       render status: 200, json: {}
     else
-      render status: 401, json: {error: "invalid code"}
+      render status: 401, json: { error: "invalid code" }
     end
   end
 
