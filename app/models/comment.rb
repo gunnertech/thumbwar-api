@@ -55,16 +55,17 @@ class Comment < ActiveRecord::Base
   end
 
   def create_alert
-    commentable.watchers.each do |watcher|
-      watcher.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment") unless user == watcher
-    end
+    unless body.match(/evidence--/)
+      commentable.watchers.each do |watcher|
+        watcher.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment") unless user == watcher
+      end
     
-    commentable.challenges.where{status != 'rejected' }.each do |challenge|
-      challenge.user.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment") unless user == challenge.user
-    end
+      commentable.challenges.where{status != 'rejected' }.each do |challenge|
+        challenge.user.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment") unless user == challenge.user
+      end
     
-    commentable.challenger.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment") unless user == commentable.challenger
-
+      commentable.challenger.alerts.create!(alertable: self, body: "#{user.display_name} posted a new comment") unless user == commentable.challenger
+    end
   end
-  # handle_asynchronously :create_alert
+  handle_asynchronously :create_alert
 end
