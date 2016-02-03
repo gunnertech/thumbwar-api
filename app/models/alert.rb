@@ -46,7 +46,7 @@ class Alert < ActiveRecord::Base
     # raise pem
     pusher = Grocer.pusher(
       certificate: pem,      # required
-      # passphrase:  ENV['APNS_PASSPHRASE'],                       # optional
+      passphrase:  ENV['APNS_PASSPHRASE'],                       # optional
       gateway:     ENV['APNS_GATEWAY']#, # optional; See note below.
       # port:        2195,                     # optional
       # retries:     3                         # optional
