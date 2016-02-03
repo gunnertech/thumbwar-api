@@ -92,7 +92,10 @@ class Alert < ActiveRecord::Base
       Device.where{ token == my{attempt.device_token} }.destroy_all
     end
     
+    puts "OH HI!"
+    
     if user
+      puts 'LET gooooo'
       user.devices.where{ device_type == 'ios' }.each do |device|
         send_push(device)
       end
