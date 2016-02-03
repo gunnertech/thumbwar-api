@@ -42,7 +42,6 @@ class Alert < ActiveRecord::Base
   
   def send_push(device)
     pem = ENV['APNS_PEM'].length < 9 ? "#{Rails.root}/#{ENV['APNS_PEM']}" : StringIO.new(ENV['APNS_PEM'])
-    puts pem.string
     # raise pem
     pusher = Grocer.pusher(
       certificate: pem,      # required
@@ -87,15 +86,12 @@ class Alert < ActiveRecord::Base
     )
 
     feedback.each do |attempt|
-      puts "Device #{attempt.device_token} failed at #{attempt.timestamp}"
   
       Device.where{ token == my{attempt.device_token} }.destroy_all
     end
     
-    puts "OH HI!"
     
     if user
-      puts 'LET gooooo'
       user.devices.where{ device_type == 'ios' }.each do |device|
         send_push(device)
       end
