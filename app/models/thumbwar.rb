@@ -67,11 +67,6 @@ class Thumbwar < ActiveRecord::Base
 
   def update_last_war_counter(user)
     self.update(last_user_to_counter: user.id)
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> 67d04f4ffd0a3ee1e1a5418cf074097dd3310856
     return true
   end
 
@@ -101,13 +96,7 @@ class Thumbwar < ActiveRecord::Base
       c.save!
     end
   end
-<<<<<<< HEAD
-  
-  
-=======
-  
-  
->>>>>>> 67d04f4ffd0a3ee1e1a5418cf074097dd3310856
+
   def set_tag_list_from_body
     _tags = []
     body.scan(/#[^ \-]+/).each do |match|
@@ -132,8 +121,6 @@ class Thumbwar < ActiveRecord::Base
     challenges.where{ status == 'pending' }.each do |challenge|
       challenge.user.alerts.create!(alertable: self, body: "Your Thumbwar is about to expire!") if expiring_soon?
     end
-<<<<<<< HEAD
-=======
   end
   handle_asynchronously :send_expiring_soon_alert, run_at: Proc.new { |tw| (tw.expires_in.to_i.minutes - 10.minutes).from_now }
 
@@ -161,12 +148,10 @@ class Thumbwar < ActiveRecord::Base
     end
     
     return true
->>>>>>> 67d04f4ffd0a3ee1e1a5418cf074097dd3310856
   end
   handle_asynchronously :send_expiring_soon_alert, run_at: Proc.new { |tw| (tw.expires_in.to_i.minutes - 10.minutes).from_now }
 
   
-<<<<<<< HEAD
   def twitter_body
     _body = body
     body.scan(/@[^ ]+/).each do |match|
