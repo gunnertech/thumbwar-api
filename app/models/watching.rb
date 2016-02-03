@@ -17,4 +17,5 @@ class Watching < ActiveRecord::Base
     end
   end
   handle_asynchronously :send_alert
+
 end
