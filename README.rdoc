@@ -710,6 +710,19 @@ curl
   
   curl -i  -F "thumbwar[body]=This is an image file" -F "thumbwar[photo]=@/Users/cody/Desktop/fireball-wallpaper-2.jpg" "https://thumbwar-api-staging.herokuapp.com/thumbwars?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441"
   
+DELETE /thumbwars/:id
+
+Params
+
+Notes
+
+Sample Response
+  {}
+  
+curl
+  curl "https://thumbwar-api-staging.herokuapp.com/thumbwars/94?token=QAbHkj97TqNdgkmL622v&facebook_id=10106161156180441" -H "Content-type:application/json" -X DELETE
+
+  
 PUT /thumbwars/:id
 
 Params

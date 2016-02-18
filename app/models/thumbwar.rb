@@ -17,7 +17,7 @@ class Thumbwar < ActiveRecord::Base
   has_many :evidence_photos, dependent: :destroy
   has_many :watchings, dependent: :destroy
   has_many :watchers, through: :watchings, source: :user
-  has_many :alerts, as: :alertable
+  has_many :alerts, as: :alertable, dependent: :destroy
   has_many :challenges, dependent: :destroy
   has_many :opponents, through: :challenges, foreign_key: :user_id, source: :user
   
