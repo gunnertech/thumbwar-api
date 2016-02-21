@@ -69,6 +69,11 @@ class Thumbwar < ActiveRecord::Base
     self.update(last_user_to_counter: user.id)
     return true
   end
+  
+  def send_countered_alert
+    challenger.alerts.create!(alertable: self, body: "Your Thumbwar was countered!")
+  end
+  handle_asynchronously :send_countered_alert
 
   protected
   
@@ -236,11 +241,6 @@ class Thumbwar < ActiveRecord::Base
     watchers.each { |u| u.alerts.create!(alertable: self, body: "A Thumbwar you're watching just ended!") }
   end
   handle_asynchronously :send_outcome_alert
-  
-  def send_countered_alert
-    challenger.alerts.create!(alertable: self, body: "Your Thumbwar was countered!")
-  end
-  handle_asynchronously :send_countered_alert
   
 
   def set_default_status
