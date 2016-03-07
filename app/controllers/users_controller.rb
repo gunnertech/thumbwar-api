@@ -193,6 +193,7 @@ class UsersController < InheritedResources::Base
   protected
   
   def set_inviter_id
+    raise current_user.id.inspect
     params[:user][:inviter_id] = current_user.id unless current_user.nil?
   end
   

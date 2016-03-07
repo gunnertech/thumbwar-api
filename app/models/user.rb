@@ -186,7 +186,7 @@ class User < ActiveRecord::Base
   
   def complete_invitation_acceptance
     
-    # self.followers << inviter
+    self.followers << inviter
     inviter.followers << self
     
     inviter.alerts.create(alertable: self, body: "#{display_name} just joined Thumbwar!")
