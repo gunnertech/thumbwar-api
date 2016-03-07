@@ -15,6 +15,8 @@ class ApplicationController < ActionController::Base
       
       @current_user = User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.first if token && facebook_id
     end
+    
+    @current_user
   end
   
   def authenticate_from_token!
