@@ -11,8 +11,6 @@ class ApplicationController < ActionController::Base
       fi = request.headers['thumbwar-facebook-id']
       t = request.headers['thumbwar-auth-token']
       
-      puts "~~~~~~#{User.where{ (facebook_id == fi) & (token == t) }.to_sql}"
-      
       @current_user = User.where{ (facebook_id == fi) & (token == t) }.first if t && fi
     end
     
