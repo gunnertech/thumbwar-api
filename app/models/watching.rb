@@ -12,8 +12,8 @@ class Watching < ActiveRecord::Base
   
   def send_alert
     thumbwar.challenges.each do |challenge|
-      challenge.user.alerts.create!(alertable: self.thumbwar, body: (self.side == 'opponents' ? "Someone sided with you!" : "Someone sided against you!"  ))
-      challenge.challenger.alerts.create!(alertable: self.thumbwar, body: (self.side == 'challenger' ? "Someone sided with you!" : "Someone sided against you!"  ))
+      challenge.user.alerts.create!(alertable: self.thumbwar, body: (self.side == 'opponents' ? "#{challenge.challenger.name} sided with you!" : "#{challenge.challenger.name} sided against you!"  ))
+      challenge.challenger.alerts.create!(alertable: self.thumbwar, body: (self.side == 'challenger' ? "#{challenge.user.name} sided with you!" : "#{challenge.user.name} sided against you!"  ))
     end
   end
   handle_asynchronously :send_alert
