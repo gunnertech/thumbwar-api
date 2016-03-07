@@ -194,6 +194,10 @@ class UsersController < InheritedResources::Base
   
   def set_inviter_id
     params[:user][:inviter_id] = current_user.id unless current_user.nil?
+    
+    puts ""
+    puts "~~~~~~3 FACEBOOK ID: #{current_user.try(:facebook_id)}"
+    puts ""
   end
   
   def collection

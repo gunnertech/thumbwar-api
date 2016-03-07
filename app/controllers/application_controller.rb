@@ -9,9 +9,15 @@ class ApplicationController < ActionController::Base
     facebook_id = request.headers['thumbwar-facebook-id']
     token = request.headers['thumbwar-auth-token']
     puts ""
-    puts "~~~~~~FACEBOOK ID: #{facebook_id}"
+    puts "~~~~~~1 FACEBOOK ID: #{facebook_id}"
     puts ""
     @current_user ||= User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.first if token && facebook_id
+    
+    puts ""
+    puts "~~~~~~2 FACEBOOK ID: #{facebook_id}"
+    puts ""
+    
+    @current_user
   end
   
   def authenticate_from_token!
