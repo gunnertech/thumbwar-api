@@ -8,10 +8,10 @@ class ApplicationController < ActionController::Base
   def current_user
     
     if !@current_user
-      facebook_id = request.headers['thumbwar-facebook-id']
-      token = request.headers['thumbwar-auth-token']
+      fi = request.headers['thumbwar-facebook-id']
+      t = request.headers['thumbwar-auth-token']
       
-      puts User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.to_sql
+      puts "~~~~~~#{User.where{ (facebook_id == fi) & (token == t) }.to_sql}"
       
       @current_user = User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.first if token && facebook_id
     end
@@ -23,14 +23,10 @@ class ApplicationController < ActionController::Base
     facebook_id = request.headers['thumbwar-facebook-id']
     token = request.headers['thumbwar-auth-token']
     if facebook_id
-      puts ""
-      puts "~~~~~~authenticate_from_token!: #{facebook_id}"
       if (user = User.find_by_facebook_id(facebook_id))
         if token
           if Devise.secure_compare(user.token, token)
             @current_user = user
-            puts "~~~~~~authenticate_from_token! FACEBOOK ID: #{@current_user.name}"
-            puts ""
           else
             render status: 401, json: {error: "invalid token"}
           end
