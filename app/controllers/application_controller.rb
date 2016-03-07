@@ -1,20 +1,20 @@
 class ApplicationController < ActionController::Base
   respond_to :json
   
-  before_filter :authenticate_from_token!
+  prepend_before_filter :authenticate_from_token!
  
   protected
   
   def current_user
-    facebook_id = request.headers['thumbwar-facebook-id']
-    token = request.headers['thumbwar-auth-token']
-    puts ""
-    puts "~~~~~~current_user: #{facebook_id}"
-    @current_user ||= User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.first if token && facebook_id
-    puts "~~~~~~current_user FACEBOOK ID: #{@current_user.name}"
-    puts ""
     
-    @current_user
+    if !@current_user
+      facebook_id = request.headers['thumbwar-facebook-id']
+      token = request.headers['thumbwar-auth-token']
+      
+      puts User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.to_sql
+      
+      @current_user = User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.first if token && facebook_id
+    end
   end
   
   def authenticate_from_token!
