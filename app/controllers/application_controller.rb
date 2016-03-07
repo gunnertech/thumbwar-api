@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
       
       puts "~~~~~~#{User.where{ (facebook_id == fi) & (token == t) }.to_sql}"
       
-      @current_user = User.where{ (facebook_id == my{facebook_id}) & (token == my{token}) }.first if token && facebook_id
+      @current_user = User.where{ (facebook_id == fi) & (token == t) }.first if t && fi
     end
     
     @current_user
