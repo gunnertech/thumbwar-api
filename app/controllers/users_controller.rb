@@ -38,28 +38,16 @@ class UsersController < InheritedResources::Base
       current_user.verified = true
       current_user.save
 
-      # Merge all the wars for the invited version if exists
-      users = User.where(mobile: current_user.mobile)
-      user_from_contact = nil
+      users = User.where{ (mobile == current_user.mobile) & (id != current_user.id) }
+      
 
-      for user in users
-        if user && !user.facebook_token
-          user_from_contact = user
-          break
-        end
+      users.each do |user|
+        Challenge.where{ user_id == user.id }.update_all(user_id: current_user.id)
+        Alert.where{ user_id == user.id }.update_all(user_id: current_user.id)
+        Alert.where{ (alertable_id == user.id) & (alertable_type == "User") }.update_all(alertable_id: current_user.id)
       end
 
-      # This user was indeed invited -> Merge the users
-      if user_from_contact
-        wars_from_friends = Challenge.where(user_id: user_from_contact.id)
-
-        for war in wars_from_friends
-          war.user_id = current_user.id
-          war.save!
-        end
-
-        user_from_contact.delete
-      end
+      users.delete_all
 
       render status: 200, json: {}
     else
