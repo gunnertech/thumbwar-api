@@ -37,14 +37,17 @@ class UsersController < InheritedResources::Base
     if params[:verification_code] == current_user.verification_code
       current_user.verified = true
       current_user.save
+      current_user_id = current_user.id
+      current_user_mobile = current_user.mobile
 
-      users = User.where{ (mobile == current_user.mobile) & (id != current_user.id) }
+      users = User.where{ (mobile == my{current_user_mobile}) & (id != my{current_user_id}) }
       
 
       users.each do |user|
-        Challenge.where{ user_id == user.id }.update_all(user_id: current_user.id)
-        Alert.where{ user_id == user.id }.update_all(user_id: current_user.id)
-        Alert.where{ (alertable_id == user.id) & (alertable_type == "User") }.update_all(alertable_id: current_user.id)
+        uid = user.id
+        Challenge.where{ user_id == my{uid} }.update_all(user_id: current_user_id)
+        Alert.where{ user_id == my{uid} }.update_all(user_id: current_user_id)
+        Alert.where{ (alertable_id == my{uid}) & (alertable_type == "User") }.update_all(alertable_id: current_user_id)
       end
 
       users.delete_all
