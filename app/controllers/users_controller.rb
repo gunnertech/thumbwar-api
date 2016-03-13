@@ -27,6 +27,9 @@ class UsersController < InheritedResources::Base
         end
       end
 
+
+      current_user.update_columns(mobile: params[:mobile])
+
       current_user.send_verification_sms(params[:mobile])
     end
 
