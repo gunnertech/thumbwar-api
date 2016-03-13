@@ -45,6 +45,7 @@ class UsersController < InheritedResources::Base
 
       users = User.where{ (mobile == my{current_user_mobile}) & (id != my{current_user_id}) }
 
+      ###173 and 170
       puts "~~~~~~~~~~"
       puts users.inspect
       puts "~~~~~~~~~~"
