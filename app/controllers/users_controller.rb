@@ -35,12 +35,19 @@ class UsersController < InheritedResources::Base
     
   def verify
     if params[:verification_code] == current_user.verification_code
+      puts "~~~~~~~~~~"
+      puts current_user.inspect
+      puts "~~~~~~~~~~"
       current_user.verified = true
       current_user.save
       current_user_id = current_user.id
       current_user_mobile = current_user.mobile
 
       users = User.where{ (mobile == my{current_user_mobile}) & (id != my{current_user_id}) }
+
+      puts "~~~~~~~~~~"
+      puts users.inspect
+      puts "~~~~~~~~~~"
       
 
       users.each do |user|
