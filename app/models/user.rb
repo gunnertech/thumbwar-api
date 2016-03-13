@@ -42,6 +42,7 @@ class User < ActiveRecord::Base
   after_create :send_invitation_wrapper, if: Proc.new{ |u| u.inviter_id.present? }
   after_create :create_welcome_alert
   after_create :send_alerts_to_facebook_friends_wrapper, if: Proc.new{ |u| u.facebook_ids.present? }
+  after_destroy :clean_up
   
   class << self
     def find_by_username_or_id(id)
@@ -134,6 +135,15 @@ class User < ActiveRecord::Base
   end
 
   protected
+
+  def clean_up
+    Challenge.where{ user_id == my{id} }.destroy_all
+    Alert.where{ user_id == my{id} }.destroy_all
+    Alert.where{ (alertable_id == my{id}) & (alertable_type == "User") }.destroy_all
+    Following.where{ followee_id == my{id} }.destroy_all
+    Following.where{ follower_id == my{id} }.destroy_all
+    Thumbwar.where{ challenger_id == my{id} }.destroy_all
+  end
   
   def generate_username(name = nil, attempt = nil)
     name = name || "#{first_name}#{last_name}"
