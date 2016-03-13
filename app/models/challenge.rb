@@ -2,7 +2,7 @@ class Challenge < ActiveRecord::Base
   attr_accessible :status, :outcome, :thumbwar_id, :user_id, :challenger_id
   
   belongs_to :user
-  belongs_to :thumbwar, dependent: :destroy
+  belongs_to :thumbwar
   belongs_to :challenger, class_name: "User", foreign_key: 'challenger_id'
   
   validates :status, inclusion: { in: %w(pending accepted rejected), message: "%{value} is not a valid status" }
