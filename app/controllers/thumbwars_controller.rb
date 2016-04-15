@@ -55,6 +55,8 @@ class ThumbwarsController < InheritedResources::Base
     else
       user = User.find_by_username_or_id(params[:user_id])
     end
+
+    is_public = params[:private].blank? ? true : !params[:private]
     
     if params[:view] == 'timeline'
       my_thumbwar_ids = user.thumbwars.pluck('id')
@@ -69,34 +71,30 @@ class ThumbwarsController < InheritedResources::Base
     
       thumbwar_ids = my_thumbwar_ids + followee_thumbwar_ids + challenge_thumbwar_ids + follower_thumbwar_ids
 
-      @thumbwars = @thumbwars.where{ id >> my{thumbwar_ids.uniq} }
+      @thumbwars = @thumbwars.where{ (id >> my{thumbwar_ids.uniq}) & (public == true) }
     elsif params[:view] == 'mine'
       my_thumbwar_ids = user.thumbwars.pluck('id')
       @thumbwars = @thumbwars.where{ id >> my{my_thumbwar_ids} }
+      @thumbwars = @thumbwars.where{ public == my{is_public} }
     elsif params[:view] == 'won'
       @thumbwars = @thumbwars.joins{ challenges }.where{ ((status == 'win') & (challenger_id == my{user.id}) ) |  ((status == 'loss') & (challenges.user_id == my{user.id}) )}
+      @thumbwars = @thumbwars.where{ public == my{is_public} }
     elsif params[:view] == 'lost'
       @thumbwars = @thumbwars.joins{ challenges }.where{ ((status == 'loss') & (challenger_id == my{user.id}) ) |  ((status == 'win') & (challenges.user_id == my{user.id}) )}
+      @thumbwars = @thumbwars.where{ public == my{is_public} }
     elsif params[:view] == 'push'
       @thumbwars = @thumbwars.joins{ challenges }.where{ ((status == 'push') & (challenger_id == my{user.id}) ) |  ((status == 'push') & (challenges.user_id == my{user.id}) )}
+      @thumbwars = @thumbwars.where{ public == my{is_public} }
     elsif params[:view] == 'in_progress'
       @thumbwars = @thumbwars.joins{ challenges }.where{ ( (status == 'in_progress') & (challenges.status == 'accepted') ) & ( (challenges.user_id == my{user.id}) | (challenger_id == my{user.id}) ) }
-    # elsif params[:view] == 'popup'
-    #   my_thumbwar_ids = []
-    #   my_thumbwar_ids = @thumbwars.joins{ challenges }.where{ ( (status == 'in_progress') & (challenges.status == 'pending') ) & ( (challenges.user_id == my{user.id}) ) }.pluck('id')
-    #   retarded_evidence_check_thumbwars = @thumbwars.joins{ challenges }.where{
-    #     ( (status == 'in_progress') & (challenges.status == 'accepted') ) &
-    #     ( (challenger_id == my{user.id}) ) &
-    #     ( (opponents_proposed_outcome != challengers_proposed_outcome) )
-    #   }
-    #
-    #   retarded_evidence_check_thumbwars.each do |thumbwar|
-    #     if thumbwar.comments.reorder{ id.asc }.last.body.match(/--evidence/) && thumbwar.comments.reorder{ id.asc }.last.user == current_user
-    #       my_thumbwar_ids.push(thumbwar.id)
-    #     end
-    #   end
-    #
-    #   @thumbwars = @thumbwars.where{ id >> my{my_thumbwar_ids} }
+      @thumbwars = @thumbwars.where{ public == my{is_public} }
+    elsif params[:view] == 'private'
+      my_thumbwar_ids = user.thumbwars.pluck('id')
+      challenge_thumbwar_ids = user.challenges.pluck('thumbwar_id')
+    
+      thumbwar_ids = my_thumbwar_ids + challenge_thumbwar_ids
+
+      @thumbwars = @thumbwars.where{ (id >> my{thumbwar_ids.uniq}) & (public == false) }
     else
       @thumbwars = @thumbwars.where{ public == true }
     end

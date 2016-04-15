@@ -138,7 +138,11 @@ class User < ActiveRecord::Base
 
   def clean_up
     Challenge.where{ user_id == my{id} }.destroy_all
+    Challenge.where{ challenger_id == my{id} }.destroy_all
     Alert.where{ user_id == my{id} }.destroy_all
+    Alert.where{ (alertable_id == my{id}) & (alertable_type == "User") }.destroy_all
+    Watching.where{ user_id == my{id} }.destroy_all
+    Comment.where{ user_id == my{id} }.destroy_all
     Alert.where{ (alertable_id == my{id}) & (alertable_type == "User") }.destroy_all
     Following.where{ followee_id == my{id} }.destroy_all
     Following.where{ follower_id == my{id} }.destroy_all
