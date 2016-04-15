@@ -57,6 +57,10 @@ class ThumbwarsController < InheritedResources::Base
     end
 
     is_public = params[:private].blank? ? true : !params[:private]
+
+
+    puts "PARAMS: #{params[:private]}"
+    puts "is_public: #{is_public}"
     
     if params[:view] == 'timeline'
       my_thumbwar_ids = user.thumbwars.pluck('id')
