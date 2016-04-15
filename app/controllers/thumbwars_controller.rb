@@ -58,6 +58,8 @@ class ThumbwarsController < InheritedResources::Base
 
     is_public = params[:private].blank? ? true : !params[:private]
 
+    is_public = true if params[:private] == "false"
+
 
     puts "PARAMS: #{params[:private]}"
     puts "is_public: #{is_public}"
